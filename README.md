@@ -5,17 +5,12 @@ Mint a Coin is a REST API for easily dealing with cryptoassets helping to abstra
 
 ## Installation
 
-1. Install dependencies
+1. Install dependencies and setup database
 ```bash
-mix deps.get
+mix setup
 ```
 
-2. Create and migrate database
-```bash
-mix ecto.setup
-```
-
-3. Start server
+2. Start server
 ```bash
 mix phx.server
 ```
