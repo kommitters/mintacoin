@@ -3,7 +3,7 @@ defmodule MintacoinWeb.ErrorHelpers do
   Conveniences for translating and building error messages.
   """
 
-  @spec translate_error({binary, keyword | map}) :: binary
+  @spec translate_error({msg :: binary(), opts :: keyword() | map()}) :: binary()
   @doc """
   Translates an error message using gettext.
   """

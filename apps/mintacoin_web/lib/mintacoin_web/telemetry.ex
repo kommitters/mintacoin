@@ -3,8 +3,9 @@ defmodule MintacoinWeb.Telemetry do
 
   use Supervisor
   import Telemetry.Metrics
+  alias Telemetry.Metrics.Summary
 
-  @spec start_link(any) :: :ignore | {:error, any} | {:ok, pid}
+  @spec start_link(arg :: any()) :: :ignore | {:error, any()} | {:ok, pid()}
   def start_link(arg) do
     Supervisor.start_link(__MODULE__, arg, name: __MODULE__)
   end
@@ -22,7 +23,7 @@ defmodule MintacoinWeb.Telemetry do
     Supervisor.init(children, strategy: :one_for_one)
   end
 
-  @spec metrics :: [Telemetry.Metrics.Summary.t(), ...]
+  @spec metrics :: list(Summary.t())
   def metrics do
     [
       # Phoenix Metrics
