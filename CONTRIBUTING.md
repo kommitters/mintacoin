@@ -12,8 +12,7 @@ We want to make it as easy as possible to contribute changes that help the [Mint
 * Fork the repository on GitHub.
 * Try to keep your local repository in a "rebased" state.
 * Set the project up.
-  * Install the dependencies running `mix deps.get`.
-  * Create and migrate your database running `mix ecto.setup`.
+  * Install the dependencies and setup database running `mix setup`.
   * To start the project, run `mix phx.server`.
   * Run tests with `mix test`.
 
