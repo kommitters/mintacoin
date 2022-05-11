@@ -17,6 +17,7 @@ defmodule MintacoinWeb do
   and import those modules here.
   """
 
+  @spec controller() :: any()
   def controller do
     quote do
       use Phoenix.Controller, namespace: MintacoinWeb
@@ -27,6 +28,7 @@ defmodule MintacoinWeb do
     end
   end
 
+  @spec view() :: any()
   def view do
     quote do
       use Phoenix.View,
@@ -42,6 +44,7 @@ defmodule MintacoinWeb do
     end
   end
 
+  @spec router() :: any()
   def router do
     quote do
       use Phoenix.Router
@@ -51,6 +54,7 @@ defmodule MintacoinWeb do
     end
   end
 
+  @spec channel() :: any()
   def channel do
     quote do
       use Phoenix.Channel

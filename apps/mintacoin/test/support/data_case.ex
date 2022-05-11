@@ -15,6 +15,7 @@ defmodule Mintacoin.DataCase do
   """
 
   use ExUnit.CaseTemplate
+  alias Ecto.Adapters.SQL.Sandbox
 
   using do
     quote do
@@ -28,11 +29,12 @@ defmodule Mintacoin.DataCase do
   end
 
   setup tags do
-    pid = Ecto.Adapters.SQL.Sandbox.start_owner!(Mintacoin.Repo, shared: not tags[:async])
-    on_exit(fn -> Ecto.Adapters.SQL.Sandbox.stop_owner(pid) end)
+    pid = Sandbox.start_owner!(Mintacoin.Repo, shared: not tags[:async])
+    on_exit(fn -> Sandbox.stop_owner(pid) end)
     :ok
   end
 
+  @spec errors_on(Ecto.Changeset.t()) :: %{optional(atom) => list}
   @doc """
   A helper that transforms changeset errors into a map of messages.
 
