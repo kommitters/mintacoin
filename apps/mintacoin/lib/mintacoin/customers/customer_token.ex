@@ -1,7 +1,13 @@
 defmodule Mintacoin.Customers.CustomerToken do
+  @moduledoc """
+  The CustomerToken context.
+  """
+
   use Ecto.Schema
   import Ecto.Query
   alias Mintacoin.Customers.CustomerToken
+
+  @type t :: %__MODULE__{}
 
   @hash_algorithm :sha256
   @rand_size 32
@@ -22,6 +28,7 @@ defmodule Mintacoin.Customers.CustomerToken do
     timestamps(updated_at: false)
   end
 
+  @spec build_session_token(t()) :: tuple()
   @doc """
   Generates a token that will be stored in a signed place,
   such as session or cookie. As they are signed, those
@@ -46,6 +53,7 @@ defmodule Mintacoin.Customers.CustomerToken do
     {token, %CustomerToken{token: token, context: "session", customer_id: customer.id}}
   end
 
+  @spec verify_session_token_query(String.t()) :: tuple()
   @doc """
   Checks if the token is valid and returns its underlying lookup query.
 
@@ -64,6 +72,7 @@ defmodule Mintacoin.Customers.CustomerToken do
     {:ok, query}
   end
 
+  @spec build_email_token(t(), String.t()) :: map()
   @doc """
   Builds a token and its hash to be delivered to the customer's email.
 
@@ -94,6 +103,7 @@ defmodule Mintacoin.Customers.CustomerToken do
      }}
   end
 
+  @spec verify_email_token_query(String.t(), String.t()) :: tuple() | :error
   @doc """
   Checks if the token is valid and returns its underlying lookup query.
 
@@ -129,6 +139,7 @@ defmodule Mintacoin.Customers.CustomerToken do
   defp days_for_context("confirm"), do: @confirm_validity_in_days
   defp days_for_context("reset_password"), do: @reset_password_validity_in_days
 
+  @spec verify_change_email_token_query(String.t(), String.t()) :: tuple() | :error
   @doc """
   Checks if the token is valid and returns its underlying lookup query.
 
@@ -159,6 +170,7 @@ defmodule Mintacoin.Customers.CustomerToken do
     end
   end
 
+  @spec token_and_context_query(String.t(), String.t()) :: struct()
   @doc """
   Returns the token struct for the given token value and context.
   """
@@ -166,6 +178,7 @@ defmodule Mintacoin.Customers.CustomerToken do
     from CustomerToken, where: [token: ^token, context: ^context]
   end
 
+  @spec customer_and_contexts_query(t(), atom()) :: list(struct())
   @doc """
   Gets all tokens for the given customer for the given contexts.
   """
@@ -173,6 +186,7 @@ defmodule Mintacoin.Customers.CustomerToken do
     from t in CustomerToken, where: t.customer_id == ^customer.id
   end
 
+  @spec customer_and_contexts_query(t(), list()) :: list(struct())
   def customer_and_contexts_query(customer, [_ | _] = contexts) do
     from t in CustomerToken, where: t.customer_id == ^customer.id and t.context in ^contexts
   end

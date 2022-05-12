@@ -1,6 +1,12 @@
 defmodule Mintacoin.Customers.Customer do
+  @moduledoc """
+  The Customer context.
+  """
+
   use Ecto.Schema
   import Ecto.Changeset
+
+  @type t :: %__MODULE__{}
 
   schema "customers" do
     field :email, :string
@@ -11,6 +17,11 @@ defmodule Mintacoin.Customers.Customer do
     timestamps()
   end
 
+  @spec registration_changeset(
+          t(),
+          map(),
+          list()
+        ) :: Ecto.Changeset.t()
   @doc """
   A customer changeset for registration.
 
@@ -69,6 +80,7 @@ defmodule Mintacoin.Customers.Customer do
     end
   end
 
+  @spec email_changeset(t(), map()) :: Ecto.Changeset.t()
   @doc """
   A customer changeset for changing the email.
 
@@ -84,6 +96,11 @@ defmodule Mintacoin.Customers.Customer do
     end
   end
 
+  @spec password_changeset(
+          t(),
+          map(),
+          list()
+        ) :: Ecto.Changeset.t()
   @doc """
   A customer changeset for changing the password.
 
@@ -103,6 +120,7 @@ defmodule Mintacoin.Customers.Customer do
     |> validate_password(opts)
   end
 
+  @spec confirm_changeset(t()) :: Ecto.Changeset.t()
   @doc """
   Confirms the account by setting `confirmed_at`.
   """
@@ -111,6 +129,7 @@ defmodule Mintacoin.Customers.Customer do
     change(customer, confirmed_at: now)
   end
 
+  @spec valid_password?(t(), String.t()) :: Boolean.t()
   @doc """
   Verifies the password.
 
@@ -122,11 +141,13 @@ defmodule Mintacoin.Customers.Customer do
     Bcrypt.verify_pass(password, hashed_password)
   end
 
+  @spec valid_password?(any(), any()) :: false
   def valid_password?(_, _) do
     Bcrypt.no_user_verify()
     false
   end
 
+  @spec validate_current_password(t(), String.t()) :: Ecto.Changeset.t()
   @doc """
   Validates the current password otherwise adds an error to the changeset.
   """
