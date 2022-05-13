@@ -1,6 +1,6 @@
-defmodule Mintacoin.Customers.Customer do
+defmodule Mintacoin.Minters.Minter do
   @moduledoc """
-  The Customer context.
+  The Minter context.
   """
 
   use Ecto.Schema
@@ -8,7 +8,7 @@ defmodule Mintacoin.Customers.Customer do
 
   @type t :: %__MODULE__{}
 
-  schema "customers" do
+  schema "minters" do
     field :email, :string
     field :password, :string, virtual: true, redact: true
     field :hashed_password, :string, redact: true
@@ -17,13 +17,8 @@ defmodule Mintacoin.Customers.Customer do
     timestamps()
   end
 
-  @spec registration_changeset(
-          t(),
-          map(),
-          list()
-        ) :: Ecto.Changeset.t()
   @doc """
-  A customer changeset for registration.
+  A minter changeset for registration.
 
   It is important to validate the length of both email and password.
   Otherwise databases may truncate the email without warnings, which
@@ -39,8 +34,10 @@ defmodule Mintacoin.Customers.Customer do
       validations on a LiveView form), this option can be set to `false`.
       Defaults to `true`.
   """
-  def registration_changeset(customer, attrs, opts \\ []) do
-    customer
+  @spec registration_changeset(minter :: t(), attrs :: map(), opts :: list()) ::
+          Ecto.Changeset.t()
+  def registration_changeset(minter, attrs, opts \\ []) do
+    minter
     |> cast(attrs, [:email, :password])
     |> validate_email()
     |> validate_password(opts)
@@ -80,14 +77,14 @@ defmodule Mintacoin.Customers.Customer do
     end
   end
 
-  @spec email_changeset(t(), map()) :: Ecto.Changeset.t()
   @doc """
-  A customer changeset for changing the email.
+  A minter changeset for changing the email.
 
   It requires the email to change otherwise an error is added.
   """
-  def email_changeset(customer, attrs) do
-    customer
+  @spec email_changeset(minter :: t(), attrs :: map()) :: Ecto.Changeset.t()
+  def email_changeset(minter, attrs) do
+    minter
     |> cast(attrs, [:email])
     |> validate_email()
     |> case do
@@ -96,61 +93,57 @@ defmodule Mintacoin.Customers.Customer do
     end
   end
 
-  @spec password_changeset(
-          t(),
-          map(),
-          list()
-        ) :: Ecto.Changeset.t()
   @doc """
-  A customer changeset for changing the password.
+  A minter changeset for changing the password.
 
   ## Options
 
-    * `:hash_password` - Hashes the password so it can be stored securely
-      in the database and ensures the password field is cleared to prevent
-      leaks in the logs. If password hashing is not needed and clearing the
-      password field is not desired (like when using this changeset for
-      validations on a LiveView form), this option can be set to `false`.
-      Defaults to `true`.
+  * `:hash_password` - Hashes the password so it can be stored securely
+  in the database and ensures the password field is cleared to prevent
+  leaks in the logs. If password hashing is not needed and clearing the
+  password field is not desired (like when using this changeset for
+  validations on a LiveView form), this option can be set to `false`.
+  Defaults to `true`.
   """
-  def password_changeset(customer, attrs, opts \\ []) do
-    customer
+  @spec password_changeset(minter :: t(), attrs :: map(), opts :: list()) :: Ecto.Changeset.t()
+  def password_changeset(minter, attrs, opts \\ []) do
+    minter
     |> cast(attrs, [:password])
     |> validate_confirmation(:password, message: "does not match password")
     |> validate_password(opts)
   end
 
-  @spec confirm_changeset(t()) :: Ecto.Changeset.t()
   @doc """
   Confirms the account by setting `confirmed_at`.
   """
-  def confirm_changeset(customer) do
+  @spec confirm_changeset(minter :: t()) :: Ecto.Changeset.t()
+  def confirm_changeset(minter) do
     now = NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
-    change(customer, confirmed_at: now)
+    change(minter, confirmed_at: now)
   end
 
-  @spec valid_password?(t(), String.t()) :: Boolean.t()
   @doc """
   Verifies the password.
 
-  If there is no customer or the customer doesn't have a password, we call
+  If there is no minter or the minter doesn't have a password, we call
   `Bcrypt.no_user_verify/0` to avoid timing attacks.
   """
-  def valid_password?(%Mintacoin.Customers.Customer{hashed_password: hashed_password}, password)
+  @spec valid_password?(minter :: t(), password :: String.t()) :: boolean()
+  def valid_password?(%__MODULE__{hashed_password: hashed_password}, password)
       when is_binary(hashed_password) and byte_size(password) > 0 do
     Bcrypt.verify_pass(password, hashed_password)
   end
 
-  @spec valid_password?(any(), any()) :: false
-  def valid_password?(_, _) do
+  @spec valid_password?(minter :: any(), password :: any()) :: false
+  def valid_password?(_minter, _password) do
     Bcrypt.no_user_verify()
     false
   end
 
-  @spec validate_current_password(t(), String.t()) :: Ecto.Changeset.t()
   @doc """
   Validates the current password otherwise adds an error to the changeset.
   """
+  @spec validate_current_password(changeset :: t(), password :: String.t()) :: Ecto.Changeset.t()
   def validate_current_password(changeset, password) do
     if valid_password?(changeset.data, password) do
       changeset
