@@ -28,7 +28,6 @@ defmodule Mintacoin.Minters.MinterToken do
     timestamps(updated_at: false)
   end
 
-  @spec build_session_token(t()) :: tuple()
   @doc """
   Generates a token that will be stored in a signed place,
   such as session or cookie. As they are signed, those
@@ -48,12 +47,12 @@ defmodule Mintacoin.Minters.MinterToken do
   and devices in the UI and allow users to explicitly expire any
   session they deem invalid.
   """
+  @spec build_session_token(minter :: t()) :: tuple()
   def build_session_token(minter) do
     token = :crypto.strong_rand_bytes(@rand_size)
-    {token, %__MODULE__{token: token, context: "session", minter_id: minter.id}}
+    {token, %MinterToken{token: token, context: "session", minter_id: minter.id}}
   end
 
-  @spec verify_session_token_query(String.t()) :: tuple()
   @doc """
   Checks if the token is valid and returns its underlying lookup query.
 
@@ -62,6 +61,7 @@ defmodule Mintacoin.Minters.MinterToken do
   The token is valid if it matches the value in the database and it has
   not expired (after @session_validity_in_days).
   """
+  @spec verify_session_token_query(token :: String.t()) :: tuple()
   def verify_session_token_query(token) do
     query =
       from token in token_and_context_query(token, "session"),
@@ -72,7 +72,6 @@ defmodule Mintacoin.Minters.MinterToken do
     {:ok, query}
   end
 
-  @spec build_email_token(t(), String.t()) :: map()
   @doc """
   Builds a token and its hash to be delivered to the minter's email.
 
@@ -86,6 +85,7 @@ defmodule Mintacoin.Minters.MinterToken do
   Users can easily adapt the existing code to provide other types of delivery methods,
   for example, by phone numbers.
   """
+  @spec build_email_token(minter :: t(), context :: String.t()) :: map()
   def build_email_token(minter, context) do
     build_hashed_token(minter, context, minter.email)
   end
@@ -95,7 +95,7 @@ defmodule Mintacoin.Minters.MinterToken do
     hashed_token = :crypto.hash(@hash_algorithm, token)
 
     {Base.url_encode64(token, padding: false),
-     %__MODULE__{
+     %MinterToken{
        token: hashed_token,
        context: context,
        sent_to: sent_to,

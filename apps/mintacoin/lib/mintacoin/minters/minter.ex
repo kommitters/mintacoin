@@ -34,7 +34,7 @@ defmodule Mintacoin.Minters.Minter do
       validations on a LiveView form), this option can be set to `false`.
       Defaults to `true`.
   """
-  @spec registration_changeset(minter :: t(), attrs :: map(), opts :: list()) ::
+  @spec registration_changeset(minter :: t(), changeset :: map(), options :: list()) ::
           Ecto.Changeset.t()
   def registration_changeset(minter, attrs, opts \\ []) do
     minter
@@ -82,7 +82,7 @@ defmodule Mintacoin.Minters.Minter do
 
   It requires the email to change otherwise an error is added.
   """
-  @spec email_changeset(minter :: t(), attrs :: map()) :: Ecto.Changeset.t()
+  @spec email_changeset(minter :: t(), changeset :: map()) :: Ecto.Changeset.t()
   def email_changeset(minter, attrs) do
     minter
     |> cast(attrs, [:email])
@@ -105,7 +105,8 @@ defmodule Mintacoin.Minters.Minter do
   validations on a LiveView form), this option can be set to `false`.
   Defaults to `true`.
   """
-  @spec password_changeset(minter :: t(), attrs :: map(), opts :: list()) :: Ecto.Changeset.t()
+  @spec password_changeset(minter :: t(), changeset :: map(), options :: list()) ::
+          Ecto.Changeset.t()
   def password_changeset(minter, attrs, opts \\ []) do
     minter
     |> cast(attrs, [:password])
