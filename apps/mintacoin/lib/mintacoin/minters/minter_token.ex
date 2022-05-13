@@ -1,11 +1,11 @@
-defmodule Mintacoin.Customers.CustomerToken do
+defmodule Mintacoin.Minters.MinterToken do
   @moduledoc """
-  The CustomerToken context.
+  The MinterToken context.
   """
 
   use Ecto.Schema
   import Ecto.Query
-  alias Mintacoin.Customers.CustomerToken
+  alias Mintacoin.Minters.MinterToken
 
   @type t :: %__MODULE__{}
 
@@ -19,11 +19,11 @@ defmodule Mintacoin.Customers.CustomerToken do
   @change_email_validity_in_days 7
   @session_validity_in_days 60
 
-  schema "customers_tokens" do
+  schema "minters_tokens" do
     field :token, :binary
     field :context, :string
     field :sent_to, :string
-    belongs_to :customer, Mintacoin.Customers.Customer
+    belongs_to :minter, Mintacoin.Minters.Minter
 
     timestamps(updated_at: false)
   end
@@ -41,23 +41,23 @@ defmodule Mintacoin.Customers.CustomerToken do
   valid indefinitely, unless you change the signing/encryption
   salt.
 
-  Therefore, storing them allows individual customer
+  Therefore, storing them allows individual minter
   sessions to be expired. The token system can also be extended
   to store additional data, such as the device used for logging in.
   You could then use this information to display all valid sessions
   and devices in the UI and allow users to explicitly expire any
   session they deem invalid.
   """
-  def build_session_token(customer) do
+  def build_session_token(minter) do
     token = :crypto.strong_rand_bytes(@rand_size)
-    {token, %CustomerToken{token: token, context: "session", customer_id: customer.id}}
+    {token, %__MODULE__{token: token, context: "session", minter_id: minter.id}}
   end
 
   @spec verify_session_token_query(String.t()) :: tuple()
   @doc """
   Checks if the token is valid and returns its underlying lookup query.
 
-  The query returns the customer found by the token, if any.
+  The query returns the minter found by the token, if any.
 
   The token is valid if it matches the value in the database and it has
   not expired (after @session_validity_in_days).
@@ -65,18 +65,18 @@ defmodule Mintacoin.Customers.CustomerToken do
   def verify_session_token_query(token) do
     query =
       from token in token_and_context_query(token, "session"),
-        join: customer in assoc(token, :customer),
+        join: minter in assoc(token, :minter),
         where: token.inserted_at > ago(@session_validity_in_days, "day"),
-        select: customer
+        select: minter
 
     {:ok, query}
   end
 
   @spec build_email_token(t(), String.t()) :: map()
   @doc """
-  Builds a token and its hash to be delivered to the customer's email.
+  Builds a token and its hash to be delivered to the minter's email.
 
-  The non-hashed token is sent to the customer email while the
+  The non-hashed token is sent to the minter email while the
   hashed part is stored in the database. The original token cannot be reconstructed,
   which means anyone with read-only access to the database cannot directly use
   the token in the application to gain access. Furthermore, if the user changes
@@ -86,28 +86,27 @@ defmodule Mintacoin.Customers.CustomerToken do
   Users can easily adapt the existing code to provide other types of delivery methods,
   for example, by phone numbers.
   """
-  def build_email_token(customer, context) do
-    build_hashed_token(customer, context, customer.email)
+  def build_email_token(minter, context) do
+    build_hashed_token(minter, context, minter.email)
   end
 
-  defp build_hashed_token(customer, context, sent_to) do
+  defp build_hashed_token(minter, context, sent_to) do
     token = :crypto.strong_rand_bytes(@rand_size)
     hashed_token = :crypto.hash(@hash_algorithm, token)
 
     {Base.url_encode64(token, padding: false),
-     %CustomerToken{
+     %__MODULE__{
        token: hashed_token,
        context: context,
        sent_to: sent_to,
-       customer_id: customer.id
+       minter_id: minter.id
      }}
   end
 
-  @spec verify_email_token_query(String.t(), String.t()) :: tuple() | :error
   @doc """
   Checks if the token is valid and returns its underlying lookup query.
 
-  The query returns the customer found by the token, if any.
+  The query returns the minter found by the token, if any.
 
   The given token is valid if it matches its hashed counterpart in the
   database and the user email has not changed. This function also checks
@@ -117,6 +116,7 @@ defmodule Mintacoin.Customers.CustomerToken do
   for resetting the password. For verifying requests to change the email,
   see `verify_change_email_token_query/2`.
   """
+  @spec verify_email_token_query(token :: String.t(), context :: String.t()) :: tuple() | :error
   def verify_email_token_query(token, context) do
     case Base.url_decode64(token, padding: false) do
       {:ok, decoded_token} ->
@@ -125,9 +125,9 @@ defmodule Mintacoin.Customers.CustomerToken do
 
         query =
           from token in token_and_context_query(hashed_token, context),
-            join: customer in assoc(token, :customer),
-            where: token.inserted_at > ago(^days, "day") and token.sent_to == customer.email,
-            select: customer
+            join: minter in assoc(token, :minter),
+            where: token.inserted_at > ago(^days, "day") and token.sent_to == minter.email,
+            select: minter
 
         {:ok, query}
 
@@ -139,13 +139,12 @@ defmodule Mintacoin.Customers.CustomerToken do
   defp days_for_context("confirm"), do: @confirm_validity_in_days
   defp days_for_context("reset_password"), do: @reset_password_validity_in_days
 
-  @spec verify_change_email_token_query(String.t(), String.t()) :: tuple() | :error
   @doc """
   Checks if the token is valid and returns its underlying lookup query.
 
-  The query returns the customer found by the token, if any.
+  The query returns the minter found by the token, if any.
 
-  This is used to validate requests to change the customer
+  This is used to validate requests to change the minter
   email. It is different from `verify_email_token_query/2` precisely because
   `verify_email_token_query/2` validates the email has not changed, which is
   the starting point by this function.
@@ -154,6 +153,8 @@ defmodule Mintacoin.Customers.CustomerToken do
   database and if it has not expired (after @change_email_validity_in_days).
   The context must always start with "change:".
   """
+  @spec verify_change_email_token_query(token :: String.t(), context :: String.t()) ::
+          tuple() | :error
   def verify_change_email_token_query(token, "change:" <> _ = context) do
     case Base.url_decode64(token, padding: false) do
       {:ok, decoded_token} ->
@@ -170,24 +171,24 @@ defmodule Mintacoin.Customers.CustomerToken do
     end
   end
 
-  @spec token_and_context_query(String.t(), String.t()) :: struct()
   @doc """
   Returns the token struct for the given token value and context.
   """
+  @spec token_and_context_query(token :: String.t(), context :: String.t()) :: struct()
   def token_and_context_query(token, context) do
-    from CustomerToken, where: [token: ^token, context: ^context]
+    from MinterToken, where: [token: ^token, context: ^context]
   end
 
-  @spec customer_and_contexts_query(t(), atom()) :: list(struct())
   @doc """
-  Gets all tokens for the given customer for the given contexts.
+  Gets all tokens for the given minter for the given contexts.
   """
-  def customer_and_contexts_query(customer, :all) do
-    from t in CustomerToken, where: t.customer_id == ^customer.id
+  @spec minter_and_contexts_query(minter :: t(), contexts :: atom()) :: list(struct())
+  def minter_and_contexts_query(minter, :all) do
+    from t in MinterToken, where: t.minter_id == ^minter.id
   end
 
-  @spec customer_and_contexts_query(t(), list()) :: list(struct())
-  def customer_and_contexts_query(customer, [_ | _] = contexts) do
-    from t in CustomerToken, where: t.customer_id == ^customer.id and t.context in ^contexts
+  @spec minter_and_contexts_query(minter :: t(), contexts :: list()) :: list(struct())
+  def minter_and_contexts_query(minter, [_ | _] = contexts) do
+    from t in MinterToken, where: t.minter_id == ^minter.id and t.context in ^contexts
   end
 end
