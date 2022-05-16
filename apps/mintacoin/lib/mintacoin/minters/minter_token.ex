@@ -21,7 +21,7 @@ defmodule Mintacoin.Minters.MinterToken do
 
   schema "minters_tokens" do
     field :token, :binary
-    field :context, :string
+    field :context, Ecto.Enum, values: [:api, :session]
     field :sent_to, :string
     belongs_to :minter, Minter
 
