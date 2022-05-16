@@ -144,7 +144,7 @@ defmodule Mintacoin.Minters.Minter do
   @doc """
   Validates the current password otherwise adds an error to the changeset.
   """
-  @spec validate_current_password(changeset :: t(), password :: String.t()) :: Ecto.Changeset.t()
+  @spec validate_current_password(changeset :: Ecto.Changeset.t(), password :: String.t()) :: Ecto.Changeset.t()
   def validate_current_password(changeset, password) do
     if valid_password?(changeset.data, password) do
       changeset
