@@ -17,23 +17,7 @@ defmodule Mintacoin.Minters.Minter do
     timestamps()
   end
 
-  @doc """
-  A minter changeset for registration.
-
-  It is important to validate the length of both email and password.
-  Otherwise databases may truncate the email without warnings, which
-  could lead to unpredictable or insecure behaviour. Long passwords may
-  also be very expensive to hash for certain algorithms.
-
-  ## Options
-
-    * `:hash_password` - Hashes the password so it can be stored securely
-      in the database and ensures the password field is cleared to prevent
-      leaks in the logs. If password hashing is not needed and clearing the
-      password field is not desired (like when using this changeset for
-      validations on a LiveView form), this option can be set to `false`.
-      Defaults to `true`.
-  """
+  @doc false
   @spec registration_changeset(minter :: t(), changeset :: map(), options :: list()) ::
           Ecto.Changeset.t()
   def registration_changeset(minter, attrs, opts \\ []) do
@@ -77,11 +61,7 @@ defmodule Mintacoin.Minters.Minter do
     end
   end
 
-  @doc """
-  A minter changeset for changing the email.
-
-  It requires the email to change otherwise an error is added.
-  """
+  @doc false
   @spec email_changeset(minter :: t(), changeset :: map()) :: Ecto.Changeset.t()
   def email_changeset(minter, attrs) do
     minter
@@ -93,18 +73,7 @@ defmodule Mintacoin.Minters.Minter do
     end
   end
 
-  @doc """
-  A minter changeset for changing the password.
-
-  ## Options
-
-  * `:hash_password` - Hashes the password so it can be stored securely
-  in the database and ensures the password field is cleared to prevent
-  leaks in the logs. If password hashing is not needed and clearing the
-  password field is not desired (like when using this changeset for
-  validations on a LiveView form), this option can be set to `false`.
-  Defaults to `true`.
-  """
+  @doc false
   @spec password_changeset(minter :: t(), changeset :: map(), options :: list()) ::
           Ecto.Changeset.t()
   def password_changeset(minter, attrs, opts \\ []) do
