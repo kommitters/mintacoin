@@ -1,4 +1,8 @@
 defmodule Mintacoin.Minters.MinterTest do
+  @moduledoc """
+  This modules defines the test cases of the `Minter` module.
+  """
+
   use Mintacoin.DataCase
 
   alias Mintacoin.Minters.Minter
