@@ -1,80 +1,139 @@
 FORMAT: 1A
-HOST: https://polls.apiblueprint.org/
+HOST: https://mintacoin.co/
 
-# mintacoin
+# Mintacoin
 
-Polls is a simple API allowing consumers to view polls and vote in them.
+Versatility, simplicity, and reliance describe the **Mintacoin** API. With
+resource-oriented URLs, facilitate fetching data from blockchain networks
+normalized with users.
 
-## Questions Collection [/questions]
+Due to the security layer over Mintacoin, all the requests to the API must be done
+over HTTPS, otherwise, the request will fail.
 
-### List All Questions [GET]
+## Error States
+The common [HTTP Response Status Codes](https://github.com/for-GET/know-your-http-well/blob/master/status-codes.md) are used.
 
-+ Response 200 (application/json)
+## Minters [/minters]
 
-        [
-            {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "votes": 2048
-                    }, {
-                        "choice": "Python",
-                        "votes": 1024
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 512
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 256
-                    }
-                ]
-            }
-        ]
+The Mintacoin API uses API keys to authenticate requests. These keys are
+related to a **Minter**, it is the object that grants you as a citizen of the system,
+allowing you to create accounts, and fetch assets and payments.
 
-### Create a New Question [POST]
 
-You may create your own question using this action. It takes a JSON
-object containing a question and a collection of answers in the
-form of choices.
+### The Minter Object
+
+A Minter object has the following attributes:
+
+| Attributes                                                       |
+| -----------------------------------------------------------------|
+| id                                                               |
+| email - A String with the minter email                           |
+| hashed_password - A String with the hashed password              |
+| confirmed_at - Date field with the account confirmation datetime |
+
+| More Attributes                                                  |
+| -----------------------------------------------------------------|
+| object - A string with the object type("Minter")                 |
+
+### Create a Minter [POST]
 
 + Request (application/json)
 
         {
-            "question": "Favourite programming language?",
-            "choices": [
-                "Swift",
-                "Python",
-                "Objective-C",
-                "Ruby"
-            ]
+            "email": "minter@mail.com",
+            "password": "secure-password"
+        }
+
++ Response 200 (application/json)
+
+    + Headers
+
+            Location: /minters/a11a290ad6828f7c76e8798a6e1f6b3592083fb6f8ee298b510268bc47b674f6
+
+    + Body
+
+            {
+                "id": "a11a290ad6828f7c76e8798a6e1f6b3592083fb6f8ee298b510268bc47b674f6",
+                "object": "Minter",
+                "email": "minter@mail.com",
+                "hashed_password": "3885C3C07CFDD4BC7D08DED0F4E39B7300B2AE872D18E3C8C192926C9D6E6636"
+                "confirmed_at": null
+            }
+
+### Retrieve a Minter [GET /minters/{id}]
++ Parameters
+    + id: 1 (required, string) - ID that identifies the Minter to fetch
+
++ Request (application/json)
+
++ Response 201 (application/json)
+
+    + Headers
+
+            Location: /minters/a11a290ad6828f7c76e8798a6e1f6b3592083fb6f8ee298b510268bc47b674f6
+
+    + Body
+
+            {
+                "id": "a11a290ad6828f7c76e8798a6e1f6b3592083fb6f8ee298b510268bc47b674f6",
+                "object": "Minter",
+                "email": "minter@mail.com",
+                "hashed_password": "3885C3C07CFDD4BC7D08DED0F4E39B7300B2AE872D18E3C8C192926C9D6E6636"
+                "confirmed_at": null
+            }
+
+### Update a Minter [PUT /minters/{id}]
++ Parameters
+    + id: 1 (required, string) - ID that identifies the Minter to Update
+
++ Request (application/json)
+
+        {
+            "email": "updated_minter@mail.com",
+            "confirmed_at": "01/01/2022"
         }
 
 + Response 201 (application/json)
 
     + Headers
 
-            Location: /questions/2
+            Location: /minters/a11a290ad6828f7c76e8798a6e1f6b3592083fb6f8ee298b510268bc47b674f6
 
     + Body
 
             {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "votes": 0
-                    }, {
-                        "choice": "Python",
-                        "votes": 0
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 0
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 0
-                    }
-                ]
+                "id": "a11a290ad6828f7c76e8798a6e1f6b3592083fb6f8ee298b510268bc47b674f6",
+                "object": "Minter",
+                "email": "updated_minter@mail.com",
+                "hashed_password": "3885C3C07CFDD4BC7D08DED0F4E39B7300B2AE872D18E3C8C192926C9D6E6636"
+                "confirmed_at": "01/01/2022"
             }
+
+### Delete a Minter [DELETE /minters/{id}]
++ Parameters
+    + id: 1 (required, string) - ID that identifies the Minter
+
++ Request (application/json)
+
++ Response 200 (application/json)
+
+### List all Minters [GET]
+
++ Request (application/json)
+
++ Response 201 (application/json)
+
+    + Headers
+
+            Location: /minters
+
+    + Body
+
+            [
+                {
+                    "id": "a11a290ad6828f7c76e8798a6e1f6b3592083fb6f8ee298b510268bc47b674f6",
+                    "object": "Minter",
+                    "email": "updated_minter@mail.com",
+                    "confirmed_at": "01/01/2022"
+                }
+            ]
