@@ -1,5 +1,7 @@
 # Mint a Coin
 
+[![Apiary Documentation](https://img.shields.io/badge/Apiary-Documented-blue.svg)](http://mintacoin.docs.apiary.io/)s
+
 Mint a Coin is a REST API for easily dealing with cryptoassets helping to abstract away the complexity and simplify these arduous processes.
 
 
