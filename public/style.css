@@ -468,12 +468,13 @@ Ensure the default browser behavior of the `hidden` attribute.
   --tw-backdrop-sepia:  ;
 }
 
-a {
-  text-decoration: underline;
-}
-
 .ptsans {
   font-family: PTSans;
+}
+
+.separator-point:before {
+  content: "•";
+  font-size: 80%;
 }
 
 .background {
@@ -486,6 +487,98 @@ a {
 .gradient-dark-green {
   background: rgb(8, 8, 32);
   background: linear-gradient(120deg, rgba(8, 8, 32, 1) 0%, rgba(9, 11, 35, 1) 50%, rgba(18, 65, 66, 1) 100%);
+}
+
+.button {
+  -ms-user-select: none;
+      user-select: none;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -o-user-select: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.button span {
+  z-index: 1;
+}
+
+.button .icon {
+  z-index: 1;
+}
+
+@media (max-width: 900px) {
+  .button.animation-1:active {
+    background-color: #29BA8F;
+  }
+}
+
+@media (min-width: 901px) {
+  /* animation 1 */
+
+  .button.animation-1:active {
+    background-color: #29BA8F;
+  }
+
+  .button.animation-1 span {
+    transition: .4s ease-in-out all;
+    position: relative;
+    left: 5%;
+  }
+
+  .button.animation-1 .icon {
+    transition: .3s ease-in-out all;
+    opacity: 0;
+  }
+
+  .button.animation-1:hover span {
+    left: 0%;
+  }
+
+  .button.animation-1:hover .icon {
+    opacity: 1;
+  }
+
+  /* animation 2 */
+
+  .button.animation-2::after {
+    content: "";
+    width: calc(100% + 80px);
+    height: 40px;
+    position: absolute;
+    z-index: 0;
+    top: 0;
+    left: calc(-100% - 80px);
+    transition: .4s ease-in-out all;
+    border-bottom: 80px solid #29BA8F;
+    border-right: 80px solid transparent;
+  }
+
+  .button.animation-2:hover::after {
+    left: 0;
+  }
+
+  /* animation 3 */
+
+  .button.animation-3::after {
+    content: "";
+    background-color: #29BA8F;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    position: absolute;
+    z-index: 0;
+    top: 50%;
+    left: 50%;
+    transition: .4s ease-in-out all;
+    border-radius: 90px
+  }
+
+  .button.animation-3:hover::after {
+    transform: scale(500);
+    opacity: 1;
+  }
 }
 
 .relative {
@@ -544,6 +637,10 @@ a {
   height: 100%;
 }
 
+.h-\[60px\] {
+  height: 60px;
+}
+
 .h-3 {
   height: 0.75rem;
 }
@@ -552,8 +649,12 @@ a {
   width: 100vw;
 }
 
-.w-3 {
-  width: 0.75rem;
+.w-\[12px\] {
+  width: 12px;
+}
+
+.w-\[200px\] {
+  width: 200px;
 }
 
 .grid-rows-3 {
@@ -604,20 +705,20 @@ a {
   font-family: PT Sans, sans-serif;
 }
 
-.text-\[10px\] {
-  font-size: 10px;
-}
-
-.text-\[30px\] {
-  font-size: 30px;
-}
-
 .text-\[16px\] {
   font-size: 16px;
 }
 
-.text-\[8px\] {
-  font-size: 8px;
+.text-\[40px\] {
+  font-size: 40px;
+}
+
+.text-\[20px\] {
+  font-size: 20px;
+}
+
+.text-\[10px\] {
+  font-size: 10px;
 }
 
 .font-bold {
@@ -628,13 +729,18 @@ a {
   font-weight: 300;
 }
 
-.leading-\[35px\] {
-  line-height: 35px;
+.leading-\[40px\] {
+  line-height: 40px;
 }
 
 .text-white {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+
+.underline {
+  -webkit-text-decoration-line: underline;
+          text-decoration-line: underline;
 }
 
 @media (min-width: 901px) {
@@ -666,12 +772,20 @@ a {
     margin-left: 32px;
   }
 
+  .computer\:h-\[80px\] {
+    height: 80px;
+  }
+
   .computer\:h-5 {
     height: 1.25rem;
   }
 
-  .computer\:w-6 {
-    width: 1.5rem;
+  .computer\:w-\[16px\] {
+    width: 16px;
+  }
+
+  .computer\:w-\[333px\] {
+    width: 333px;
   }
 
   .computer\:px-\[80px\] {
