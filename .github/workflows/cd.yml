@@ -34,7 +34,7 @@ jobs:
         done | sort | uniq | tr '\n' ' ' > .updated_files
         
     - name: Deploy to production if branch is main
-      if: github.ref == 'refs/heads/main' && toJSON(.updated_files) == "{}"
+      if: github.ref == 'refs/heads/main' && toJSON('.updated_files') == "{}"
       run: aws s3 sync ./public/ s3://mintacoin.co --delete
 
     - name: invalidate
