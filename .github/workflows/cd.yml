@@ -16,10 +16,10 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
 
-    - name: checkout dist
+    - name: checkout main
       uses: actions/checkout@master
       with:
-        ref: dist
+        ref: main
         fetch-depth: 2
 
     - name: get updated files
