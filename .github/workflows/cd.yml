@@ -33,11 +33,20 @@ jobs:
           [[ "$file" == *"/index.html" ]] && echo $file | sed -e 's/\/index.html$/\//'
         done | sort | uniq | tr '\n' ' ' > .updated_files
         
+    - name: Check if there are changes in public folder
+      id: changes
+      run: |
+        set +e
+        FILES=$(cat < .updated_files)
+        set -e
+        echo ::set-output name=CHANGED::$(( ${#FILES} > 0 ? 1 : 0 ))
+
     - name: Deploy to production if branch is main
-      if: github.ref == 'refs/heads/main' && toJSON('.updated_files') == '{}'
+      if: steps.changes.outputs.CHANGED == 1
       run: aws s3 sync ./public/ s3://mintacoin.co --delete
 
     - name: invalidate
+      if: steps.changes.outputs.CHANGED == 1
       uses: chetan/invalidate-cloudfront-action@v2
       env:
         PATHS_FROM: .updated_files
