@@ -649,8 +649,8 @@ Ensure the default browser behavior of the `hidden` attribute.
   width: 100vw;
 }
 
-.w-\[12px\] {
-  width: 12px;
+.w-\[18px\] {
+  width: 18px;
 }
 
 .w-\[200px\] {
@@ -780,8 +780,8 @@ Ensure the default browser behavior of the `hidden` attribute.
     height: 1.25rem;
   }
 
-  .computer\:w-\[16px\] {
-    width: 16px;
+  .computer\:w-\[20px\] {
+    width: 20px;
   }
 
   .computer\:w-\[333px\] {
@@ -802,8 +802,8 @@ Ensure the default browser behavior of the `hidden` attribute.
     padding-left: 65px;
   }
 
-  .computer\:text-\[16px\] {
-    font-size: 16px;
+  .computer\:text-\[18px\] {
+    font-size: 18px;
   }
 
   .computer\:text-\[60px\] {
@@ -812,6 +812,10 @@ Ensure the default browser behavior of the `hidden` attribute.
 
   .computer\:text-\[32px\] {
     font-size: 32px;
+  }
+
+  .computer\:text-\[16px\] {
+    font-size: 16px;
   }
 
   .computer\:leading-\[71px\] {
