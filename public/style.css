@@ -468,25 +468,8 @@ Ensure the default browser behavior of the `hidden` attribute.
   --tw-backdrop-sepia:  ;
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 .ptsans {
   font-family: PTSans;
-}
-
-.separator-point:before {
-  content: "•";
-  font-size: 80%;
-=======
-a {
-  text-decoration: underline;
-}
-
-=======
->>>>>>> links and animation for button
-.ptsans {
-  font-family: PTSans;
->>>>>>> Add landing page
 }
 
 .separator-point:before {
@@ -506,10 +489,6 @@ a {
   background: linear-gradient(120deg, rgba(8, 8, 32, 1) 0%, rgba(9, 11, 35, 1) 50%, rgba(18, 65, 66, 1) 100%);
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> links and animation for button
 .button {
   -ms-user-select: none;
       user-select: none;
@@ -602,11 +581,6 @@ a {
   }
 }
 
-<<<<<<< HEAD
-=======
->>>>>>> Add landing page
-=======
->>>>>>> links and animation for button
 .relative {
   position: relative;
 }
@@ -663,19 +637,10 @@ a {
   height: 100%;
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> links and animation for button
 .h-\[60px\] {
   height: 60px;
 }
 
-<<<<<<< HEAD
-=======
->>>>>>> Add landing page
-=======
->>>>>>> links and animation for button
 .h-3 {
   height: 0.75rem;
 }
@@ -684,23 +649,12 @@ a {
   width: 100vw;
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> links and animation for button
-.w-\[12px\] {
-  width: 12px;
+.w-\[18px\] {
+  width: 18px;
 }
 
 .w-\[200px\] {
   width: 200px;
-<<<<<<< HEAD
-=======
-.w-3 {
-  width: 0.75rem;
->>>>>>> Add landing page
-=======
->>>>>>> links and animation for button
 }
 
 .grid-rows-3 {
@@ -751,8 +705,6 @@ a {
   font-family: PT Sans, sans-serif;
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 .text-\[16px\] {
   font-size: 16px;
 }
@@ -767,31 +719,6 @@ a {
 
 .text-\[10px\] {
   font-size: 10px;
-=======
-.text-\[10px\] {
-  font-size: 10px;
-=======
-.text-\[16px\] {
-  font-size: 16px;
->>>>>>> links and animation for button
-}
-
-.text-\[40px\] {
-  font-size: 40px;
-}
-
-.text-\[20px\] {
-  font-size: 20px;
-}
-
-<<<<<<< HEAD
-.text-\[8px\] {
-  font-size: 8px;
->>>>>>> Add landing page
-=======
-.text-\[10px\] {
-  font-size: 10px;
->>>>>>> links and animation for button
 }
 
 .font-bold {
@@ -802,18 +729,8 @@ a {
   font-weight: 300;
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 .leading-\[40px\] {
   line-height: 40px;
-=======
-.leading-\[35px\] {
-  line-height: 35px;
->>>>>>> Add landing page
-=======
-.leading-\[40px\] {
-  line-height: 40px;
->>>>>>> links and animation for button
 }
 
 .text-white {
@@ -821,20 +738,11 @@ a {
   color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> links and animation for button
 .underline {
   -webkit-text-decoration-line: underline;
           text-decoration-line: underline;
 }
 
-<<<<<<< HEAD
-=======
->>>>>>> Add landing page
-=======
->>>>>>> links and animation for button
 @media (min-width: 901px) {
   .computer\:absolute {
     position: absolute;
@@ -864,40 +772,20 @@ a {
     margin-left: 32px;
   }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> links and animation for button
   .computer\:h-\[80px\] {
     height: 80px;
   }
 
-<<<<<<< HEAD
-=======
->>>>>>> Add landing page
-=======
->>>>>>> links and animation for button
   .computer\:h-5 {
     height: 1.25rem;
   }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> links and animation for button
-  .computer\:w-\[16px\] {
-    width: 16px;
+  .computer\:w-\[20px\] {
+    width: 20px;
   }
 
   .computer\:w-\[333px\] {
     width: 333px;
-<<<<<<< HEAD
-=======
-  .computer\:w-6 {
-    width: 1.5rem;
->>>>>>> Add landing page
-=======
->>>>>>> links and animation for button
   }
 
   .computer\:px-\[80px\] {
@@ -914,8 +802,8 @@ a {
     padding-left: 65px;
   }
 
-  .computer\:text-\[16px\] {
-    font-size: 16px;
+  .computer\:text-\[18px\] {
+    font-size: 18px;
   }
 
   .computer\:text-\[60px\] {
@@ -924,6 +812,10 @@ a {
 
   .computer\:text-\[32px\] {
     font-size: 32px;
+  }
+
+  .computer\:text-\[16px\] {
+    font-size: 16px;
   }
 
   .computer\:leading-\[71px\] {
