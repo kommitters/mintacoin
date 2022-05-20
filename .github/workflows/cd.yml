@@ -1,4 +1,4 @@
-name: MintACoin CD
+name: MintACoin Landing CD
 
 on: workflow_dispatch
 
