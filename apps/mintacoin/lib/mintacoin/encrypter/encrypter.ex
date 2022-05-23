@@ -9,7 +9,7 @@ defmodule Mintacoin.Encrypter do
   def generate_secret, do: impl().generate_secret()
 
   @impl true
-  def encrypt(val, key), do: impl().encrypt(val, key)
+  def encrypt(payload, key), do: impl().encrypt(payload, key)
 
   @impl true
   def decrypt(ciphertext, key), do: impl().decrypt(ciphertext, key)
