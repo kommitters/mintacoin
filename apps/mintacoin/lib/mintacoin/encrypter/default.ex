@@ -31,21 +31,19 @@ defmodule Mintacoin.Encrypter.Default do
 
   @impl true
   def encrypt(payload, key) do
-    try do
-      {:ok, secret_key} = Base.decode64(key, padding: false)
-      iv = :crypto.strong_rand_bytes(@block_size)
-      plaintext = pad(payload, @block_size)
+    {:ok, secret_key} = Base.decode64(key, padding: false)
+    iv = :crypto.strong_rand_bytes(@block_size)
+    plaintext = pad(payload, @block_size)
 
-      ciphertext =
-        @cipher
-        |> :crypto.crypto_one_time(secret_key, iv, plaintext, true)
-        |> (&(iv <> &1)).()
-        |> Base.encode64(padding: false)
+    ciphertext =
+      @cipher
+      |> :crypto.crypto_one_time(secret_key, iv, plaintext, true)
+      |> (&(iv <> &1)).()
+      |> Base.encode64(padding: false)
 
-      {:ok, ciphertext}
-    rescue
-      _ -> {:error, "Decode64 error"}
-    end
+    {:ok, ciphertext}
+  rescue
+    _ -> {:error, "Decode64 error"}
   end
 
   @impl true
@@ -73,16 +71,14 @@ defmodule Mintacoin.Encrypter.Default do
 
   @impl true
   def pk_from_sk(secret_key_64) do
-    try do
-      {:ok, secret_key} = Base.decode64(secret_key_64, padding: false)
+    {:ok, secret_key} = Base.decode64(secret_key_64, padding: false)
 
-      :eddsa
-      |> :crypto.generate_key(:ed25519, secret_key)
-      |> encode_keypair()
-    rescue
-      _ ->
-        {:error, "Decode64 error"}
-    end
+    :eddsa
+    |> :crypto.generate_key(:ed25519, secret_key)
+    |> encode_keypair()
+  rescue
+    _ ->
+      {:error, "Decode64 error"}
   end
 
   @impl true
