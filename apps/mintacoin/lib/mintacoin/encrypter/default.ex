@@ -6,7 +6,7 @@ defmodule Mintacoin.Encrypter.Default do
   @block_size 16
   @cipher :aes_128_cbc
   @language :english
-  @hash_algorith :sha256
+  @hash_algorithm :sha256
 
   @impl true
   def generate_secret do
@@ -23,7 +23,7 @@ defmodule Mintacoin.Encrypter.Default do
 
     hashed_token =
       bytes_string
-      |> (&:crypto.hash(@hash_algorith, &1)).()
+      |> (&:crypto.hash(@hash_algorithm, &1)).()
       |> Base.encode64(padding: false)
 
     {:ok, {encoded_token, hashed_token}}
