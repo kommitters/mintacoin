@@ -3,20 +3,34 @@ defmodule Mintacoin.Encrypter.Spec do
   Specifies the functions available for the Encrypter
   """
 
-  @callback generate_secret :: String.t()
+  @type secret() :: String.t()
+  @type ciphertext() :: String.t()
+  @type public_key() :: String.t()
+  @type payload() :: String.t()
+  @type key() :: String.t()
+  @type secret_key() :: String.t()
+  @type token_encoded() :: String.t()
+  @type token_hashed() :: String.t()
+  @type encrypted_secret() :: String.t()
+  @type seed_words() :: list()
+  @type keypair() :: {public_key(), secret_key()}
+  @type token_pair() :: {token_encoded(), token_hashed()}
 
-  @callback encrypt(payload :: String.t(), key :: String.t()) :: {:ok | :error, String.t()}
+  # DEFINIR ERRORES
 
-  @callback decrypt(ciphertext :: String.t(), key :: String.t()) :: {:ok | :error, String.t()}
+  @callback generate_secret :: secret()
 
-  @callback random() :: {:ok, {String.t(), String.t()}}
+  @callback encrypt(payload(), key()) :: {:ok, ciphertext()}
 
-  @callback from_secret(secret_key :: String.t()) :: {:ok, {String.t(), String.t()}}
+  @callback decrypt(ciphertext(), key()) :: {:ok, payload()}
 
-  @callback one_time_token() :: {:ok, {String.t(), String.t()}}
+  @callback random_keypair() :: {:ok, keypair()}
 
-  @callback encrypt_with_seed_words(secret_key_64 :: String.t()) :: {:ok, {String.t(), list()}}
+  @callback pk_from_sk(secret_key()) :: {:ok, keypair()}
 
-  @callback decrypt_with_seed_words(encrypted_secret :: String.t(), seed_words :: list()) ::
-              {:ok, String.t()}
+  @callback one_time_token() :: {:ok, token_pair()}
+
+  @callback seed_words_from_sk(secret_key()) :: {:ok, {encrypted_secret(), seed_words()}}
+
+  @callback sk_from_seed_words(encrypted_secret(), seed_words()) :: {:ok, encrypted_secret()}
 end

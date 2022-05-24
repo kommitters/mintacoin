@@ -66,19 +66,19 @@ defmodule Mintacoin.Encrypter.Default do
   end
 
   @impl true
-  def random do
+  def random_keypair do
     :eddsa
     |> :crypto.generate_key(:ed25519)
-    |> encoded64_keypair()
+    |> encoded_keypair()
   end
 
   @impl true
-  def from_secret(secret_key_64) do
+  def pk_from_sk(secret_key_64) do
     case Base.decode64(secret_key_64, padding: false) do
       {:ok, secret_key} ->
         :eddsa
         |> :crypto.generate_key(:ed25519, secret_key)
-        |> encoded64_keypair()
+        |> encoded_keypair()
 
       :error ->
         {:error, "Decode64 error"}
@@ -86,13 +86,17 @@ defmodule Mintacoin.Encrypter.Default do
   end
 
   @impl true
-  def encrypt_with_seed_words(secret_key_64) do
+  def seed_words_from_sk(secret_key_64) do
     entropy = generate_secret()
 
     seed_words =
       entropy
       |> Base.decode64!(padding: false)
-      |> Bip39.entropy_to_mnemonic(Bip39.get_words(@language))
+      |> Bip39.entropy_to_mnemonic()
+
+      @language
+      |> Bip39.get_words()
+      |> Base.decode64!(padding: false)
 
     case encrypt(secret_key_64, entropy) do
       {:ok, encrypted_secret} ->
@@ -104,10 +108,12 @@ defmodule Mintacoin.Encrypter.Default do
   end
 
   @impl true
-  def decrypt_with_seed_words(encrypted_secret, seed_words) do
+  def sk_from_seed_words(encrypted_secret, seed_words) do
     entropy =
-      seed_words
-      |> Bip39.mnemonic_to_entropy(Bip39.get_words(@language))
+
+      @language
+      |> Bip39.get_words()
+      |> (&Bip39.mnemonic_to_entropy(seed_words, &1)).()
       |> Base.encode64(padding: false)
 
     case decrypt(encrypted_secret, entropy) do
@@ -131,14 +137,12 @@ defmodule Mintacoin.Encrypter.Default do
     data <> :binary.copy(<<to_add>>, to_add)
   end
 
-  @spec encoded64_keypair({public_key :: String.t(), secret_key :: String.t()}) ::
+  @spec encoded_keypair({public_key :: String.t(), secret_key :: String.t()}) ::
           {:ok, {String.t(), String.t()}} | {:error, String.t()}
-  defp encoded64_keypair({public_key, secret_key}) do
+  defp encoded_keypair({public_key, secret_key}) do
     public_key_64 = Base.encode64(public_key, padding: false)
     secret_key_64 = Base.encode64(secret_key, padding: false)
 
     {:ok, {public_key_64, secret_key_64}}
   end
-
-  defp encoded64_keypair(_keypair), do: {:error, "Keypair Encode64 error"}
 end

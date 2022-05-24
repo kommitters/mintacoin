@@ -15,20 +15,20 @@ defmodule Mintacoin.Encrypter do
   def decrypt(ciphertext, key), do: impl().decrypt(ciphertext, key)
 
   @impl true
-  def random, do: impl().random()
+  def random_keypair, do: impl().random_keypair()
 
   @impl true
-  def from_secret(secret_key), do: impl().from_secret(secret_key)
+  def pk_from_sk(secret_key), do: impl().pk_from_sk(secret_key)
 
   @impl true
   def one_time_token, do: impl().one_time_token()
 
   @impl true
-  def encrypt_with_seed_words(secret_key), do: impl().encrypt_with_seed_words(secret_key)
+  def seed_words_from_sk(secret_key), do: impl().seed_words_from_sk(secret_key)
 
   @impl true
-  def decrypt_with_seed_words(encrypted_secret, seed_words),
-    do: impl().decrypt_with_seed_words(encrypted_secret, seed_words)
+  def sk_from_seed_words(encrypted_secret, seed_words),
+    do: impl().sk_from_seed_words(encrypted_secret, seed_words)
 
   @spec impl() :: atom()
   defp impl, do: Application.get_env(:encrypter, :impl, Mintacoin.Encrypter.Default)
