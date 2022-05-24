@@ -1,7 +1,11 @@
-# Mint a Coin
+# Mintacoin
+![banner](https://user-images.githubusercontent.com/1649973/170068587-1b4c1b0d-9b48-46d1-9aed-f99d1b2b84f8.png)
 
-Mint a Coin is a REST API for easily dealing with cryptoassets helping to abstract away the complexity and simplify these arduous processes.
+Mintacoin is a **minimalist** and **open-source** API that abstracts the blockchain complexity and provides a simple and reliable infrastructure layer to mint your crypto assets and process payments with them.
 
+Abstracting the blockchain complexity away, and combining the power of Elixir and Stellar, Mintacoin provides a simple and reliable infrastructure layer to mint crypto assets and process payments with them.
+
+Reaching the power of blockchain with just an API integration.
 
 ## Installation
 
