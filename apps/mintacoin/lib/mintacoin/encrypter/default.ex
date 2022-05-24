@@ -31,21 +31,20 @@ defmodule Mintacoin.Encrypter.Default do
 
   @impl true
   def encrypt(payload, key) do
-    case Base.decode64(key, padding: false) do
-      {:ok, secret_key} ->
-        iv = :crypto.strong_rand_bytes(@block_size)
-        plaintext = pad(payload, @block_size)
+    try do
+      {:ok, secret_key} = Base.decode64(key, padding: false)
+      iv = :crypto.strong_rand_bytes(@block_size)
+      plaintext = pad(payload, @block_size)
 
-        ciphertext =
-          @cipher
-          |> :crypto.crypto_one_time(secret_key, iv, plaintext, true)
-          |> (&(iv <> &1)).()
-          |> Base.encode64(padding: false)
+      ciphertext =
+        @cipher
+        |> :crypto.crypto_one_time(secret_key, iv, plaintext, true)
+        |> (&(iv <> &1)).()
+        |> Base.encode64(padding: false)
 
-        {:ok, ciphertext}
-
-      :error ->
-        {:error, "Decode64 error"}
+      {:ok, ciphertext}
+    rescue
+      _ -> {:error, "Decode64 error"}
     end
   end
 
@@ -61,7 +60,7 @@ defmodule Mintacoin.Encrypter.Default do
       {:ok, plaintext}
     else
       :error -> {:error, "Decode64 error"}
-      _ -> {:error, "Pattern matching error"}
+      _ -> {:error, "Pattern matching error while decoding ciphertext"}
     end
   end
 
@@ -69,18 +68,19 @@ defmodule Mintacoin.Encrypter.Default do
   def random_keypair do
     :eddsa
     |> :crypto.generate_key(:ed25519)
-    |> encoded_keypair()
+    |> encode_keypair()
   end
 
   @impl true
   def pk_from_sk(secret_key_64) do
-    case Base.decode64(secret_key_64, padding: false) do
-      {:ok, secret_key} ->
-        :eddsa
-        |> :crypto.generate_key(:ed25519, secret_key)
-        |> encoded_keypair()
+    try do
+      {:ok, secret_key} = Base.decode64(secret_key_64, padding: false)
 
-      :error ->
+      :eddsa
+      |> :crypto.generate_key(:ed25519, secret_key)
+      |> encode_keypair()
+    rescue
+      _ ->
         {:error, "Decode64 error"}
     end
   end
@@ -88,15 +88,12 @@ defmodule Mintacoin.Encrypter.Default do
   @impl true
   def seed_words_from_sk(secret_key_64) do
     entropy = generate_secret()
+    words = Bip39.get_words(@language)
 
     seed_words =
       entropy
       |> Base.decode64!(padding: false)
-      |> Bip39.entropy_to_mnemonic()
-
-      @language
-      |> Bip39.get_words()
-      |> Base.decode64!(padding: false)
+      |> Bip39.entropy_to_mnemonic(words)
 
     case encrypt(secret_key_64, entropy) do
       {:ok, encrypted_secret} ->
@@ -110,7 +107,6 @@ defmodule Mintacoin.Encrypter.Default do
   @impl true
   def sk_from_seed_words(encrypted_secret, seed_words) do
     entropy =
-
       @language
       |> Bip39.get_words()
       |> (&Bip39.mnemonic_to_entropy(seed_words, &1)).()
@@ -137,9 +133,9 @@ defmodule Mintacoin.Encrypter.Default do
     data <> :binary.copy(<<to_add>>, to_add)
   end
 
-  @spec encoded_keypair({public_key :: String.t(), secret_key :: String.t()}) ::
+  @spec encode_keypair({public_key :: String.t(), secret_key :: String.t()}) ::
           {:ok, {String.t(), String.t()}} | {:error, String.t()}
-  defp encoded_keypair({public_key, secret_key}) do
+  defp encode_keypair({public_key, secret_key}) do
     public_key_64 = Base.encode64(public_key, padding: false)
     secret_key_64 = Base.encode64(secret_key, padding: false)
 

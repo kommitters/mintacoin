@@ -5,6 +5,8 @@ defmodule Mintacoin.Encrypter do
 
   @behaviour Mintacoin.Encrypter.Spec
 
+  alias Mintacoin.Encrypter.Default
+
   @impl true
   def generate_secret, do: impl().generate_secret()
 
@@ -31,5 +33,5 @@ defmodule Mintacoin.Encrypter do
     do: impl().sk_from_seed_words(encrypted_secret, seed_words)
 
   @spec impl() :: atom()
-  defp impl, do: Application.get_env(:encrypter, :impl, Mintacoin.Encrypter.Default)
+  defp impl, do: Application.get_env(:encrypter, :impl, Default)
 end
