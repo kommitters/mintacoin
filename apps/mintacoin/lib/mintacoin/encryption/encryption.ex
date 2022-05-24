@@ -1,11 +1,11 @@
-defmodule Mintacoin.Encrypter do
+defmodule Mintacoin.Encryption do
   @moduledoc """
-  This module provides the boundary for the Encrypter's operations.
+  This module provides the boundary for the Encryption's operations.
   """
 
-  @behaviour Mintacoin.Encrypter.Spec
+  @behaviour Mintacoin.Encryption.Spec
 
-  alias Mintacoin.Encrypter.Default
+  alias Mintacoin.Encryption.Default
 
   @impl true
   def generate_secret, do: impl().generate_secret()
@@ -33,5 +33,5 @@ defmodule Mintacoin.Encrypter do
     do: impl().sk_from_seed_words(encrypted_secret, seed_words)
 
   @spec impl() :: atom()
-  defp impl, do: Application.get_env(:encrypter, :impl, Default)
+  defp impl, do: Application.get_env(:encryption, :impl, Default)
 end

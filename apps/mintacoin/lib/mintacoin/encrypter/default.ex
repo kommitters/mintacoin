@@ -1,7 +1,7 @@
-defmodule Mintacoin.Encrypter.Default do
+defmodule Mintacoin.Encryption.Default do
   @moduledoc false
 
-  @behaviour Mintacoin.Encrypter.Spec
+  @behaviour Mintacoin.Encryption.Spec
 
   @block_size 16
   @cipher :aes_128_cbc

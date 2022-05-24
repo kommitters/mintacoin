@@ -1,6 +1,6 @@
-defmodule Mintacoin.Encrypter.Spec do
+defmodule Mintacoin.Encryption.Spec do
   @moduledoc """
-  Specifies the functions available for the Encrypter
+  Specifies the functions available for the Encryption
   """
 
   @type secret() :: String.t()
