@@ -16,7 +16,7 @@ defmodule Mintacoin.Encrypter.Default do
   end
 
   @impl true
-  def one_time_token() do
+  def one_time_token do
     bytes_string = :crypto.strong_rand_bytes(@block_size)
 
     encoded_token = Base.encode64(bytes_string, padding: false)
@@ -66,7 +66,7 @@ defmodule Mintacoin.Encrypter.Default do
   end
 
   @impl true
-  def random() do
+  def random do
     :eddsa
     |> :crypto.generate_key(:ed25519)
     |> encoded64_keypair()
