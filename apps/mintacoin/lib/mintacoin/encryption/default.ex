@@ -43,8 +43,8 @@ defmodule Mintacoin.Encryption.Default do
 
     {:ok, ciphertext}
   rescue
-    :error -> {:error, :decode_64_error}
-    _error -> {:error, :error_in_encryption}
+    :error -> {:error, :decoding_error}
+    _error -> {:error, :encryption_error}
   end
 
   @impl true
@@ -58,8 +58,7 @@ defmodule Mintacoin.Encryption.Default do
 
       {:ok, plaintext}
     else
-      :error -> {:error, :decode_64_error}
-      _error -> {:error, :error_in_decryption_pattern_matching}
+      _error -> {:error, :decoding_error}
     end
   end
 
@@ -78,7 +77,7 @@ defmodule Mintacoin.Encryption.Default do
     |> :crypto.generate_key(:ed25519, secret_key)
     |> encode_keypair()
   rescue
-    _error -> {:error, :decode_64_error}
+    _error -> {:error, :decoding_error}
   end
 
   @impl true

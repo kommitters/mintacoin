@@ -45,7 +45,7 @@ defmodule Mintacoin.EncryptionTest do
     end
 
     test "with invalid secret should return an error" do
-      {:error, :error_in_decryption_pattern_matching} = Encryption.decrypt("test", "invalid")
+      {:error, :decoding_error} = Encryption.decrypt("test", "invalid")
     end
   end
 
@@ -68,7 +68,7 @@ defmodule Mintacoin.EncryptionTest do
     end
 
     test "with an invalid secret key, it should return an error" do
-      {:error, :decode_64_error} = Encryption.pk_from_sk("invalid")
+      {:error, :decoding_error} = Encryption.pk_from_sk("invalid")
     end
   end
 
