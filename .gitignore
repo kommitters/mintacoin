@@ -1,6 +1,7 @@
 /_build
 /cover
 /deps
+app/*/deps/
 /doc
 /.fetch
 erl_crash.dump
@@ -8,3 +9,11 @@ erl_crash.dump
 *.beam
 /config/*.secret.exs
 .elixir_ls/
+.tool-versions
+apps/*/config/dev.exs
+apps/*/assets/node_modules/
+apps/*/priv/static/
+apps/*/cover/
+.deliver/releases/
+.vscode
+config/dev.exs
