@@ -7,21 +7,41 @@ defmodule Mintacoin.EncryptionTest do
 
   alias Mintacoin.Encryption
 
+  setup do
+    %{
+      public_key: "PRI8EQ22VCOV30TGEOVPNAC5KODDO0UCJK0IKUF081DCS22MNU30",
+      secret_key: "CLC6HS1QP6OG6MMD2HKS5B53882KBMCUGT91VR7OS0KUGVEKSVM0",
+      encrypted_secret_key:
+        "GwSF3MyB7gR18R0Jwz3pw4H3drMIlH/j8lbarAA3eLrxholC4H6UUwTZJynbuvhWacg8J9Gzgu0jRbUKEy6lqILDmv+KlG8MiigwDGnPbuU",
+      seed_words: [
+        "skin",
+        "sudden",
+        "early",
+        "duty",
+        "dove",
+        "write",
+        "chuckle",
+        "stove",
+        "fossil",
+        "material",
+        "wire",
+        "stool"
+      ]
+    }
+  end
+
   describe "generate_secret/0" do
     test "should return a secret key" do
-      refute is_nil(Encryption.generate_secret())
+      secret = Encryption.generate_secret()
+      refute is_nil(secret)
+      16 = byte_size(Base.decode64!(secret, padding: false))
     end
   end
 
   describe "one_time_token/0" do
-    test "Should return the encoded, and the hashed token" do
-      {:ok, {encoded_token, hashed_token}} = Encryption.one_time_token()
-
-      ^hashed_token =
-        encoded_token
-        |> Base.decode64!(padding: false)
-        |> (&:crypto.hash(:sha256, &1)).()
-        |> Base.encode64(padding: false)
+    test "should return a token" do
+      {:ok, token} = Encryption.one_time_token()
+      refute is_nil(token)
     end
   end
 
@@ -32,7 +52,7 @@ defmodule Mintacoin.EncryptionTest do
     end
 
     test "with invalid secret should return an error" do
-      {:error, :error_in_encryption} = Encryption.encrypt("test", "invalid")
+      {:error, :encryption_error} = Encryption.encrypt("test", "invalid")
     end
   end
 
@@ -40,8 +60,7 @@ defmodule Mintacoin.EncryptionTest do
     test "with valid secret should return a plaintext" do
       secret = Encryption.generate_secret()
       {:ok, ciphertext} = Encryption.encrypt("test", secret)
-      {:ok, plaintext} = Encryption.decrypt(ciphertext, secret)
-      "test" = plaintext
+      {:ok, "test"} = Encryption.decrypt(ciphertext, secret)
     end
 
     test "with invalid secret should return an error" do
@@ -58,13 +77,11 @@ defmodule Mintacoin.EncryptionTest do
   end
 
   describe "pk_from_sk/1" do
-    test "with a valid secret key, it should return the keypair with the right public key" do
-      {:ok, {pk, sk}} = Encryption.random_keypair()
-      {:ok, {assumed_pk, assumed_sk}} = Encryption.pk_from_sk(sk)
-      # Public key should match
-      ^pk = assumed_pk
-      # Secret key should be the same as the given one
-      ^sk = assumed_sk
+    test "with a valid secret key, it should return the keypair with the right public key", %{
+      public_key: pk,
+      secret_key: sk
+    } do
+      {:ok, {^pk, ^sk}} = Encryption.pk_from_sk(sk)
     end
 
     test "with an invalid secret key, it should return an error" do
@@ -73,8 +90,7 @@ defmodule Mintacoin.EncryptionTest do
   end
 
   describe "seed_words_from_sk/1" do
-    test "should return the encrypted_secret and seed words" do
-      {:ok, {_pk, sk}} = Encryption.random_keypair()
+    test "should return the encrypted_secret and seed words", %{secret_key: sk} do
       {:ok, encrypted_secret, seed_words} = Encryption.seed_words_from_sk(sk)
 
       refute is_nil(encrypted_secret)
@@ -83,11 +99,12 @@ defmodule Mintacoin.EncryptionTest do
   end
 
   describe "sk_from_seed_words/2" do
-    test "should return the secret key" do
-      {:ok, {_pk, sk}} = Encryption.random_keypair()
-      {:ok, encrypted_secret, seed_words} = Encryption.seed_words_from_sk(sk)
-      # Recovered secret key should match
-      {:ok, ^sk} = Encryption.sk_from_seed_words(encrypted_secret, seed_words)
+    test "should return the secret key", %{
+      secret_key: sk,
+      encrypted_secret_key: encrypted_secret_key,
+      seed_words: seed_words
+    } do
+      {:ok, ^sk} = Encryption.sk_from_seed_words(encrypted_secret_key, seed_words)
     end
   end
 end

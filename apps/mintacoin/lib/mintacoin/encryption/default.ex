@@ -3,10 +3,16 @@ defmodule Mintacoin.Encryption.Default do
 
   @behaviour Mintacoin.Encryption.Spec
 
+  @type public_key() :: String.t()
+  @type secret_key() :: String.t()
+  @type keypair() :: {public_key(), secret_key()}
+
   @block_size 16
   @cipher :aes_128_cbc
   @language :english
   @hash_algorithm :sha256
+  @key_type :eddsa
+  @edwards_curve_ed :ed25519
 
   @impl true
   def generate_secret do
@@ -17,16 +23,11 @@ defmodule Mintacoin.Encryption.Default do
 
   @impl true
   def one_time_token do
-    bytes_string = :crypto.strong_rand_bytes(@block_size)
-
-    encoded_token = Base.encode64(bytes_string, padding: false)
-
-    hashed_token =
-      bytes_string
-      |> (&:crypto.hash(@hash_algorithm, &1)).()
-      |> Base.encode64(padding: false)
-
-    {:ok, {encoded_token, hashed_token}}
+    @block_size
+    |> :crypto.strong_rand_bytes()
+    |> (&:crypto.hash(@hash_algorithm, &1)).()
+    |> Base.encode64(padding: false)
+    |> (&{:ok, &1}).()
   end
 
   @impl true
@@ -64,17 +65,17 @@ defmodule Mintacoin.Encryption.Default do
 
   @impl true
   def random_keypair do
-    :eddsa
-    |> :crypto.generate_key(:ed25519)
+    @key_type
+    |> :crypto.generate_key(@edwards_curve_ed)
     |> encode_keypair()
   end
 
   @impl true
-  def pk_from_sk(secret_key_64) do
-    {:ok, secret_key} = Base.decode64(secret_key_64, padding: false)
+  def pk_from_sk(secret_key) do
+    {:ok, secret_key} = Base.hex_decode32(secret_key, padding: false)
 
-    :eddsa
-    |> :crypto.generate_key(:ed25519, secret_key)
+    @key_type
+    |> :crypto.generate_key(@edwards_curve_ed, secret_key)
     |> encode_keypair()
   rescue
     _error -> {:error, :decoding_error}
@@ -128,12 +129,11 @@ defmodule Mintacoin.Encryption.Default do
     data <> :binary.copy(<<to_add>>, to_add)
   end
 
-  @spec encode_keypair({public_key :: String.t(), secret_key :: String.t()}) ::
-          {:ok, {String.t(), String.t()}} | {:error, String.t()}
+  @spec encode_keypair(keypair :: keypair()) :: {:ok, keypair()}
   defp encode_keypair({public_key, secret_key}) do
-    public_key_64 = Base.encode64(public_key, padding: false)
-    secret_key_64 = Base.encode64(secret_key, padding: false)
+    encoded_public_key = Base.hex_encode32(public_key, padding: false)
+    encoded_secret_key = Base.hex_encode32(secret_key, padding: false)
 
-    {:ok, {public_key_64, secret_key_64}}
+    {:ok, {encoded_public_key, encoded_secret_key}}
   end
 end
