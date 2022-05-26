@@ -71,7 +71,7 @@ defmodule Mintacoin.Encryption.Default do
   end
 
   @impl true
-  def pk_from_sk(secret_key) do
+  def public_key_from_secret_key(secret_key) do
     {:ok, secret_key} = Base.hex_decode32(secret_key, padding: false)
 
     @key_type
@@ -82,7 +82,7 @@ defmodule Mintacoin.Encryption.Default do
   end
 
   @impl true
-  def seed_words_from_sk(secret_key_64) do
+  def mnemonic_encrypt(secret_key_64) do
     entropy = generate_secret()
     words = Bip39.get_words(@language)
 
@@ -101,7 +101,7 @@ defmodule Mintacoin.Encryption.Default do
   end
 
   @impl true
-  def sk_from_seed_words(encrypted_secret, seed_words) do
+  def recover_secret_key_from_seed_words(encrypted_secret, seed_words) do
     entropy =
       @language
       |> Bip39.get_words()

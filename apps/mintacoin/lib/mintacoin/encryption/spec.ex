@@ -22,13 +22,13 @@ defmodule Mintacoin.Encryption.Spec do
 
   @callback random_keypair() :: {:ok, keypair()}
 
-  @callback pk_from_sk(secret_key()) :: {:ok, keypair()} | error()
+  @callback public_key_from_secret_key(secret_key()) :: {:ok, keypair()} | error()
 
   @callback one_time_token() :: {:ok, token()}
 
-  @callback seed_words_from_sk(secret_key()) ::
+  @callback mnemonic_encrypt(secret_key()) ::
               {:ok, {encrypted_secret(), seed_words()}} | error()
 
-  @callback sk_from_seed_words(encrypted_secret(), seed_words()) ::
+  @callback recover_secret_key_from_seed_words(encrypted_secret(), seed_words()) ::
               {:ok, encrypted_secret()} | error()
 end

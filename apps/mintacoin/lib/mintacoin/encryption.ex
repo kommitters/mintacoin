@@ -20,17 +20,17 @@ defmodule Mintacoin.Encryption do
   def random_keypair, do: impl().random_keypair()
 
   @impl true
-  def pk_from_sk(secret_key), do: impl().pk_from_sk(secret_key)
+  def public_key_from_secret_key(secret_key), do: impl().public_key_from_secret_key(secret_key)
 
   @impl true
   def one_time_token, do: impl().one_time_token()
 
   @impl true
-  def seed_words_from_sk(secret_key), do: impl().seed_words_from_sk(secret_key)
+  def mnemonic_encrypt(secret_key), do: impl().mnemonic_encrypt(secret_key)
 
   @impl true
-  def sk_from_seed_words(encrypted_secret, seed_words),
-    do: impl().sk_from_seed_words(encrypted_secret, seed_words)
+  def recover_secret_key_from_seed_words(encrypted_secret, seed_words),
+    do: impl().recover_secret_key_from_seed_words(encrypted_secret, seed_words)
 
   @spec impl() :: atom()
   defp impl, do: Application.get_env(:encryption, :impl, Default)

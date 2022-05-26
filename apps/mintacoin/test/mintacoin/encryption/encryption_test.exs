@@ -28,8 +28,8 @@ defmodule Mintacoin.Encryption.CannedEncryptionImpl do
   end
 
   @impl true
-  def pk_from_sk(_secret_key) do
-    send(self(), {:pk_from_sk, "KEYPAIR"})
+  def public_key_from_secret_key(_secret_key) do
+    send(self(), {:public_key_from_secret_key, "KEYPAIR"})
     :ok
   end
 
@@ -40,14 +40,14 @@ defmodule Mintacoin.Encryption.CannedEncryptionImpl do
   end
 
   @impl true
-  def seed_words_from_sk(_secret_key) do
-    send(self(), {:seed_words_from_sk, "SEED_WORDS"})
+  def mnemonic_encrypt(_secret_key) do
+    send(self(), {:mnemonic_encrypt, "SEED_WORDS"})
     :ok
   end
 
   @impl true
-  def sk_from_seed_words(_encrypted_secret, _seed_words) do
-    send(self(), {:sk_from_seed_words, "SECRET_KEY"})
+  def recover_secret_key_from_seed_words(_encrypted_secret, _seed_words) do
+    send(self(), {:recover_secret_key_from_seed_words, "SECRET_KEY"})
     :ok
   end
 end
@@ -85,9 +85,9 @@ defmodule Mintacoin.EncryptionTest do
     assert_receive({:random_keypair, "KEYPAIR"})
   end
 
-  test "pk_from_sk/1" do
-    Mintacoin.Encryption.pk_from_sk("PUBLIC_KEY")
-    assert_receive({:pk_from_sk, "KEYPAIR"})
+  test "public_key_from_secret_key/1" do
+    Mintacoin.Encryption.public_key_from_secret_key("PUBLIC_KEY")
+    assert_receive({:public_key_from_secret_key, "KEYPAIR"})
   end
 
   test "one_time_token/0" do
@@ -95,13 +95,13 @@ defmodule Mintacoin.EncryptionTest do
     assert_receive({:one_time_token, "API_TOKEN"})
   end
 
-  test "seed_words_from_sk/1" do
-    Mintacoin.Encryption.seed_words_from_sk("SECRET_KEY")
-    assert_receive({:seed_words_from_sk, "SEED_WORDS"})
+  test "mnemonic_encrypt/1" do
+    Mintacoin.Encryption.mnemonic_encrypt("SECRET_KEY")
+    assert_receive({:mnemonic_encrypt, "SEED_WORDS"})
   end
 
-  test "sk_from_seed_words/2" do
-    Mintacoin.Encryption.sk_from_seed_words("ENCRYPTED_SECRET", "SEED_WORDS")
-    assert_receive({:sk_from_seed_words, "SECRET_KEY"})
+  test "recover_secret_key_from_seed_words/2" do
+    Mintacoin.Encryption.recover_secret_key_from_seed_words("ENCRYPTED_SECRET", "SEED_WORDS")
+    assert_receive({:recover_secret_key_from_seed_words, "SECRET_KEY"})
   end
 end

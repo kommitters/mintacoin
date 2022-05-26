@@ -76,35 +76,35 @@ defmodule Mintacoin.Encryption.DefaultTest do
     end
   end
 
-  describe "pk_from_sk/1" do
+  describe "public_key_from_secret_key/1" do
     test "with a valid secret key, it should return the keypair with the right public key", %{
       public_key: pk,
       secret_key: sk
     } do
-      {:ok, {^pk, ^sk}} = Encryption.pk_from_sk(sk)
+      {:ok, {^pk, ^sk}} = Encryption.public_key_from_secret_key(sk)
     end
 
     test "with an invalid secret key, it should return an error" do
-      {:error, :decoding_error} = Encryption.pk_from_sk("invalid")
+      {:error, :decoding_error} = Encryption.public_key_from_secret_key("invalid")
     end
   end
 
-  describe "seed_words_from_sk/1" do
+  describe "mnemonic_encrypt/1" do
     test "should return the encrypted_secret and seed words", %{secret_key: sk} do
-      {:ok, encrypted_secret, seed_words} = Encryption.seed_words_from_sk(sk)
+      {:ok, encrypted_secret, seed_words} = Encryption.mnemonic_encrypt(sk)
 
       refute is_nil(encrypted_secret)
       12 = Enum.count(seed_words)
     end
   end
 
-  describe "sk_from_seed_words/2" do
+  describe "recover_secret_key_from_seed_words/2" do
     test "should return the secret key", %{
       secret_key: sk,
       encrypted_secret_key: encrypted_secret_key,
       seed_words: seed_words
     } do
-      {:ok, ^sk} = Encryption.sk_from_seed_words(encrypted_secret_key, seed_words)
+      {:ok, ^sk} = Encryption.recover_secret_key_from_seed_words(encrypted_secret_key, seed_words)
     end
   end
 end
