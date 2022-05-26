@@ -1,0 +1,44 @@
+name: MintACoin Landing CD
+
+on: workflow_dispatch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: checkout main
+      uses: actions/checkout@master
+      with:
+        ref: main
+        fetch-depth: 2
+        
+    - name: Check if there are changes in public folder
+      id: public-cache
+      uses: actions/cache@v2
+      with:
+        path: ./public/
+        key: ${{ runner.os }}-public-cache-key-${{ hashFiles('public/*.html') }}-${{ hashFiles('public/*.css') }}
+
+    - name: Deploy to production if branch is main
+      if: steps.public-cache.outputs.cache-hit != 'true'
+      run: aws s3 sync ./public/ s3://mintacoin.co --delete
+
+    - name: invalidate
+      if: steps.public-cache.outputs.cache-hit != 'true'
+      uses: chetan/invalidate-cloudfront-action@v2
+      env:
+        PATHS: "/public"
+        AWS_REGION: 'us-east-1'
+        DISTRIBUTION: ${{ secrets.DISTRIBUTION }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
