@@ -48,7 +48,7 @@ jobs:
       - name: Run Credo
         run: mix credo --strict
       - name: Dispatch CD workflow
-        if: github.event.pull_request.merged == true && github.ref == 'refs/heads/main'
+        if: github.event.pull_request.merged == true && contains('refs/heads/main', github.ref)
         uses: benc-uk/workflow-dispatch@v1
         with:
           token: ${{ secrets.REPO_ACCESS_TOKEN }}
