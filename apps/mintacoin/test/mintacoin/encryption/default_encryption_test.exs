@@ -1,4 +1,4 @@
-defmodule Mintacoin.EncryptionTest do
+defmodule Mintacoin.Encryption.DefaultTest do
   @moduledoc """
   This modules defines the test cases of the `Encryption` module.
   """
