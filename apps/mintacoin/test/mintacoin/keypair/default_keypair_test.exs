@@ -1,6 +1,6 @@
 defmodule Mintacoin.Keypair.DefaultTest do
   @moduledoc """
-  This modules defines the test cases of the `Keypair` default module.
+  This modules defines the test cases of the `Keypair.Default` default module.
   """
 
   use Mintacoin.DataCase
