@@ -22,32 +22,8 @@ defmodule Mintacoin.Encryption.CannedEncryptionImpl do
   end
 
   @impl true
-  def random_keypair do
-    send(self(), {:random_keypair, "KEYPAIR"})
-    :ok
-  end
-
-  @impl true
-  def public_key_from_secret_key(_secret_key) do
-    send(self(), {:public_key_from_secret_key, "KEYPAIR"})
-    :ok
-  end
-
-  @impl true
   def one_time_token do
     send(self(), {:one_time_token, "API_TOKEN"})
-    :ok
-  end
-
-  @impl true
-  def mnemonic_encrypt(_secret_key) do
-    send(self(), {:mnemonic_encrypt, "SEED_WORDS"})
-    :ok
-  end
-
-  @impl true
-  def recover_secret_key_from_seed_words(_encrypted_secret, _seed_words) do
-    send(self(), {:recover_secret_key_from_seed_words, "SECRET_KEY"})
     :ok
   end
 end
@@ -80,28 +56,8 @@ defmodule Mintacoin.EncryptionTest do
     assert_receive({:decrypt, "PLAIN_TEXT"})
   end
 
-  test "random_keypair/0" do
-    Mintacoin.Encryption.random_keypair()
-    assert_receive({:random_keypair, "KEYPAIR"})
-  end
-
-  test "public_key_from_secret_key/1" do
-    Mintacoin.Encryption.public_key_from_secret_key("PUBLIC_KEY")
-    assert_receive({:public_key_from_secret_key, "KEYPAIR"})
-  end
-
   test "one_time_token/0" do
     Mintacoin.Encryption.one_time_token()
     assert_receive({:one_time_token, "API_TOKEN"})
-  end
-
-  test "mnemonic_encrypt/1" do
-    Mintacoin.Encryption.mnemonic_encrypt("SECRET_KEY")
-    assert_receive({:mnemonic_encrypt, "SEED_WORDS"})
-  end
-
-  test "recover_secret_key_from_seed_words/2" do
-    Mintacoin.Encryption.recover_secret_key_from_seed_words("ENCRYPTED_SECRET", "SEED_WORDS")
-    assert_receive({:recover_secret_key_from_seed_words, "SECRET_KEY"})
   end
 end
