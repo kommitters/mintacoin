@@ -7,29 +7,6 @@ defmodule Mintacoin.Encryption.DefaultTest do
 
   alias Mintacoin.Encryption
 
-  setup do
-    %{
-      public_key: "PRI8EQ22VCOV30TGEOVPNAC5KODDO0UCJK0IKUF081DCS22MNU30",
-      secret_key: "CLC6HS1QP6OG6MMD2HKS5B53882KBMCUGT91VR7OS0KUGVEKSVM0",
-      encrypted_secret_key:
-        "GwSF3MyB7gR18R0Jwz3pw4H3drMIlH/j8lbarAA3eLrxholC4H6UUwTZJynbuvhWacg8J9Gzgu0jRbUKEy6lqILDmv+KlG8MiigwDGnPbuU",
-      seed_words: [
-        "skin",
-        "sudden",
-        "early",
-        "duty",
-        "dove",
-        "write",
-        "chuckle",
-        "stove",
-        "fossil",
-        "material",
-        "wire",
-        "stool"
-      ]
-    }
-  end
-
   describe "generate_secret/0" do
     test "should return a secret key" do
       secret = Encryption.generate_secret()

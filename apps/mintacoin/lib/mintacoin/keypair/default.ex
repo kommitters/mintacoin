@@ -22,7 +22,7 @@ defmodule Mintacoin.Keypair.Default do
 
   @impl true
   def from_secret_key(secret_key) do
-    {:ok, secret_key} = Base.hex_decode32(secret_key, padding: false)
+    {:ok, secret_key} = Base.decode64(secret_key, padding: false)
 
     @key_type
     |> :crypto.generate_key(@edwards_curve_ed, secret_key)
@@ -34,7 +34,7 @@ defmodule Mintacoin.Keypair.Default do
   @spec encode_keypair(keypair :: keypair()) :: {:ok, keypair()}
   defp encode_keypair({public_key, secret_key}) do
     encoded_public_key = Base.hex_encode32(public_key, padding: false)
-    encoded_secret_key = Base.hex_encode32(secret_key, padding: false)
+    encoded_secret_key = Base.encode64(secret_key, padding: false)
 
     {:ok, {encoded_public_key, encoded_secret_key}}
   end

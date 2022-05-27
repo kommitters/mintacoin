@@ -9,8 +9,8 @@ defmodule Mintacoin.Keypair.DefaultTest do
 
   setup do
     %{
-      public_key: "PRI8EQ22VCOV30TGEOVPNAC5KODDO0UCJK0IKUF081DCS22MNU30",
-      secret_key: "CLC6HS1QP6OG6MMD2HKS5B53882KBMCUGT91VR7OS0KUGVEKSVM0"
+      public_key: "30MGLHU1OGC23O06RFSHSA5325O49V05UEFA81FMN8JHV0AUVKG0",
+      secret_key: "0Qmk3ZinGhZLuIMJC2j/WNN+scV3MMLxkI5ALlAVun8"
     }
   end
 
