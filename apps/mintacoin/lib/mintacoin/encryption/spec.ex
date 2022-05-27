@@ -7,13 +7,13 @@ defmodule Mintacoin.Encryption.Spec do
   @type ciphertext() :: String.t()
   @type payload() :: String.t()
   @type token() :: String.t()
-  @type error() :: {:error, :decoding_error | :encryption_error}
+  @type error() :: :decoding_error | :encryption_error
 
   @callback generate_secret :: secret()
 
-  @callback encrypt(payload(), secret()) :: {:ok, ciphertext()} | error()
+  @callback encrypt(payload(), secret()) :: {:ok, ciphertext()} | {:error, error()}
 
-  @callback decrypt(ciphertext(), secret()) :: {:ok, payload()} | error()
+  @callback decrypt(ciphertext(), secret()) :: {:ok, payload()} | {:error, error()}
 
   @callback one_time_token() :: {:ok, token()}
 end

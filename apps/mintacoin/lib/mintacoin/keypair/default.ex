@@ -28,7 +28,7 @@ defmodule Mintacoin.Keypair.Default do
     |> :crypto.generate_key(@edwards_curve_ed, secret_key)
     |> encode_keypair()
   rescue
-    _error -> {:error, :decoding_error}
+    _error -> {:error, :secret_key_error}
   end
 
   @spec encode_keypair(keypair :: keypair()) :: {:ok, keypair()}

@@ -31,7 +31,7 @@ defmodule Mintacoin.Keypair.DefaultTest do
     end
 
     test "with an invalid secret key, it should return an error" do
-      {:error, :decoding_error} = Keypair.from_secret_key("invalid")
+      {:error, :secret_key_error} = Keypair.from_secret_key("invalid")
     end
   end
 end
