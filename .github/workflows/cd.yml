@@ -29,9 +29,9 @@ jobs:
         path: ./public/
         key: ${{ runner.os }}-public-cache-key-${{ hashFiles('public/*.html') }}-${{ hashFiles('public/*.css') }}
 
-    # - name: Deploy to production if branch is main
-    #   if: steps.public-cache.outputs.cache-hit != 'true'
-    #   run: aws s3 sync ./public/ s3://mintacoin.co --delete
+    - name: Deploy to production if branch is main
+      if: steps.public-cache.outputs.cache-hit != 'true'
+      run: aws s3 sync ./public/ s3://mintacoin.co --delete
 
     - name: invalidate
       if: steps.public-cache.outputs.cache-hit != 'true'
