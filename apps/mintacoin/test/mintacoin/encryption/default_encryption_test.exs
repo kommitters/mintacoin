@@ -1,34 +1,11 @@
 defmodule Mintacoin.Encryption.DefaultTest do
   @moduledoc """
-  This modules defines the test cases of the `Encryption` module.
+  This modules defines the test cases of the `Encryption.Default` module.
   """
 
   use Mintacoin.DataCase
 
   alias Mintacoin.Encryption
-
-  setup do
-    %{
-      public_key: "PRI8EQ22VCOV30TGEOVPNAC5KODDO0UCJK0IKUF081DCS22MNU30",
-      secret_key: "CLC6HS1QP6OG6MMD2HKS5B53882KBMCUGT91VR7OS0KUGVEKSVM0",
-      encrypted_secret_key:
-        "GwSF3MyB7gR18R0Jwz3pw4H3drMIlH/j8lbarAA3eLrxholC4H6UUwTZJynbuvhWacg8J9Gzgu0jRbUKEy6lqILDmv+KlG8MiigwDGnPbuU",
-      seed_words: [
-        "skin",
-        "sudden",
-        "early",
-        "duty",
-        "dove",
-        "write",
-        "chuckle",
-        "stove",
-        "fossil",
-        "material",
-        "wire",
-        "stool"
-      ]
-    }
-  end
 
   describe "generate_secret/0" do
     test "should return a secret key" do
@@ -65,46 +42,6 @@ defmodule Mintacoin.Encryption.DefaultTest do
 
     test "with invalid secret should return an error" do
       {:error, :decoding_error} = Encryption.decrypt("test", "invalid")
-    end
-  end
-
-  describe "random_keypair/0" do
-    test "should return a keypair with a public and secret key" do
-      {:ok, {public_key, secret_key}} = Encryption.random_keypair()
-      refute is_nil(public_key)
-      refute is_nil(secret_key)
-    end
-  end
-
-  describe "public_key_from_secret_key/1" do
-    test "with a valid secret key, it should return the keypair with the right public key", %{
-      public_key: pk,
-      secret_key: sk
-    } do
-      {:ok, {^pk, ^sk}} = Encryption.public_key_from_secret_key(sk)
-    end
-
-    test "with an invalid secret key, it should return an error" do
-      {:error, :decoding_error} = Encryption.public_key_from_secret_key("invalid")
-    end
-  end
-
-  describe "mnemonic_encrypt/1" do
-    test "should return the encrypted_secret and seed words", %{secret_key: sk} do
-      {:ok, encrypted_secret, seed_words} = Encryption.mnemonic_encrypt(sk)
-
-      refute is_nil(encrypted_secret)
-      12 = Enum.count(seed_words)
-    end
-  end
-
-  describe "recover_secret_key_from_seed_words/2" do
-    test "should return the secret key", %{
-      secret_key: sk,
-      encrypted_secret_key: encrypted_secret_key,
-      seed_words: seed_words
-    } do
-      {:ok, ^sk} = Encryption.recover_secret_key_from_seed_words(encrypted_secret_key, seed_words)
     end
   end
 end
