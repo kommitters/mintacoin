@@ -69,11 +69,11 @@ defmodule Database.Accounts.AccountsTest do
     end
 
     test "with an authorized key", %{api_key: api_key} do
-      true = Minters.is_authorized(api_key)
+      true = Minters.is_authorized?(api_key)
     end
 
     test "with an invalid key" do
-      false = Minters.is_authorized("INVALID")
+      false = Minters.is_authorized?("INVALID")
     end
   end
 end
