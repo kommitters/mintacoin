@@ -31,7 +31,7 @@ defmodule Mintacoin.Keypair.Default do
     _error -> {:error, :secret_key_error}
   end
 
-  @spec encode_keypair(keypair()) :: {:ok, keypair()}
+  @spec encode_keypair(keypair :: keypair()) :: {:ok, keypair()}
   defp encode_keypair({public_key, secret_key}) do
     encoded_public_key = Base.hex_encode32(public_key, padding: false)
     encoded_secret_key = Base.encode64(secret_key, padding: false)
