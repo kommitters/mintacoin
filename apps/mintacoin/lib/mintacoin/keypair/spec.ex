@@ -8,7 +8,7 @@ defmodule Mintacoin.Keypair.Spec do
   @type keypair :: {public_key(), secret_key()}
   @type error :: :secret_key_error
 
-  @callback random :: {:ok, keypair}
+  @callback random :: {:ok, keypair()}
 
-  @callback from_secret_key(secret_key()) :: {:ok, keypair} | {:error, error}
+  @callback from_secret_key(secret_key()) :: {:ok, keypair()} | {:error, error()}
 end

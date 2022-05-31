@@ -11,9 +11,9 @@ defmodule Mintacoin.Encryption.Spec do
 
   @callback generate_secret :: secret
 
-  @callback encrypt(payload, secret) :: {:ok, ciphertext} | {:error, error}
+  @callback encrypt(payload(), secret()) :: {:ok, ciphertext()} | {:error, error()}
 
-  @callback decrypt(ciphertext, secret) :: {:ok, payload} | {:error, error}
+  @callback decrypt(ciphertext(), secret()) :: {:ok, payload()} | {:error, error()}
 
-  @callback one_time_token :: {:ok, token}
+  @callback one_time_token :: {:ok, token()}
 end
