@@ -41,8 +41,7 @@ defmodule Mintacoin.MixProject do
       {:postgrex, ">= 0.0.0"},
       {:jason, "~> 1.2"},
       {:bip39, "~> 0.1.1"},
-      {:ecto_enum, "~> 1.4"},
-      {:uuid, "~> 1.1"}
+      {:ecto_enum, "~> 1.4"}
     ]
   end
 
