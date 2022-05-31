@@ -4,13 +4,13 @@ defmodule Mintacoin.Minters do
   """
 
   alias Mintacoin.Repo
+  alias Ecto.Changeset
   alias Mintacoin.Minter
 
   @type id :: String.t()
   @type api_key :: String.t()
   @type changes :: map()
-  @type minter :: any()
-  @type error :: any()
+  @type error :: Changeset.t() | :not_found
 
   @archived_status :archived
 
@@ -35,17 +35,17 @@ defmodule Mintacoin.Minters do
     |> has_minter_access?()
   end
 
-  @spec persist_changes(minter :: minter(), changes :: changes()) ::
+  @spec persist_changes(minter :: Minter.t(), changes :: changes()) ::
           {:ok, Minter.t()} | {:error, error()}
-  defp persist_changes(nil, _changes), do: {:error, :not_found}
-
-  defp persist_changes(minter, changes) do
+  defp persist_changes(%Minter{} = minter, changes) do
     minter
     |> Minter.changeset(changes)
     |> Repo.update()
   end
 
-  @spec has_minter_access?(minter :: minter()) :: boolean()
-  defp has_minter_access?(nil), do: false
-  defp has_minter_access?(%{status: status}), do: status != @archived_status
+  defp persist_changes(_minter, _changes), do: {:error, :not_found}
+
+  @spec has_minter_access?(minter :: Minter.t()) :: boolean()
+  defp has_minter_access?(%Minter{status: status}), do: status != @archived_status
+  defp has_minter_access?(_minter), do: false
 end
