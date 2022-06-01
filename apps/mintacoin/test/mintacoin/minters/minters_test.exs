@@ -1,4 +1,4 @@
-defmodule Database.Accounts.AccountsTest do
+defmodule Mintacoin.Minters.MintersTest do
   @moduledoc """
     This module is used to group common tests for Minters functions
   """
