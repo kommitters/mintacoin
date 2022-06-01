@@ -9,7 +9,7 @@ defmodule Mintacoin.Repo.Migrations.AddAccountsTable do
       add(:address, :uuid, unique: true)
       add(:derived_key, :string, null: false)
       add(:encrypted_signature, :string, null: false)
-      add(:is_active, :boolean)
+      add(:status, :string, null: false)
 
       timestamps()
     end
