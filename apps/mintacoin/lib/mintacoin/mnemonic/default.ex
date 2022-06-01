@@ -17,14 +17,17 @@ defmodule Mintacoin.Mnemonic.Default do
     @language
     |> Bip39.get_words()
     |> (&Bip39.entropy_to_mnemonic(raw_entropy, &1)).()
+    |> Enum.join(" ")
     |> (&{:ok, {entropy, &1}}).()
   end
 
   @impl true
   def to_entropy(seed_words) do
+    mnemonic_list = String.split(seed_words)
+
     @language
     |> Bip39.get_words()
-    |> (&Bip39.mnemonic_to_entropy(seed_words, &1)).()
+    |> (&Bip39.mnemonic_to_entropy(mnemonic_list, &1)).()
     |> Base.encode64(padding: false)
     |> (&{:ok, &1}).()
   rescue
@@ -38,6 +41,7 @@ defmodule Mintacoin.Mnemonic.Default do
     @language
     |> Bip39.get_words()
     |> (&Bip39.entropy_to_mnemonic(raw_entropy, &1)).()
+    |> Enum.join(" ")
     |> (&{:ok, &1}).()
   rescue
     _error -> {:error, :mnemonic_entropy_error}
