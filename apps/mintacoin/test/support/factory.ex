@@ -4,5 +4,8 @@ defmodule Mintacoin.Factory do
   """
   use ExMachina.Ecto, repo: Mintacoin.Repo
 
-  use Mintacoin.MinterFactory
+  use Mintacoin.{
+    MinterFactory,
+    AccountFactory
+  }
 end
