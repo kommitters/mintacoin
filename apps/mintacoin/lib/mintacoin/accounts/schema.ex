@@ -50,6 +50,7 @@ defmodule Mintacoin.Account do
       :name,
       :status
     ])
+    |> validate_required([:email, :name])
     |> unique_constraint([:email])
   end
 
