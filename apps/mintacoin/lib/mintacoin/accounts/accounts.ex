@@ -61,7 +61,7 @@ defmodule Mintacoin.Accounts do
   @spec recover_signature(address :: address(), seed_words :: seed_words()) ::
           {:ok, signature()} | {:error, error()}
   def recover_signature(address, seed_words) do
-    with {:ok, %{encrypted_signature: encrypted_signature}} <- retrieve(address),
+    with {:ok, %Account{encrypted_signature: encrypted_signature}} <- retrieve(address),
          {:ok, entropy} <- Mnemonic.to_entropy(seed_words) do
       Encryption.decrypt(encrypted_signature, entropy)
     else

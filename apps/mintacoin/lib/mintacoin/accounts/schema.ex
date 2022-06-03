@@ -83,8 +83,5 @@ defmodule Mintacoin.Account do
   end
 
   @spec add_unique_address(changeset :: Changeset.t()) :: Changeset.t()
-  defp add_unique_address(changeset) do
-    UUID.generate()
-    |> (&put_change(changeset, :address, &1)).()
-  end
+  defp add_unique_address(changeset), do: put_change(changeset, :address, UUID.generate())
 end
