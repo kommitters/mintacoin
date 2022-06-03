@@ -10,6 +10,15 @@ defmodule Mintacoin.Minter do
 
   alias Ecto.Changeset
 
+  @type status :: :active | :archived
+
+  @type t :: %__MODULE__{
+          email: String.t(),
+          name: String.t(),
+          status: status(),
+          api_key: String.t()
+        }
+
   defenum(Status, :status, [
     :active,
     :archived
@@ -34,7 +43,8 @@ defmodule Mintacoin.Minter do
       :status,
       :api_key
     ])
-    |> unique_constraint([:api_key, :email])
+    |> unique_constraint([:api_key])
+    |> unique_constraint([:email])
   end
 
   @spec create_changeset(minter :: Minter.t(), changes :: map()) :: Changeset.t()
@@ -47,6 +57,7 @@ defmodule Mintacoin.Minter do
       :api_key
     ])
     |> validate_required([:email, :name, :api_key])
-    |> unique_constraint([:api_key, :email])
+    |> unique_constraint([:api_key])
+    |> unique_constraint([:email])
   end
 end
