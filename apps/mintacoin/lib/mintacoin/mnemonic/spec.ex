@@ -4,7 +4,7 @@ defmodule Mintacoin.Mnemonic.Spec do
   """
 
   @type entropy :: String.t()
-  @type seed_words :: list(String.t())
+  @type seed_words :: String.t()
   @type error :: :mnemonic_seed_words_error | :mnemonic_entropy_error
 
   @callback random_entropy_and_mnemonic :: {:ok, {entropy(), seed_words()}}

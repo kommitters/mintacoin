@@ -10,20 +10,7 @@ defmodule Mintacoin.Mnemonic.DefaultTest do
   setup do
     %{
       entropy: "cOyBaqug5GtdZ2rqMOAqdg",
-      seed_words: [
-        "ill",
-        "goat",
-        "follow",
-        "firm",
-        "atom",
-        "cup",
-        "intact",
-        "unhappy",
-        "tuition",
-        "mandate",
-        "appear",
-        "uncover"
-      ]
+      seed_words: "ill goat follow firm atom cup intact unhappy tuition mandate appear uncover"
     }
   end
 
@@ -32,7 +19,11 @@ defmodule Mintacoin.Mnemonic.DefaultTest do
       {:ok, {entropy, seed_words}} = Mnemonic.random_entropy_and_mnemonic()
 
       refute is_nil(entropy)
-      12 = Enum.count(seed_words)
+
+      12 =
+        seed_words
+        |> String.split()
+        |> Enum.count()
     end
   end
 
