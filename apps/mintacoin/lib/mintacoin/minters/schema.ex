@@ -1,6 +1,6 @@
 defmodule Mintacoin.Minter do
   @moduledoc """
-  Ecto schema for minter
+  Ecto schema for Minter
   """
 
   use Ecto.Schema
@@ -10,7 +10,7 @@ defmodule Mintacoin.Minter do
 
   alias Ecto.Changeset
 
-  @type status :: :active | :archived
+  @type status :: :active | :deleted
 
   @type t :: %__MODULE__{
           email: String.t(),
@@ -21,7 +21,7 @@ defmodule Mintacoin.Minter do
 
   defenum(Status, :status, [
     :active,
-    :archived
+    :deleted
   ])
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -43,8 +43,8 @@ defmodule Mintacoin.Minter do
       :status,
       :api_key
     ])
-    |> unique_constraint([:api_key])
     |> validate_email()
+    |> unique_constraint([:api_key])
   end
 
   @spec create_changeset(minter :: Minter.t(), changes :: map()) :: Changeset.t()
@@ -56,9 +56,9 @@ defmodule Mintacoin.Minter do
       :status,
       :api_key
     ])
+    |> validate_email()
     |> validate_required([:name, :api_key])
     |> unique_constraint([:api_key])
-    |> validate_email()
   end
 
   @spec validate_email(changeset :: Changeset.t()) :: Changeset.t()

@@ -46,7 +46,7 @@ defmodule Mintacoin.Minters.MintersTest do
     end
   end
 
-  describe "archive/1" do
+  describe "delete/1" do
     setup do
       {:ok, %Minter{id: id}} =
         Minters.create(%{
@@ -58,12 +58,12 @@ defmodule Mintacoin.Minters.MintersTest do
       %{id: id}
     end
 
-    test "with valid id, archive minter", %{id: id} do
-      {:ok, %Minter{status: :archived}} = Minters.archive(id)
+    test "with valid id, delete minter", %{id: id} do
+      {:ok, %Minter{status: :deleted}} = Minters.delete(id)
     end
 
     test "with not valid id, return not found error" do
-      {:error, :not_found} = Minters.archive("32c2a7a2-ebb9-4b28-a199-cd34234b2d58")
+      {:error, :not_found} = Minters.delete("32c2a7a2-ebb9-4b28-a199-cd34234b2d58")
     end
   end
 
