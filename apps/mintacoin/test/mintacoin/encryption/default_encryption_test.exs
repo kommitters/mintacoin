@@ -8,10 +8,10 @@ defmodule Mintacoin.Encryption.DefaultTest do
   alias Mintacoin.Encryption
 
   describe "generate_secret/0" do
-    test "should return a secret key" do
+    test "should return a secret" do
       secret = Encryption.generate_secret()
       refute is_nil(secret)
-      16 = byte_size(Base.decode64!(secret, padding: false))
+      32 = byte_size(Base.decode64!(secret, padding: false))
     end
   end
 

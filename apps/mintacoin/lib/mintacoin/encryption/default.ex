@@ -6,20 +6,21 @@ defmodule Mintacoin.Encryption.Default do
 
   @behaviour Mintacoin.Encryption.Spec
 
-  @block_size 16
-  @cipher :aes_128_cbc
+  @token_size 16
   @hash_algorithm :sha256
+
+  @default_block_size 32
 
   @impl true
   def generate_secret do
-    @block_size
+    @default_block_size
     |> :crypto.strong_rand_bytes()
     |> Base.encode64(padding: false)
   end
 
   @impl true
   def one_time_token do
-    @block_size
+    @token_size
     |> :crypto.strong_rand_bytes()
     |> (&:crypto.hash(@hash_algorithm, &1)).()
     |> Base.encode64(padding: false)
@@ -29,11 +30,13 @@ defmodule Mintacoin.Encryption.Default do
   @impl true
   def encrypt(payload, key) do
     {:ok, secret_key} = Base.decode64(key, padding: false)
-    iv = :crypto.strong_rand_bytes(@block_size)
-    plaintext = pad(payload, @block_size)
+    {:ok, {block_size, cipher}} = detect_encryption_mode(secret_key)
+
+    iv = :crypto.strong_rand_bytes(16)
+    plaintext = pad(payload, block_size)
 
     ciphertext =
-      @cipher
+      cipher
       |> :crypto.crypto_one_time(secret_key, iv, plaintext, true)
       |> (&(iv <> &1)).()
       |> Base.encode64(padding: false)
@@ -48,8 +51,10 @@ defmodule Mintacoin.Encryption.Default do
   def decrypt(ciphertext, key) do
     with {:ok, secret_key} <- Base.decode64(key, padding: false),
          {:ok, <<iv::binary-16, ciphertext::binary>>} <- Base.decode64(ciphertext, padding: false) do
+      {:ok, {_block_size, cipher}} = detect_encryption_mode(secret_key)
+
       plaintext =
-        @cipher
+        cipher
         |> :crypto.crypto_one_time(secret_key, iv, ciphertext, false)
         |> unpad()
 
@@ -69,5 +74,18 @@ defmodule Mintacoin.Encryption.Default do
   defp pad(data, block_size) do
     to_add = block_size - rem(byte_size(data), block_size)
     data <> :binary.copy(<<to_add>>, to_add)
+  end
+
+  @spec detect_encryption_mode(secret_key :: binary()) ::
+          {:ok, {block_size :: integer(), cipher :: atom()}}
+  defp detect_encryption_mode(secret_key) do
+    cipher =
+      case block_size = byte_size(secret_key) do
+        16 -> :aes_128_cbc
+        32 -> :aes_256_cbc
+        _ -> raise "invalid secret key size"
+      end
+
+    {:ok, {block_size, cipher}}
   end
 end
