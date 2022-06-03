@@ -4,6 +4,7 @@ defmodule Mintacoin.MinterFactory do
   """
 
   alias Mintacoin.Minter
+  alias Ecto.UUID
 
   defmacro __using__(_opts) do
     quote do
@@ -21,7 +22,7 @@ defmodule Mintacoin.MinterFactory do
           )
 
         %Minter{
-          id: Ecto.UUID.generate(),
+          id: UUID.generate(),
           email: email,
           name: name,
           status: status,

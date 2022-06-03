@@ -12,27 +12,27 @@ defmodule Mintacoin.Minters do
   @type changes :: map()
   @type error :: Changeset.t() | :not_found
 
-  @archived_status :archived
+  @deleted_status :deleted
 
-  @spec create_minter(changes :: changes()) :: {:ok, Minter.t()} | {:error, error()}
-  def create_minter(changes) do
+  @spec create(changes :: changes()) :: {:ok, Minter.t()} | {:error, error()}
+  def create(changes) do
     %Minter{}
     |> Minter.create_changeset(changes)
     |> Repo.insert()
   end
 
-  @spec archive_minter(id :: id()) :: {:ok, Minter.t()} | {:error, error()}
-  def archive_minter(id) do
+  @spec delete(id :: id()) :: {:ok, Minter.t()} | {:error, error()}
+  def delete(id) do
     Minter
     |> Repo.get(id)
-    |> persist_changes(%{status: @archived_status})
+    |> persist_changes(%{status: @deleted_status})
   end
 
   @spec is_authorized?(api_key :: api_key()) :: boolean()
   def is_authorized?(api_key) do
     Minter
     |> Repo.get_by(api_key: api_key)
-    |> has_minter_access?()
+    |> has_access?()
   end
 
   @spec persist_changes(minter :: Minter.t(), changes :: changes()) ::
@@ -45,7 +45,7 @@ defmodule Mintacoin.Minters do
 
   defp persist_changes(_minter, _changes), do: {:error, :not_found}
 
-  @spec has_minter_access?(minter :: Minter.t()) :: boolean()
-  defp has_minter_access?(%Minter{status: status}), do: status != @archived_status
-  defp has_minter_access?(_minter), do: false
+  @spec has_access?(minter :: Minter.t()) :: boolean()
+  defp has_access?(%Minter{status: status}), do: status != @deleted_status
+  defp has_access?(_minter), do: false
 end

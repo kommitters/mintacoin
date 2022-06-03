@@ -12,7 +12,7 @@ defmodule Mintacoin.Minters.MintersTest do
     :ok = Sandbox.checkout(Mintacoin.Repo)
   end
 
-  describe "create_minter/1" do
+  describe "create/1" do
     setup do
       %{
         minter: %{
@@ -24,11 +24,11 @@ defmodule Mintacoin.Minters.MintersTest do
     end
 
     test "with valid params", %{minter: %{email: email} = minter_data} do
-      {:ok, %Minter{email: ^email}} = Minters.create_minter(minter_data)
+      {:ok, %Minter{email: ^email}} = Minters.create(minter_data)
     end
 
     test "validate required fields" do
-      {:error, changeset} = Minters.create_minter(%{})
+      {:error, changeset} = Minters.create(%{})
 
       %{
         api_key: ["can't be blank"],
@@ -36,12 +36,20 @@ defmodule Mintacoin.Minters.MintersTest do
         name: ["can't be blank"]
       } = errors_on(changeset)
     end
+
+    test "validate email format", %{minter: minter_data} do
+      {:error, changeset} = Minters.create(%{minter_data | email: "INVALID_EMAIL"})
+
+      %{
+        email: ["must have the @ sign and no spaces"]
+      } = errors_on(changeset)
+    end
   end
 
-  describe "archive_minter/1" do
+  describe "delete/1" do
     setup do
       {:ok, %Minter{id: id}} =
-        Minters.create_minter(%{
+        Minters.create(%{
           email: "test3@mail.com",
           name: "Test Minter 3",
           api_key: "i4b0OpB00oHVZERCdOEKf+3/Oz2zeBxNKvzdzYc/wgc"
@@ -50,19 +58,19 @@ defmodule Mintacoin.Minters.MintersTest do
       %{id: id}
     end
 
-    test "with valid id, archive minter", %{id: id} do
-      {:ok, %Minter{status: :archived}} = Minters.archive_minter(id)
+    test "with valid id, delete minter", %{id: id} do
+      {:ok, %Minter{status: :deleted}} = Minters.delete(id)
     end
 
     test "with not valid id, return not found error" do
-      {:error, :not_found} = Minters.archive_minter("32c2a7a2-ebb9-4b28-a199-cd34234b2d58")
+      {:error, :not_found} = Minters.delete("32c2a7a2-ebb9-4b28-a199-cd34234b2d58")
     end
   end
 
   describe "is_authorized?/1" do
     setup do
       {:ok, %Minter{api_key: api_key}} =
-        Minters.create_minter(%{
+        Minters.create(%{
           email: "test4@mail.com",
           name: "Test Minter 4",
           api_key: "J6CwjuzoR3I2hGzXFFUz7mtp/insEoadWQ80nDUOkCw"

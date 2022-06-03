@@ -1,6 +1,6 @@
 defmodule Mintacoin.Minter do
   @moduledoc """
-  Ecto schema for minter
+  Ecto schema for Minter
   """
 
   use Ecto.Schema
@@ -10,9 +10,18 @@ defmodule Mintacoin.Minter do
 
   alias Ecto.Changeset
 
+  @type status :: :active | :deleted
+
+  @type t :: %__MODULE__{
+          email: String.t(),
+          name: String.t(),
+          status: status(),
+          api_key: String.t()
+        }
+
   defenum(Status, :status, [
     :active,
-    :archived
+    :deleted
   ])
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -34,7 +43,8 @@ defmodule Mintacoin.Minter do
       :status,
       :api_key
     ])
-    |> unique_constraint([:api_key, :email])
+    |> validate_email()
+    |> unique_constraint([:api_key])
   end
 
   @spec create_changeset(minter :: Minter.t(), changes :: map()) :: Changeset.t()
@@ -46,7 +56,17 @@ defmodule Mintacoin.Minter do
       :status,
       :api_key
     ])
-    |> validate_required([:email, :name, :api_key])
-    |> unique_constraint([:api_key, :email])
+    |> validate_email()
+    |> validate_required([:name, :api_key])
+    |> unique_constraint([:api_key])
+  end
+
+  @spec validate_email(changeset :: Changeset.t()) :: Changeset.t()
+  defp validate_email(changeset) do
+    changeset
+    |> validate_required([:email])
+    |> validate_format(:email, ~r/^[^\s]+@[^\s]+$/, message: "must have the @ sign and no spaces")
+    |> validate_length(:email, max: 160)
+    |> unique_constraint(:email)
   end
 end
