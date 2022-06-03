@@ -44,7 +44,7 @@ defmodule Mintacoin.Minter do
       :api_key
     ])
     |> unique_constraint([:api_key])
-    |> unique_constraint([:email])
+    |> validate_email()
   end
 
   @spec create_changeset(minter :: Minter.t(), changes :: map()) :: Changeset.t()
@@ -56,8 +56,17 @@ defmodule Mintacoin.Minter do
       :status,
       :api_key
     ])
-    |> validate_required([:email, :name, :api_key])
+    |> validate_required([:name, :api_key])
     |> unique_constraint([:api_key])
-    |> unique_constraint([:email])
+    |> validate_email()
+  end
+
+  @spec validate_email(changeset :: Changeset.t()) :: Changeset.t()
+  defp validate_email(changeset) do
+    changeset
+    |> validate_required([:email])
+    |> validate_format(:email, ~r/^[^\s]+@[^\s]+$/, message: "must have the @ sign and no spaces")
+    |> validate_length(:email, max: 160)
+    |> unique_constraint(:email)
   end
 end
