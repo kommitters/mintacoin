@@ -103,6 +103,12 @@ defmodule Mintacoin.Accounts.AccountsTest do
       {:error, changeset} = Accounts.update(address, %{email: "account0@mail.com"})
       %{email: ["has already been taken"]} = errors_on(changeset)
     end
+
+    test "with wrong email format", %{account: account_data} do
+      {:ok, %Account{address: address}} = Accounts.create(account_data)
+      {:error, changeset} = Accounts.update(address, %{email: "INVALID_EMAIL"})
+      %{email: ["must have the @ sign and no spaces"]} = errors_on(changeset)
+    end
   end
 
   describe "delete/1" do
