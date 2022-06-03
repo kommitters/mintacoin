@@ -50,8 +50,8 @@ defmodule Mintacoin.Account do
       :name,
       :status
     ])
-    |> validate_required([:email, :name])
-    |> unique_constraint([:email])
+    |> validate_email()
+    |> validate_required([:name])
   end
 
   @spec create_changeset(account :: Account.t(), changes :: map()) :: Changeset.t()
@@ -67,10 +67,19 @@ defmodule Mintacoin.Account do
       :signature
     ])
     |> add_unique_address()
-    |> validate_required([:email, :name, :derived_key, :encrypted_signature])
-    |> unique_constraint([:email])
+    |> validate_email()
+    |> validate_required([:name, :derived_key, :encrypted_signature])
     |> unique_constraint([:address])
     |> unique_constraint([:encrypted_signature])
+  end
+
+  @spec validate_email(changeset :: Changeset.t()) :: Changeset.t()
+  defp validate_email(changeset) do
+    changeset
+    |> validate_required([:email])
+    |> validate_format(:email, ~r/^[^\s]+@[^\s]+$/, message: "must have the @ sign and no spaces")
+    |> validate_length(:email, max: 160)
+    |> unique_constraint(:email)
   end
 
   @spec add_unique_address(changeset :: Changeset.t()) :: Changeset.t()

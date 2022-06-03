@@ -30,14 +30,17 @@ defmodule Mintacoin.Accounts do
     retrieve_by(address: address, status: @active_status)
   end
 
-  def retrieve(_address), do: {:error, :bad_argument}
+  def retrieve(_address), do: {:error, :not_found}
 
   @spec retrieve_by(parameter :: parameter()) ::
           {:ok, Account.t() | nil} | {:error, error()}
   def retrieve_by(parameter) when is_list(parameter) do
-    {:ok, Repo.get_by(Account, parameter)}
+    case Repo.get_by(Account, parameter) do
+      nil -> {:error, :not_found}
+      account -> {:ok, account}
+    end
   rescue
-    CastError -> {:error, :bad_argument}
+    CastError -> {:error, :not_found}
   end
 
   def retrieve_by(_parameter), do: {:error, :bad_argument}

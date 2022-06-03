@@ -54,16 +54,13 @@ defmodule Mintacoin.Accounts.AccountsTest do
       {:ok, %Account{address: address}} = Accounts.create(account_data)
       {:ok, %Account{address: ^address, status: :archived}} = Accounts.delete(address)
 
-      {:ok, nil} = Accounts.retrieve(address)
+      {:error, :not_found} = Accounts.retrieve(address)
     end
 
     test "with non existing address" do
-      {:ok, nil} = Accounts.retrieve("8dd3eaa3-c073-46f6-8e20-72c7f7203146")
-    end
-
-    test "with bad argument" do
-      {:error, :bad_argument} = Accounts.retrieve("INVALID_ADDRESS")
-      {:error, :bad_argument} = Accounts.retrieve(1)
+      {:error, :not_found} = Accounts.retrieve("8dd3eaa3-c073-46f6-8e20-72c7f7203146")
+      {:error, :not_found} = Accounts.retrieve("INVALID_ADDRESS")
+      {:error, :not_found} = Accounts.retrieve(1)
     end
   end
 
@@ -76,7 +73,7 @@ defmodule Mintacoin.Accounts.AccountsTest do
     end
 
     test "with non existing parameter" do
-      {:ok, nil} = Accounts.retrieve_by(email: "INVALID_EMAIL")
+      {:error, :not_found} = Accounts.retrieve_by(email: "INVALID_EMAIL")
     end
 
     test "with bad argument" do
@@ -116,11 +113,8 @@ defmodule Mintacoin.Accounts.AccountsTest do
 
     test "with non existing address" do
       {:error, :not_found} = Accounts.delete("8dd3eaa3-c073-46f6-8e20-72c7f7203146")
-    end
-
-    test "with bad argument" do
-      {:error, :bad_argument} = Accounts.delete("INVALID_ADDRESS")
-      {:error, :bad_argument} = Accounts.delete(1)
+      {:error, :not_found} = Accounts.delete("INVALID_ADDRESS")
+      {:error, :not_found} = Accounts.delete(1)
     end
   end
 
