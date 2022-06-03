@@ -14,15 +14,15 @@ defmodule Mintacoin.Minters do
 
   @archived_status :archived
 
-  @spec create_minter(changes :: changes()) :: {:ok, Minter.t()} | {:error, error()}
-  def create_minter(changes) do
+  @spec create(changes :: changes()) :: {:ok, Minter.t()} | {:error, error()}
+  def create(changes) do
     %Minter{}
     |> Minter.create_changeset(changes)
     |> Repo.insert()
   end
 
-  @spec archive_minter(id :: id()) :: {:ok, Minter.t()} | {:error, error()}
-  def archive_minter(id) do
+  @spec archive(id :: id()) :: {:ok, Minter.t()} | {:error, error()}
+  def archive(id) do
     Minter
     |> Repo.get(id)
     |> persist_changes(%{status: @archived_status})
