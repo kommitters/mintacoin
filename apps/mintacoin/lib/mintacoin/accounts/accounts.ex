@@ -5,6 +5,7 @@ defmodule Mintacoin.Accounts do
 
   alias Ecto.Changeset
   alias Ecto.Query.CastError
+  alias Ecto.NoResultsError
   alias Mintacoin.{Repo, Account, Mnemonic, Encryption, Keypair}
 
   @type address :: String.t()
@@ -25,7 +26,7 @@ defmodule Mintacoin.Accounts do
     |> Repo.insert()
   end
 
-  @spec retrieve(address :: address()) :: {:ok, Account.t() | nil} | {:error, error()}
+  @spec retrieve(address :: address()) :: {:ok, Account.t()} | {:error, error()}
   def retrieve(address) when is_binary(address) do
     retrieve_by(address: address, status: @active_status)
   end
@@ -33,14 +34,12 @@ defmodule Mintacoin.Accounts do
   def retrieve(_address), do: {:error, :not_found}
 
   @spec retrieve_by(parameter :: parameter()) ::
-          {:ok, Account.t() | nil} | {:error, error()}
+          {:ok, Account.t()} | {:error, error()}
   def retrieve_by(parameter) when is_list(parameter) do
-    case Repo.get_by(Account, parameter) do
-      nil -> {:error, :not_found}
-      account -> {:ok, account}
-    end
+    {:ok, Repo.get_by!(Account, parameter)}
   rescue
     CastError -> {:error, :not_found}
+    NoResultsError -> {:error, :not_found}
   end
 
   def retrieve_by(_parameter), do: {:error, :bad_argument}
@@ -69,7 +68,7 @@ defmodule Mintacoin.Accounts do
     end
   end
 
-  @spec persist_changes({:ok, account :: Account.t() | nil}, changes :: changes()) ::
+  @spec persist_changes({:ok, account :: Account.t()}, changes :: changes()) ::
           {:ok, Account.t()} | {:error, error()}
   defp persist_changes({:ok, %Account{} = account}, changes) do
     account
@@ -78,7 +77,6 @@ defmodule Mintacoin.Accounts do
   end
 
   defp persist_changes({:error, error}, _changes), do: {:error, error}
-  defp persist_changes({:ok, nil}, _changes), do: {:error, :not_found}
 
   @spec add_signature_fields(changes :: changes()) :: changes()
   defp add_signature_fields(changes) do
