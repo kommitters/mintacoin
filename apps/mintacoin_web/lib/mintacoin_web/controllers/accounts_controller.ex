@@ -10,6 +10,8 @@ defmodule MintacoinWeb.AccountsController do
 
   @allowed_params ["email", "name"]
 
+  action_fallback MintacoinWeb.FallbackController
+
   @spec create(conn :: conn(), params :: params()) :: {:error, error()} | conn()
   def create(conn, params) do
     allowed_params = fetch_allowed_params(params)
