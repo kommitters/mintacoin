@@ -5,8 +5,12 @@ defmodule MintacoinWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/api", MintacoinWeb do
-    pipe_through :api
+  pipeline :authenticated do
+    plug MintacoinWeb.Plugs.Authenticate
+  end
+
+  scope "/v1/", MintacoinWeb do
+    pipe_through [:api, :authenticated]
   end
 
   # Enables LiveDashboard only for development
