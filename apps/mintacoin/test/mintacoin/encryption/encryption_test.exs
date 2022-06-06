@@ -4,7 +4,7 @@ defmodule Mintacoin.Encryption.CannedEncryptionImpl do
   @behaviour Mintacoin.Encryption.Spec
 
   @impl true
-  def generate_secret do
+  def generate_secret(_opts) do
     send(self(), {:generate_secret, "SECRET"})
     :ok
   end
@@ -22,7 +22,7 @@ defmodule Mintacoin.Encryption.CannedEncryptionImpl do
   end
 
   @impl true
-  def one_time_token do
+  def one_time_token(_opts) do
     send(self(), {:one_time_token, "API_TOKEN"})
     :ok
   end

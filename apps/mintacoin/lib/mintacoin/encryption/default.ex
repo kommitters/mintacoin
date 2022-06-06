@@ -6,21 +6,21 @@ defmodule Mintacoin.Encryption.Default do
 
   @behaviour Mintacoin.Encryption.Spec
 
-  @token_size 16
+  @default_bytes_size 16
   @hash_algorithm :sha256
 
-  @default_block_size 32
-
   @impl true
-  def generate_secret do
-    @default_block_size
+  def generate_secret(opts \\ []) do
+    opts
+    |> Keyword.get(:bytes, @default_bytes_size)
     |> :crypto.strong_rand_bytes()
     |> Base.encode64(padding: false)
   end
 
   @impl true
-  def one_time_token do
-    @token_size
+  def one_time_token(opts \\ []) do
+    opts
+    |> Keyword.get(:bytes, @default_bytes_size)
     |> :crypto.strong_rand_bytes()
     |> (&:crypto.hash(@hash_algorithm, &1)).()
     |> Base.encode64(padding: false)
