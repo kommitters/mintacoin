@@ -63,7 +63,8 @@ defmodule Mintacoin.Accounts do
          {:ok, entropy} <- Mnemonic.to_entropy(seed_words) do
       Encryption.decrypt(encrypted_signature, entropy)
     else
-      error -> error
+      {:error, :not_found} -> {:error, :not_found}
+      _error -> {:error, :bad_argument}
     end
   end
 
