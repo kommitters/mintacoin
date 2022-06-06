@@ -11,6 +11,8 @@ defmodule MintacoinWeb.Router do
 
   scope "/v1/", MintacoinWeb do
     pipe_through [:api, :authenticated]
+    resources "/accounts", AccountsController, param: "address"
+    post "/accounts/:address/recover", AccountsController, :recover
   end
 
   # Enables LiveDashboard only for development
