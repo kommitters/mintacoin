@@ -23,8 +23,17 @@ defmodule Mintacoin.Encryption.DefaultTest do
   end
 
   describe "encrypt/2" do
-    test "with valid secret should return a ciphertext" do
+    test "with valid secret of 32 bytes should return a ciphertext" do
       secret = Encryption.generate_secret()
+      {:ok, _ciphertext} = Encryption.encrypt("test", secret)
+    end
+
+    test "with valid secret of 16 bytes should return a ciphertext" do
+      secret =
+        16
+        |> :crypto.strong_rand_bytes()
+        |> Base.encode64(padding: false)
+
       {:ok, _ciphertext} = Encryption.encrypt("test", secret)
     end
 
