@@ -5,32 +5,36 @@ defmodule MintacoinWeb.AccountsControllerTest do
 
   alias Mintacoin.{Minter, Encryption, Mnemonic, Keypair}
 
-  @create_attrs %{"name" => "Test Name", "email" => "test@mail.com"}
-  @update_attrs %{"name" => "Updated Test Name", "email" => "updatedtest@mail.com"}
-  @invalid_attrs %{}
-  @non_existing_address "78f0eb93-4466-451c-b3e7-5c6189500919"
   @auth_header "authorization"
 
   setup %{conn: conn} do
     %Minter{api_key: api_key} = insert(:minter)
 
-    conn
-    |> put_req_header("accept", "application/json")
-    |> put_req_header(@auth_header, "Bearer #{api_key}")
-    |> (&{:ok, conn: &1}).()
+    conn =
+      conn
+      |> put_req_header("accept", "application/json")
+      |> put_req_header(@auth_header, "Bearer #{api_key}")
+
+    %{
+      create_attrs: %{"name" => "Test Name", "email" => "test@mail.com"},
+      update_attrs: %{"name" => "Updated Test Name", "email" => "updatedtest@mail.com"},
+      invalid_attrs: %{},
+      non_existing_address: "78f0eb93-4466-451c-b3e7-5c6189500919",
+      conn: conn
+    }
   end
 
   describe "create account" do
-    test "returns account when data is valid", %{conn: conn} do
-      conn = post(conn, Routes.accounts_path(conn, :create), @create_attrs)
+    test "returns account when data is valid", %{conn: conn, create_attrs: create_attrs} do
+      conn = post(conn, Routes.accounts_path(conn, :create), create_attrs)
       %{"address" => address} = json_response(conn, 201)
 
       conn = get(conn, Routes.accounts_path(conn, :show, address))
       %{"address" => ^address} = json_response(conn, 200)
     end
 
-    test "returns errors when data is invalid", %{conn: conn} do
-      conn = post(conn, Routes.accounts_path(conn, :create), @invalid_attrs)
+    test "returns errors when data is invalid", %{conn: conn, invalid_attrs: invalid_attrs} do
+      conn = post(conn, Routes.accounts_path(conn, :create), invalid_attrs)
 
       %{"email" => ["can't be blank"], "name" => ["can't be blank"]} =
         json_response(conn, 422)["errors"]
@@ -48,8 +52,11 @@ defmodule MintacoinWeb.AccountsControllerTest do
       %{"address" => ^address} = json_response(conn, 200)
     end
 
-    test "returns not found response when address doesn't exist", %{conn: conn} do
-      conn = get(conn, Routes.accounts_path(conn, :show, @non_existing_address))
+    test "returns not found response when address doesn't exist", %{
+      conn: conn,
+      non_existing_address: non_existing_address
+    } do
+      conn = get(conn, Routes.accounts_path(conn, :show, non_existing_address))
       assert response(conn, 404)
     end
   end
@@ -59,21 +66,24 @@ defmodule MintacoinWeb.AccountsControllerTest do
 
     test "returns updated account when data is valid", %{
       conn: conn,
+      update_attrs: %{"name" => update_name, "email" => update_email} = update_attrs,
       account: %{address: address}
     } do
-      conn = put(conn, Routes.accounts_path(conn, :update, address), @update_attrs)
+      conn = put(conn, Routes.accounts_path(conn, :update, address), update_attrs)
       assert %{"address" => ^address} = json_response(conn, 200)
 
       conn = get(conn, Routes.accounts_path(conn, :show, address))
-
-      %{"name" => update_name, "email" => update_email} = @update_attrs
 
       %{"address" => ^address, "name" => ^update_name, "email" => ^update_email} =
         json_response(conn, 200)
     end
 
-    test "returns not found response when account's address doesn't exist", %{conn: conn} do
-      conn = put(conn, Routes.accounts_path(conn, :update, @non_existing_address), @update_attrs)
+    test "returns not found response when account's address doesn't exist", %{
+      conn: conn,
+      non_existing_address: non_existing_address,
+      update_attrs: update_attrs
+    } do
+      conn = put(conn, Routes.accounts_path(conn, :update, non_existing_address), update_attrs)
       assert response(conn, 404)
     end
   end
@@ -89,8 +99,11 @@ defmodule MintacoinWeb.AccountsControllerTest do
       assert response(conn, 404)
     end
 
-    test "returns not found response when account's address doesn't exist", %{conn: conn} do
-      conn = delete(conn, Routes.accounts_path(conn, :delete, @non_existing_address))
+    test "returns not found response when account's address doesn't exist", %{
+      conn: conn,
+      non_existing_address: non_existing_address
+    } do
+      conn = delete(conn, Routes.accounts_path(conn, :delete, non_existing_address))
       assert response(conn, 404)
     end
   end
@@ -118,12 +131,13 @@ defmodule MintacoinWeb.AccountsControllerTest do
 
     test "returns not found response when account's address doesn't exist", %{
       conn: conn,
+      non_existing_address: non_existing_address,
       account: %{seed_words: seed_words}
     } do
       conn =
         post(
           conn,
-          Routes.accounts_path(conn, :recover, @non_existing_address, %{seed_words: seed_words})
+          Routes.accounts_path(conn, :recover, non_existing_address, %{seed_words: seed_words})
         )
 
       assert response(conn, 404)
