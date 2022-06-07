@@ -7,11 +7,11 @@ defmodule MintacoinWeb.AccountsView do
   @type assigns :: map()
   @type json_template :: map()
   @type account :: Account.t()
-  @type object :: map()
+  @type resource :: map()
   @type key :: atom()
   @type value :: any()
 
-  @account_object %{object: "account"}
+  @account_resource %{resource: "account"}
   @public_attributes ~w(address email name derived_key seed_words signature status)a
 
   @spec render(template :: template(), assigns :: assigns()) :: json_template()
@@ -22,14 +22,15 @@ defmodule MintacoinWeb.AccountsView do
   defp account_json(account) do
     account
     |> Map.from_struct()
-    |> Enum.reduce(@account_object, &filter_public_attributes/2)
+    |> Enum.reduce(@account_resource, &filter_public_attributes/2)
   end
 
-  @spec filter_public_attributes({key :: key(), value :: value()}, object :: object()) :: object()
-  defp filter_public_attributes({_key, nil}, object), do: object
+  @spec filter_public_attributes({key :: key(), value :: value()}, resource :: resource()) ::
+          resource()
+  defp filter_public_attributes({_key, nil}, resource), do: resource
 
-  defp filter_public_attributes({key, value}, object) when key in @public_attributes,
-    do: Map.put(object, key, value)
+  defp filter_public_attributes({key, value}, resource) when key in @public_attributes,
+    do: Map.put(resource, key, value)
 
-  defp filter_public_attributes(_key_value, object), do: object
+  defp filter_public_attributes(_key_value, resource), do: resource
 end
