@@ -3,7 +3,7 @@ defmodule MintacoinWeb.AccountsControllerTest do
 
   import Mintacoin.Factory
 
-  alias Mintacoin.Minter
+  alias Mintacoin.{Minter, Encryption, Mnemonic, Keypair}
 
   @create_attrs %{"name" => "Test Name", "email" => "test@mail.com"}
   @update_attrs %{"name" => "Updated Test Name", "email" => "updatedtest@mail.com"}
@@ -131,9 +131,9 @@ defmodule MintacoinWeb.AccountsControllerTest do
   end
 
   defp create_account(_conn) do
-    {:ok, {entropy, seed_words}} = Mintacoin.Mnemonic.random_entropy_and_mnemonic()
-    {:ok, {derived_key, signature}} = Mintacoin.Keypair.random()
-    {:ok, encrypted_signature} = Mintacoin.Encryption.encrypt(signature, entropy)
+    {:ok, {entropy, seed_words}} = Mnemonic.random_entropy_and_mnemonic()
+    {:ok, {derived_key, signature}} = Keypair.random()
+    {:ok, encrypted_signature} = Encryption.encrypt(signature, entropy)
 
     account =
       insert(:account,
