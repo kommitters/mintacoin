@@ -12,7 +12,7 @@ defmodule MintacoinWeb.AccountsController do
 
   action_fallback MintacoinWeb.FallbackController
 
-  @spec create(conn :: conn(), params :: params()) :: {:error, error()} | conn()
+  @spec create(conn :: conn(), params :: params()) :: conn() | {:error, error()}
   def create(conn, params) do
     allowed_params = fetch_allowed_params(params)
 
@@ -28,7 +28,7 @@ defmodule MintacoinWeb.AccountsController do
     end
   end
 
-  @spec show(conn :: conn(), params :: params()) :: {:error, error()} | conn()
+  @spec show(conn :: conn(), params :: params()) :: conn() | {:error, error()}
   def show(conn, %{"address" => address}) do
     case Accounts.retrieve(address) do
       {:ok, %Account{} = account} ->
@@ -44,7 +44,7 @@ defmodule MintacoinWeb.AccountsController do
     end
   end
 
-  @spec update(conn :: conn(), params :: params()) :: {:error, error()} | conn()
+  @spec update(conn :: conn(), params :: params()) :: conn() | {:error, error()}
   def update(conn, %{"address" => address} = params) do
     with allowed_params when allowed_params != %{} <- fetch_allowed_params(params),
          {:ok, account} <- Accounts.update(address, allowed_params) do
@@ -57,7 +57,7 @@ defmodule MintacoinWeb.AccountsController do
     end
   end
 
-  @spec delete(conn :: conn(), params :: params()) :: {:error, error()} | conn()
+  @spec delete(conn :: conn(), params :: params()) :: conn() | {:error, error()}
   def delete(conn, %{"address" => address}) do
     case Accounts.delete(address) do
       {:ok, _account} -> send_resp(conn, :no_content, "")
@@ -66,7 +66,7 @@ defmodule MintacoinWeb.AccountsController do
     end
   end
 
-  @spec recover(conn :: conn(), params :: params()) :: {:error, error()} | conn()
+  @spec recover(conn :: conn(), params :: params()) :: conn() | {:error, error()}
   def recover(conn, %{"address" => address, "seed_words" => seed_words}) do
     case Accounts.recover_signature(address, seed_words) do
       {:ok, signature} -> render(conn, "signature.json", signature: signature)
