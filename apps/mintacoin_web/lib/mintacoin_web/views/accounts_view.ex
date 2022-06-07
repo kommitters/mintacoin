@@ -12,7 +12,7 @@ defmodule MintacoinWeb.AccountsView do
   @type value :: any()
 
   @account_object %{object: "account"}
-  @public_attributes [:address, :email, :name, :derived_key, :seed_words, :signature, :status]
+  @public_attributes ~w(address email name derived_key seed_words signature status)a
 
   @spec render(template :: template(), assigns :: assigns()) :: json_template()
   def render("account.json", %{account: account}), do: account_json(account)

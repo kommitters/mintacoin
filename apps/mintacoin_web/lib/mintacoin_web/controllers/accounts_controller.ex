@@ -8,7 +8,7 @@ defmodule MintacoinWeb.AccountsController do
   @type conn :: Plug.Conn.t()
   @type error :: :not_found | :bad_request | Ecto.Changeset.t()
 
-  @allowed_params ["email", "name"]
+  @allowed_params ~w(email name)
 
   action_fallback MintacoinWeb.FallbackController
 
