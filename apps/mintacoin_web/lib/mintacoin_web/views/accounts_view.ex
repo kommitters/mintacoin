@@ -13,12 +13,16 @@ defmodule MintacoinWeb.AccountsView do
 
   @account_resource %{resource: "account"}
   @public_attributes ~w(address email name derived_key seed_words signature status)a
+  @archived_status :archived
 
   @spec render(template :: template(), assigns :: assigns()) :: json_template()
-  def render("account.json", %{account: account}), do: account_json(account)
-  def render("signature.json", %{signature: signature}), do: %{signature: signature}
+  def render("account.json", %{resource: %Account{status: @archived_status, address: address}}),
+    do: %{address: address, status: @archived_status}
 
-  @spec account_json(account) :: json_template()
+  def render("account.json", %{resource: %Account{} = account}), do: account_json(account)
+  def render("signature.json", %{resource: signature}), do: %{signature: signature}
+
+  @spec account_json(account :: account()) :: json_template()
   defp account_json(account) do
     account
     |> Map.from_struct()

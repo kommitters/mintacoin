@@ -93,7 +93,7 @@ defmodule MintacoinWeb.AccountsControllerTest do
 
     test "deletes account with given address", %{conn: conn, account: %{address: address}} do
       conn = delete(conn, Routes.accounts_path(conn, :delete, address))
-      assert response(conn, 204)
+      %{"address" => ^address, "status" => "archived"} = json_response(conn, 200)
 
       conn = get(conn, Routes.accounts_path(conn, :show, address))
       assert response(conn, 404)
