@@ -15,7 +15,7 @@ defmodule MintacoinWeb.ChangesetView do
   @spec translate_errors(changeset :: Changeset.t()) :: formatted_error()
   def translate_errors(changeset), do: Changeset.traverse_errors(changeset, &translate_error/1)
 
-  @spec render(template :: template(), changeset :: Changeset.t()) :: formatted_error()
+  @spec render(template :: template(), changeset :: map()) :: formatted_error()
   def render("error.json", %{changeset: changeset}) do
     # When encoded, the changeset returns its errors
     # as a JSON object. So we just pass it forward.
