@@ -2,7 +2,7 @@ defmodule MintacoinWeb.AccountsController do
   use MintacoinWeb, :controller
 
   alias Ecto.Changeset
-  alias MintacoinWeb.RequestParams
+  alias MintacoinWeb.Utils.RequestParams
   alias Mintacoin.{Account, Accounts}
 
   @type params :: map()
