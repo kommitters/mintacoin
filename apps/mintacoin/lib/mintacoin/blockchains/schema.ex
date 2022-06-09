@@ -9,9 +9,7 @@ defmodule Mintacoin.Blockchain do
 
   alias Ecto.Changeset
 
-  @type t :: %__MODULE__{
-          name: String.t()
-        }
+  @type t :: %__MODULE__{name: String.t()}
 
   @primary_key {:id, :binary_id, autogenerate: true}
   schema "blockchains" do
