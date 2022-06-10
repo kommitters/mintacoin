@@ -9,6 +9,7 @@ defmodule Mintacoin.Minter do
   import EctoEnum
 
   alias Ecto.Changeset
+  alias Mintacoin.Asset
 
   @type status :: :active | :deleted
 
@@ -30,6 +31,7 @@ defmodule Mintacoin.Minter do
     field(:name, :string)
     field(:status, Status, default: :active)
     field(:api_key, :string)
+    has_many(:assets, Asset)
 
     timestamps()
   end
