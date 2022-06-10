@@ -7,7 +7,7 @@ defmodule Mintacoin.Assets.AssetsTest do
 
   import Mintacoin.Factory
 
-  alias Mintacoin.{Repo, Asset, Assets, Minter, Blockchain, Blockchains}
+  alias Mintacoin.{Repo, Asset, Assets, Minter, Account, Blockchain, Blockchains}
   alias Mintacoin.Utils.DefaultResources
   alias Ecto.Adapters.SQL.Sandbox
 
@@ -16,14 +16,18 @@ defmodule Mintacoin.Assets.AssetsTest do
     # Create default blockchain
     {:ok, _blockchain} = Blockchains.create(%{name: "Stellar"})
 
-    %Minter{id: minter_id} = insert(:minter)
+    %Minter{id: minter_id, email: email, name: name} = insert(:minter)
+    %Account{address: address} = insert(:account, email: email, name: name)
+
+    code = "ASSET_CODE"
 
     %{
       asset: %{
-        code: "ASSET_CODE",
+        code: code,
         supply: "100",
         minter_id: minter_id
-      }
+      },
+      actual_asset_code: "#{code}:#{address}"
     }
   end
 
@@ -39,17 +43,17 @@ defmodule Mintacoin.Assets.AssetsTest do
     test "when blockchain_id is provided", %{
       asset:
         %{
-          code: code,
           supply: supply,
           minter_id: minter_id
         } = asset_data,
+      actual_asset_code: actual_asset_code,
       blockchain_name: blockchain_name
     } do
       {:ok, %Blockchain{id: blockchain_id}} = Blockchains.create(%{name: blockchain_name})
 
       {:ok,
        %Asset{
-         code: ^code,
+         code: ^actual_asset_code,
          supply: ^supply,
          minter_id: ^minter_id,
          blockchain_id: ^blockchain_id
@@ -62,16 +66,16 @@ defmodule Mintacoin.Assets.AssetsTest do
     test "when blockchain_id is not provided (use default one)", %{
       asset:
         %{
-          code: code,
           supply: supply,
           minter_id: minter_id
-        } = asset_data
+        } = asset_data,
+      actual_asset_code: actual_asset_code
     } do
       %Blockchain{id: default_blockchain_id} = DefaultResources.blockchain()
 
       {:ok,
        %Asset{
-         code: ^code,
+         code: ^actual_asset_code,
          supply: ^supply,
          minter_id: ^minter_id,
          blockchain_id: ^default_blockchain_id
