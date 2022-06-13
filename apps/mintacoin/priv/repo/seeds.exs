@@ -11,5 +11,6 @@
 # and so on) as they will fail if something goes wrong.
 
 alias Mintacoin.{Repo, Blockchain}
+alias Mintacoin.Blockchains.Network.Stellar
 
-Repo.insert!(%Blockchain{name: "Stellar"})
+Repo.insert!(%Blockchain{name: Stellar.name()})

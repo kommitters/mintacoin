@@ -8,13 +8,13 @@ defmodule Mintacoin.Assets.AssetsTest do
   import Mintacoin.Factory
 
   alias Mintacoin.{Repo, Asset, Assets, Minter, Account, Blockchain, Blockchains}
-  alias Mintacoin.Utils.DefaultResources
+  alias Blockchains.Network
   alias Ecto.Adapters.SQL.Sandbox
 
   setup do
     :ok = Sandbox.checkout(Repo)
     # Create default blockchain
-    {:ok, _blockchain} = Blockchains.create(%{name: "Stellar"})
+    {:ok, _blockchain} = Blockchains.create(%{name: Network.name()})
 
     %Minter{id: minter_id, email: email, name: name} = insert(:minter)
     %Account{address: address} = insert(:account, email: email, name: name)
@@ -71,7 +71,7 @@ defmodule Mintacoin.Assets.AssetsTest do
         } = asset_data,
       actual_asset_code: actual_asset_code
     } do
-      %Blockchain{id: default_blockchain_id} = DefaultResources.blockchain()
+      %Blockchain{id: default_blockchain_id} = Network.struct()
 
       {:ok,
        %Asset{

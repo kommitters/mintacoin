@@ -8,7 +8,7 @@ defmodule Mintacoin.Assets do
   alias Ecto.{NoResultsError, Changeset, UUID}
   alias Ecto.Query.CastError
   alias Mintacoin.{Repo, Asset, Blockchain, Minter, Account}
-  alias Mintacoin.Utils.DefaultResources
+  alias Mintacoin.Blockchains.Network
 
   @type id :: UUID.t()
   @type code :: String.t()
@@ -25,7 +25,7 @@ defmodule Mintacoin.Assets do
   end
 
   def create(changes) do
-    %Blockchain{id: blockchain_id} = DefaultResources.blockchain()
+    %Blockchain{id: blockchain_id} = Network.struct()
 
     changes
     |> Map.put(:blockchain_id, blockchain_id)
