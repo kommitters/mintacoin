@@ -5,11 +5,11 @@ defmodule MintacoinWeb.Plugs.Authenticate do
 
   @behaviour Plug
 
-  import Plug.Conn, only: [halt: 1, put_status: 2, get_req_header: 2]
+  import Plug.Conn, only: [halt: 1, put_status: 2, get_req_header: 2, assign: 3]
   import Phoenix.Controller, only: [put_view: 2, render: 2]
 
   alias MintacoinWeb.ErrorView
-  alias Mintacoin.Minters
+  alias Mintacoin.{Minter, Minters}
 
   @auth_header "authorization"
 
@@ -21,8 +21,8 @@ defmodule MintacoinWeb.Plugs.Authenticate do
   @impl true
   def call(conn, _default) do
     with ["Bearer " <> api_key] <- get_req_header(conn, @auth_header),
-         true <- Minters.is_authorized?(api_key) do
-      conn
+         {:ok, %Minter{} = minter} <- Minters.retrieve_authorized_by_api_key(api_key) do
+      assign(conn, :minter, minter)
     else
       _error -> unauthorized_response(conn)
     end
