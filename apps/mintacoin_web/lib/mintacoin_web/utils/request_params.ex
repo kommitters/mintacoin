@@ -8,7 +8,8 @@ defmodule MintacoinWeb.Utils.RequestParams do
   @type resource :: atom()
 
   @allowed_params [
-    accounts: ~w(email name)
+    accounts: ~w(email name),
+    assets: ~w(code supply blockchain)
   ]
 
   @spec fetch_allowed(params :: params(), resource :: resource()) :: params()
