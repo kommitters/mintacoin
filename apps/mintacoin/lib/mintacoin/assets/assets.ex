@@ -38,12 +38,24 @@ defmodule Mintacoin.Assets do
   @spec retrieve_by_code(code :: code()) :: {:ok, Asset.t()} | {:error, error()}
   def retrieve_by_code(code), do: retrieve_by(code: code)
 
+  @spec list_by_minter_id(minter_id :: id()) :: {:ok, list(Asset.t())} | {:error, error()}
+  def list_by_minter_id(minter_id), do: list_by(minter_id: minter_id)
+
   @spec retrieve_by(parameter :: parameter()) :: {:ok, Asset.t()} | {:error, error()}
   defp retrieve_by(parameter) when is_list(parameter) do
     {:ok, Repo.get_by!(Asset, parameter)}
   rescue
     CastError -> {:error, :not_found}
     NoResultsError -> {:error, :not_found}
+  end
+
+  @spec list_by(parameter :: parameter()) :: {:ok, list(Asset.t())} | {:error, error()}
+  defp list_by(parameter) when is_list(parameter) do
+    from(a in Asset, where: ^parameter)
+    |> Repo.all()
+    |> (&{:ok, &1}).()
+  rescue
+    _error -> {:error, :not_found}
   end
 
   @spec complete_code_with_address(changes :: changes()) :: changes()

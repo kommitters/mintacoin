@@ -160,4 +160,33 @@ defmodule Mintacoin.Assets.AssetsTest do
       {:error, :not_found} = Assets.retrieve_by_code(code)
     end
   end
+
+  describe "list_by_minter_id/1" do
+    setup %{asset: %{minter_id: minter_id} = asset_data} do
+      {:ok, asset1} = Assets.create(asset_data)
+      {:ok, asset2} = Assets.create(%{asset_data | code: "ASSET_CODE2"})
+
+      %{
+        assets: [asset1, asset2],
+        minter_id: minter_id,
+        non_existing_id: "8dd3eaa3-c073-46f6-8e20-72c7f7203146",
+        invalid_id: "invalid_id"
+      }
+    end
+
+    test "with valid data", %{
+      assets: assets,
+      minter_id: minter_id
+    } do
+      {:ok, ^assets} = Assets.list_by_minter_id(minter_id)
+    end
+
+    test "with invalid minter_id", %{invalid_id: minter_id} do
+      {:error, :not_found} = Assets.list_by_minter_id(minter_id)
+    end
+
+    test "with non existing minter_id", %{non_existing_id: minter_id} do
+      {:ok, []} = Assets.list_by_minter_id(minter_id)
+    end
+  end
 end
