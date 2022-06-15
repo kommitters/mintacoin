@@ -3,15 +3,17 @@ defmodule Mintacoin.Minters do
   This module is responsible for doing the CRD operations for Minters
   """
 
-  alias Mintacoin.Repo
-  alias Ecto.Changeset
-  alias Mintacoin.Minter
+  alias Ecto.{Changeset, NoResultsError, UUID}
+  alias Ecto.Query.CastError
+  alias Mintacoin.{Repo, Minter}
 
-  @type id :: String.t()
+  @type id :: UUID.t()
   @type api_key :: String.t()
   @type changes :: map()
+  @type parameter :: keyword()
   @type error :: Changeset.t() | :not_found
 
+  @active_status :active
   @deleted_status :deleted
 
   @spec create(changes :: changes()) :: {:ok, Minter.t()} | {:error, error()}
@@ -28,11 +30,21 @@ defmodule Mintacoin.Minters do
     |> persist_changes(%{status: @deleted_status})
   end
 
-  @spec is_authorized?(api_key :: api_key()) :: boolean()
-  def is_authorized?(api_key) do
-    Minter
-    |> Repo.get_by(api_key: api_key)
-    |> has_access?()
+  @spec retrieve(id :: id()) :: {:ok, Minter.t()} | {:error, error()}
+  def retrieve(id), do: retrieve_by(id: id)
+
+  @spec retrieve_authorized_by_api_key(api_key :: api_key()) ::
+          {:ok, Minter.t()} | {:error, error()}
+  def retrieve_authorized_by_api_key(api_key),
+    do: retrieve_by(api_key: api_key, status: @active_status)
+
+  @spec retrieve_by(parameter :: parameter()) ::
+          {:ok, Minter.t()} | {:error, error()}
+  def retrieve_by(parameter) when is_list(parameter) do
+    {:ok, Repo.get_by!(Minter, parameter)}
+  rescue
+    CastError -> {:error, :not_found}
+    NoResultsError -> {:error, :not_found}
   end
 
   @spec persist_changes(minter :: Minter.t(), changes :: changes()) ::
@@ -44,8 +56,4 @@ defmodule Mintacoin.Minters do
   end
 
   defp persist_changes(_minter, _changes), do: {:error, :not_found}
-
-  @spec has_access?(minter :: Minter.t()) :: boolean()
-  defp has_access?(%Minter{status: status}), do: status != @deleted_status
-  defp has_access?(_minter), do: false
 end

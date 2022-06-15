@@ -5,6 +5,8 @@ defmodule Mintacoin.Minters.MintersTest do
 
   use Mintacoin.DataCase, async: false
 
+  import Mintacoin.Factory
+
   alias Mintacoin.{Minter, Minters}
   alias Ecto.Adapters.SQL.Sandbox
 
@@ -48,13 +50,7 @@ defmodule Mintacoin.Minters.MintersTest do
 
   describe "delete/1" do
     setup do
-      {:ok, %Minter{id: id}} =
-        Minters.create(%{
-          email: "test3@mail.com",
-          name: "Test Minter 3",
-          api_key: "i4b0OpB00oHVZERCdOEKf+3/Oz2zeBxNKvzdzYc/wgc"
-        })
-
+      %Minter{id: id} = insert(:minter)
       %{id: id}
     end
 
@@ -67,24 +63,47 @@ defmodule Mintacoin.Minters.MintersTest do
     end
   end
 
-  describe "is_authorized?/1" do
+  describe "retrieve/1" do
     setup do
-      {:ok, %Minter{api_key: api_key}} =
-        Minters.create(%{
-          email: "test4@mail.com",
-          name: "Test Minter 4",
-          api_key: "J6CwjuzoR3I2hGzXFFUz7mtp/insEoadWQ80nDUOkCw"
-        })
+      %Minter{id: id} = insert(:minter)
+      %{id: id}
+    end
 
+    test "with valid id, return minter", %{id: id} do
+      {:ok, %Minter{id: ^id}} = Minters.retrieve(id)
+    end
+
+    test "with not valid id, return not found error" do
+      {:error, :not_found} = Minters.retrieve("32c2a7a2-ebb9-4b28-a199-cd34234b2d58")
+    end
+  end
+
+  describe "retrieve_authorized_by_api_key/1" do
+    setup do
+      %Minter{api_key: api_key} = insert(:minter)
       %{api_key: api_key}
     end
 
-    test "return true with an authorized key", %{api_key: api_key} do
-      true = Minters.is_authorized?(api_key)
+    test "returns minter with an authorized key", %{api_key: api_key} do
+      {:ok, %Minter{api_key: ^api_key}} = Minters.retrieve_authorized_by_api_key(api_key)
     end
 
-    test "rerturn false with an invalid key" do
-      false = Minters.is_authorized?("INVALID")
+    test "returns not found error with an invalid key" do
+      {:error, :not_found} = Minters.retrieve_authorized_by_api_key("INVALID")
+    end
+  end
+
+  describe "retrieve_by/1" do
+    setup do
+      %{minter: insert(:minter)}
+    end
+
+    test "with valid params, return minter", %{minter: %Minter{email: email}} do
+      {:ok, %Minter{email: ^email}} = Minters.retrieve_by(email: email)
+    end
+
+    test "with not valid params, return not found error" do
+      {:error, :not_found} = Minters.retrieve_by(email: "invalid@example.com")
     end
   end
 end
