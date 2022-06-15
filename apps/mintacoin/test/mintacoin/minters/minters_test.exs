@@ -5,7 +5,7 @@ defmodule Mintacoin.Minters.MintersTest do
 
   use Mintacoin.DataCase, async: false
 
-  import Mintacoin.Factory
+  import Mintacoin.Factory, only: [insert: 1]
 
   alias Mintacoin.{Minter, Minters}
   alias Ecto.Adapters.SQL.Sandbox
@@ -104,6 +104,10 @@ defmodule Mintacoin.Minters.MintersTest do
 
     test "with not valid params, return not found error" do
       {:error, :not_found} = Minters.retrieve_by(email: "invalid@example.com")
+    end
+
+    test "with bad argument" do
+      {:error, :bad_argument} = Minters.retrieve_by("invalid")
     end
   end
 end

@@ -11,7 +11,7 @@ defmodule Mintacoin.Minters do
   @type api_key :: String.t()
   @type changes :: map()
   @type parameter :: keyword()
-  @type error :: Changeset.t() | :not_found
+  @type error :: Changeset.t() | :not_found | :bad_argument
 
   @active_status :active
   @deleted_status :deleted
@@ -46,6 +46,8 @@ defmodule Mintacoin.Minters do
     CastError -> {:error, :not_found}
     NoResultsError -> {:error, :not_found}
   end
+
+  def retrieve_by(_parameter), do: {:error, :bad_argument}
 
   @spec persist_changes(minter :: Minter.t(), changes :: changes()) ::
           {:ok, Minter.t()} | {:error, error()}
