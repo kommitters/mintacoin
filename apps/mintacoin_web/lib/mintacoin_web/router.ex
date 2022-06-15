@@ -12,7 +12,7 @@ defmodule MintacoinWeb.Router do
   scope "/v1/", MintacoinWeb do
     pipe_through [:api, :authenticated]
 
-    resources "/accounts", AccountsController, param: "address", only: ~w(create show update delete)a
+    resources "/accounts", AccountsController, param: "address", except: [:index]
     post "/accounts/:address/recover", AccountsController, :recover
 
     resources "/assets", AssetsController, param: "code", only: ~w(index create show)a

@@ -2,6 +2,7 @@ defmodule MintacoinWeb.AssetsView do
   use MintacoinWeb, :view
   alias MintacoinWeb.AssetsView
 
+  @spec render(template :: String.t(), assigns :: map()) :: map()
   def render("index.json", %{assets: assets}) do
     render_many(assets, AssetsView, "asset.json", as: :asset)
   end
