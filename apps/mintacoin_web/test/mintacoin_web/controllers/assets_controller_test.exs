@@ -61,6 +61,53 @@ defmodule MintacoinWeb.AssetsControllerTest do
       } = json_response(conn, 201)
     end
 
+    test "returns asset when blockchain is not specified (use default one)", %{
+      conn: conn,
+      attrs:
+        %{
+          "supply" => supply
+        } = attrs,
+      minter_id: minter_id,
+      blockchain_id: blockchain_id,
+      actual_asset_code: actual_asset_code
+    } do
+      # Remove blockchain from attrs
+      attrs = Map.delete(attrs, :blockchain)
+
+      conn = post(conn, Routes.assets_path(conn, :create), attrs)
+
+      %{
+        "resource" => "asset",
+        "code" => ^actual_asset_code,
+        "supply" => ^supply,
+        "minter_id" => ^minter_id,
+        "blockchain_id" => ^blockchain_id
+      } = json_response(conn, 201)
+    end
+
+    test "returns asset when blockchain is not on db (use default one)", %{
+      conn: conn,
+      attrs:
+        %{
+          "supply" => supply
+        } = attrs,
+      minter_id: minter_id,
+      blockchain_id: blockchain_id,
+      actual_asset_code: actual_asset_code
+    } do
+      attrs = Map.put(attrs, :blockchain, "strange_blockchain")
+
+      conn = post(conn, Routes.assets_path(conn, :create), attrs)
+
+      %{
+        "resource" => "asset",
+        "code" => ^actual_asset_code,
+        "supply" => ^supply,
+        "minter_id" => ^minter_id,
+        "blockchain_id" => ^blockchain_id
+      } = json_response(conn, 201)
+    end
+
     test "returns errors when data is invalid", %{conn: conn} do
       conn = post(conn, Routes.assets_path(conn, :create), %{})
 
