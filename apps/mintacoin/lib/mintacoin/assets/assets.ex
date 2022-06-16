@@ -14,7 +14,7 @@ defmodule Mintacoin.Assets do
   @type code :: String.t()
   @type changes :: map()
   @type parameter :: keyword()
-  @type error :: Changeset.t() | :not_found
+  @type error :: Changeset.t() | :not_found | :bad_argument
 
   @spec create(changes :: changes()) :: {:ok, Asset.t()} | {:error, error()}
   def create(%{blockchain_id: _blockchain_id} = changes) do
@@ -55,7 +55,7 @@ defmodule Mintacoin.Assets do
     |> Repo.all()
     |> (&{:ok, &1}).()
   rescue
-    _error -> {:error, :not_found}
+    _error -> {:error, :bad_argument}
   end
 
   @spec complete_code_with_address(changes :: changes()) :: changes()
