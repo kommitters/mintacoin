@@ -16,12 +16,7 @@ defmodule MintacoinWeb.AssetsController do
   @spec index(conn :: conn(), params :: params()) :: conn() | {:error, error()}
   def index(conn, _params) do
     minter_id = conn.assigns[:minter].id
-
-    assets =
-      case Assets.list_by_minter_id(minter_id) do
-        {:ok, assets} -> assets
-        {:error, _error} -> []
-      end
+    {:ok, assets} = Assets.list_by_minter_id(minter_id)
 
     conn
     |> put_status(:ok)
