@@ -182,7 +182,7 @@ defmodule Mintacoin.Assets.AssetsTest do
     end
 
     test "with invalid minter_id", %{invalid_id: minter_id} do
-      {:error, :not_found} = Assets.list_by_minter_id(minter_id)
+      {:error, :bad_argument} = Assets.list_by_minter_id(minter_id)
     end
 
     test "with non existing minter_id", %{non_existing_id: minter_id} do
