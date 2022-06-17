@@ -10,6 +10,7 @@ defmodule Mintacoin.Account do
 
   alias Ecto.Changeset
   alias Ecto.UUID
+  alias Mintacoin.Wallet
 
   @type status :: :active | :archived
 
@@ -38,6 +39,7 @@ defmodule Mintacoin.Account do
 
     field(:signature, :string, virtual: true)
     field(:seed_words, :string, virtual: true)
+    has_many(:wallets, Wallet)
 
     timestamps()
   end

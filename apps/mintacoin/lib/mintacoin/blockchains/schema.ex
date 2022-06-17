@@ -8,12 +8,14 @@ defmodule Mintacoin.Blockchain do
   import Ecto.Changeset
 
   alias Ecto.Changeset
+  alias Mintacoin.Wallet
 
   @type t :: %__MODULE__{name: String.t()}
 
   @primary_key {:id, :binary_id, autogenerate: true}
   schema "blockchains" do
     field(:name, :string)
+    has_many(:wallets, Wallet)
 
     timestamps()
   end
