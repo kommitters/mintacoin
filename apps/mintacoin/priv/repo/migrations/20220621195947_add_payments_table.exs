@@ -4,10 +4,9 @@ defmodule Mintacoin.Repo.Migrations.AddPaymentsTable do
   def change do
     create table(:payments, primary_key: false) do
       add(:id, :uuid, primary_key: true)
-      add(:source_id, references(:accounts, type: :uuid), null: false)
-      add(:destination_id, references(:accounts, type: :uuid), null: false)
-      add(:blockchain_id, references(:blockchains, type: :uuid), null: false)
-      add(:asset_id, references(:assets, type: :uuid), null: false)
+      add(:source, references(:accounts, column: :address, type: :uuid), null: false)
+      add(:destination, references(:accounts, column: :address, type: :uuid), null: false)
+      add(:asset_code, references(:assets, column: :code,  type: :string), null: false)
       add(:amount, :string, null: false)
       add(:status, :string, null: false)
 
