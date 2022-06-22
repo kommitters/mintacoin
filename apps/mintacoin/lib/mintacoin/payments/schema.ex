@@ -45,9 +45,9 @@ defmodule Mintacoin.Payment do
     timestamps()
   end
 
-  @spec changeset(asset :: %__MODULE__{}, changes :: map()) :: Changeset.t()
-  def changeset(asset, changes) do
-    asset
+  @spec create_changeset(payment :: %__MODULE__{}, changes :: map()) :: Changeset.t()
+  def create_changeset(payment, changes) do
+    payment
     |> cast(changes, [:source, :destination, :asset_code, :amount, :status])
     |> validate_required([
       :source,
@@ -59,5 +59,12 @@ defmodule Mintacoin.Payment do
     |> foreign_key_constraint(:destination)
     |> foreign_key_constraint(:asset_code)
     |> validate_format(:amount, ~r/^\d+(\.\d+)?$/, message: "must have a decimal number format")
+  end
+
+  @spec changeset(payment :: t(), changes :: map()) :: Changeset.t()
+  def changeset(payment, changes) do
+    payment
+    |> cast(changes, [:status])
+    |> validate_required([:status])
   end
 end
