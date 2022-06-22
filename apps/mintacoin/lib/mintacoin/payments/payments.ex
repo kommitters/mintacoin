@@ -3,14 +3,11 @@ defmodule Mintacoin.Payments do
   This module is responsible for doing the CRUD operations for Payments
   """
 
-  alias Ecto.{NoResultsError, Changeset, UUID}
-  alias Ecto.Query.CastError
+  alias Ecto.{Query.CastError, NoResultsError, Changeset, UUID}
   alias Mintacoin.{Repo, Payment}
 
   @type id :: UUID.t()
-  @type code :: String.t()
   @type changes :: map()
-  @type parameter :: keyword()
   @type error :: Changeset.t() | :not_found
 
   @spec create(changes :: changes()) :: {:ok, Payment.t()} | {:error, error()}
