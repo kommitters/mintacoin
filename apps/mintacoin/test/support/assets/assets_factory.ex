@@ -3,7 +3,7 @@ defmodule Mintacoin.AssetFactory do
   Allow the creation of assets while testing.
   """
 
-  alias Mintacoin.{Asset, Account, Blockchain, Minter}
+  alias Mintacoin.{Asset, Blockchain, Minter}
   alias Ecto.UUID
 
   defmacro __using__(_opts) do
@@ -15,21 +15,16 @@ defmodule Mintacoin.AssetFactory do
         %Minter{id: minter_id, email: email, name: name} =
           Map.get(attrs, :minter, insert(:minter))
 
-        %Account{address: address} =
-          Map.get(attrs, :account, insert(:account, email: email, name: name))
-
-        code = Map.get(attrs, :code, "MTK:#{address}")
+        code = Map.get(attrs, :code, "MTK:#{minter_id}")
         supply = Map.get(attrs, :supply, "10000")
 
-        %Asset{
+        evaluate_lazy_attributes(%Asset{
           id: UUID.generate(),
           blockchain_id: blockchain_id,
           minter_id: minter_id,
           code: code,
           supply: supply
-        }
-        |> merge_attributes(attrs)
-        |> evaluate_lazy_attributes()
+        })
       end
     end
   end

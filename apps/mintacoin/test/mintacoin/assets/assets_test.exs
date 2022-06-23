@@ -27,7 +27,9 @@ defmodule Mintacoin.Assets.AssetsTest do
         supply: "100",
         minter_id: minter_id
       },
-      actual_asset_code: "#{code}:#{address}"
+      actual_asset_code: "#{code}:#{address}",
+      non_existing_id: "8dd3eaa3-c073-46f6-8e20-72c7f7203146",
+      invalid_id: "invalid_id"
     }
   end
 
@@ -35,8 +37,7 @@ defmodule Mintacoin.Assets.AssetsTest do
     setup do
       %{
         blockchain_name: "BLOCKCHAIN_NAME",
-        invalid_supply: "invalid_supply",
-        non_existing_id: "8dd3eaa3-c073-46f6-8e20-72c7f7203146"
+        invalid_supply: "invalid_supply"
       }
     end
 
@@ -118,14 +119,8 @@ defmodule Mintacoin.Assets.AssetsTest do
   end
 
   describe "retrieve/1" do
-    setup %{asset: asset_data} do
-      {:ok, asset} = Assets.create(asset_data)
-
-      %{
-        asset: asset,
-        non_existing_id: "8dd3eaa3-c073-46f6-8e20-72c7f7203146",
-        invalid_id: "invalid_id"
-      }
+    setup do
+      %{asset: insert(:asset)}
     end
 
     test "with valid id", %{
@@ -144,9 +139,8 @@ defmodule Mintacoin.Assets.AssetsTest do
   end
 
   describe "retrieve_by_code/1" do
-    setup %{asset: asset_data} do
-      {:ok, asset} = Assets.create(asset_data)
-      %{asset: asset, non_existing_code: "non_existing_code"}
+    setup do
+      %{asset: insert(:asset), non_existing_code: "non_existing_code"}
     end
 
     test "with valid code", %{
@@ -162,21 +156,21 @@ defmodule Mintacoin.Assets.AssetsTest do
   end
 
   describe "list_by_minter_id/1" do
-    setup %{asset: %{minter_id: minter_id} = asset_data} do
-      {:ok, asset1} = Assets.create(asset_data)
-      {:ok, asset2} = Assets.create(%{asset_data | code: "ASSET_CODE2"})
+    setup do
+      %Minter{} = minter = insert(:minter)
 
       %{
-        assets: [asset1, asset2],
-        minter_id: minter_id,
-        non_existing_id: "8dd3eaa3-c073-46f6-8e20-72c7f7203146",
-        invalid_id: "invalid_id"
+        assets: [
+          insert(:asset, minter: minter),
+          insert(:asset, minter: minter, code: "ASSET_CODE2")
+        ],
+        minter: minter
       }
     end
 
     test "with valid data", %{
       assets: assets,
-      minter_id: minter_id
+      minter: %{id: minter_id}
     } do
       {:ok, ^assets} = Assets.list_by_minter_id(minter_id)
     end
