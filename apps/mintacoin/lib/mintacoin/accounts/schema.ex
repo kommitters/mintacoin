@@ -44,7 +44,7 @@ defmodule Mintacoin.Account do
     timestamps()
   end
 
-  @spec changeset(account :: Account.t(), changes :: map()) :: Changeset.t()
+  @spec changeset(account :: t(), changes :: map()) :: Changeset.t()
   def changeset(account, changes) do
     account
     |> cast(changes, [
