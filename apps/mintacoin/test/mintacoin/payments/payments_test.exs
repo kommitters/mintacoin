@@ -18,7 +18,7 @@ defmodule Mintacoin.Payments.PaymentsTest do
     %Account{address: destination} = insert(:account)
 
     # Create asset
-    %Asset{code: asset_code} = insert(:asset)
+    %Asset{code: asset_code} = asset = insert(:asset)
 
     %{
       payment: %{
@@ -27,6 +27,7 @@ defmodule Mintacoin.Payments.PaymentsTest do
         asset_code: asset_code,
         amount: "10.0"
       },
+      asset: asset,
       non_existing_id: "8dd3eaa3-c073-46f6-8e20-72c7f7203146",
       invalid_id: "invalid_id",
       non_existing_asset_code: "MTK:123",
@@ -92,15 +93,27 @@ defmodule Mintacoin.Payments.PaymentsTest do
   end
 
   describe "retrieve/1" do
-    setup %{payment: payment_data} do
-      {:ok, %Payment{} = payment} = Payments.create(payment_data)
-      %{payment: payment}
+    setup %{asset: asset} do
+      %{payment: insert(:payment, asset: asset)}
     end
 
     test "with existing id", %{
-      payment: %Payment{id: id} = payment
+      payment: %Payment{
+        id: id,
+        source: source,
+        destination: destination,
+        asset_code: asset_code,
+        amount: amount
+      }
     } do
-      {:ok, ^payment} = Payments.retrieve(id)
+      {:ok,
+       %{
+         id: ^id,
+         source: ^source,
+         destination: ^destination,
+         amount: ^amount,
+         asset_code: ^asset_code
+       }} = Payments.retrieve(id)
     end
 
     test "with non existing id", %{non_existing_id: id} do
