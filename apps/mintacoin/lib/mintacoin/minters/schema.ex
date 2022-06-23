@@ -36,7 +36,7 @@ defmodule Mintacoin.Minter do
     timestamps()
   end
 
-  @spec changeset(minter :: Minter.t(), changes :: map()) :: Changeset.t()
+  @spec changeset(minter :: t(), changes :: map()) :: Changeset.t()
   def changeset(minter, changes) do
     minter
     |> cast(changes, [
@@ -49,7 +49,7 @@ defmodule Mintacoin.Minter do
     |> unique_constraint([:api_key])
   end
 
-  @spec create_changeset(minter :: Minter.t(), changes :: map()) :: Changeset.t()
+  @spec create_changeset(minter :: %__MODULE__{}, changes :: map()) :: Changeset.t()
   def create_changeset(minter, changes) do
     minter
     |> cast(changes, [
