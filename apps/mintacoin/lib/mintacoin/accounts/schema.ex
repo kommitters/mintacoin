@@ -56,7 +56,7 @@ defmodule Mintacoin.Account do
     |> validate_required([:name])
   end
 
-  @spec create_changeset(account :: Account.t(), changes :: map()) :: Changeset.t()
+  @spec create_changeset(account :: %__MODULE__{}, changes :: map()) :: Changeset.t()
   def create_changeset(account, changes) do
     account
     |> cast(changes, [
