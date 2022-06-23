@@ -14,13 +14,14 @@ defmodule Mintacoin.PaymentFactory do
         %Account{address: destination_address} = Map.get(attrs, :destination, insert(:account))
         %Asset{code: code} = Map.get(attrs, :asset, insert(:asset))
         status = Map.get(attrs, :status, :emitted)
+        amount = Map.get(attrs, :amount, "10000")
 
         %Payment{
           id: UUID.generate(),
           source: source_address,
           destination: destination_address,
           asset_code: code,
-          amount: "10000",
+          amount: amount,
           status: status
         }
         |> merge_attributes(attrs)
