@@ -14,7 +14,7 @@ defmodule Mintacoin.Assets.AssetsTest do
   setup do
     :ok = Sandbox.checkout(Repo)
     # Create default blockchain
-    {:ok, _blockchain} = Blockchains.create(%{name: Network.name()})
+    insert(:blockchain, name: Network.name())
 
     %Minter{id: minter_id, email: email, name: name} = insert(:minter)
     %Account{address: address} = insert(:account, email: email, name: name)
@@ -49,7 +49,7 @@ defmodule Mintacoin.Assets.AssetsTest do
       actual_asset_code: actual_asset_code,
       blockchain_name: blockchain_name
     } do
-      {:ok, %Blockchain{id: blockchain_id}} = Blockchains.create(%{name: blockchain_name})
+      %Blockchain{id: blockchain_id} = insert(:blockchain, name: blockchain_name)
 
       {:ok,
        %Asset{
