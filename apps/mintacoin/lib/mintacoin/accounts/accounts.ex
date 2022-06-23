@@ -3,11 +3,10 @@ defmodule Mintacoin.Accounts do
   This module is responsible for doing the CRUD operations for Accounts
   """
 
-  alias Ecto.{Changeset, NoResultsError}
-  alias Ecto.Query.CastError
+  alias Ecto.{Changeset, NoResultsError, Query.CastError, UUID}
   alias Mintacoin.{Repo, Account, Mnemonic, Encryption, Keypair}
 
-  @type address :: String.t()
+  @type address :: UUID.t()
   @type seed_words :: String.t()
   @type signature :: String.t()
   @type changes :: map()
