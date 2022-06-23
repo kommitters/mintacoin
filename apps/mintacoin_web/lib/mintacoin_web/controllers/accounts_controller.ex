@@ -65,10 +65,10 @@ defmodule MintacoinWeb.AccountsController do
   defp handle_response({:error, %Changeset{} = changeset}, _conn, _status, _template),
     do: {:error, changeset}
 
-  defp handle_response({:ok, resource}, conn, :created, template) do
+  defp handle_response({:ok, %Account{address: address} = resource}, conn, :created, template) do
     conn
     |> put_status(:created)
-    |> put_resp_header("location", Routes.accounts_path(conn, :show, resource))
+    |> put_resp_header("location", Routes.accounts_path(conn, :show, address))
     |> render(template, resource: resource)
   end
 
