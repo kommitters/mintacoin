@@ -16,6 +16,7 @@ defmodule MintacoinWeb.Router do
     post "/accounts/:address/recover", AccountsController, :recover
 
     resources "/assets", AssetsController, param: "code", only: ~w(index create show)a
+    resources "/payments", PaymentsController, param: "id", only: ~w(create show)a
   end
 
   # Enables LiveDashboard only for development

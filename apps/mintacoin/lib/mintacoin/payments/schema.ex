@@ -21,6 +21,8 @@ defmodule Mintacoin.Payment do
           status: status()
         }
 
+  @uuid_regex ~r/^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/
+
   defenum(Status, :status, [:emitted, :processed])
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -55,6 +57,8 @@ defmodule Mintacoin.Payment do
       :asset_code,
       :amount
     ])
+    |> validate_format(:source, @uuid_regex, message: "source must be an uuid")
+    |> validate_format(:destination, @uuid_regex, message: "destination must be an uuid")
     |> foreign_key_constraint(:source)
     |> foreign_key_constraint(:destination)
     |> foreign_key_constraint(:asset_code)
