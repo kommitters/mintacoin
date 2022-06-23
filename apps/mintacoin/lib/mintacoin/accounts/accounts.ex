@@ -68,7 +68,7 @@ defmodule Mintacoin.Accounts do
     end
   end
 
-  @spec persist_changes({:ok, account :: Account.t()}, changes :: changes()) ::
+  @spec persist_changes({:ok, Account.t()} | {:error, error()}, changes :: changes()) ::
           {:ok, Account.t()} | {:error, error()}
   defp persist_changes({:ok, %Account{} = account}, changes) do
     account
