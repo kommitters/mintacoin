@@ -5,10 +5,8 @@ defmodule Mintacoin.Assets do
 
   import Ecto.Query
 
-  alias Ecto.{NoResultsError, Changeset, UUID}
-  alias Ecto.Query.CastError
-  alias Mintacoin.{Repo, Asset, Blockchain, Minter, Account}
-  alias Mintacoin.Blockchains.Network
+  alias Ecto.{NoResultsError, Changeset, UUID, Query.CastError}
+  alias Mintacoin.{Repo, Asset, Blockchain, Blockchains.Network, Minter, Account}
 
   @type id :: UUID.t()
   @type code :: String.t()

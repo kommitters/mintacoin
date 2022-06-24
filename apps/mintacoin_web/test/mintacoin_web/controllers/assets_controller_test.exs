@@ -4,8 +4,7 @@ defmodule MintacoinWeb.AssetsControllerTest do
   import Mintacoin.Factory, only: [insert: 1, insert: 2]
 
   alias Ecto.Adapters.SQL.Sandbox
-  alias Mintacoin.{Repo, Blockchains, Blockchain, Minter, Account}
-  alias Blockchains.Network
+  alias Mintacoin.{Repo, Blockchains, Blockchain, Blockchains.Network, Minter, Account}
 
   @auth_header "authorization"
 

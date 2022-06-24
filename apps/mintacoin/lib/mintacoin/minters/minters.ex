@@ -3,8 +3,7 @@ defmodule Mintacoin.Minters do
   This module is responsible for doing the CRD operations for Minters
   """
 
-  alias Ecto.{Changeset, NoResultsError, UUID}
-  alias Ecto.Query.CastError
+  alias Ecto.{Changeset, NoResultsError, UUID, Query.CastError}
   alias Mintacoin.{Repo, Minter}
 
   @type id :: UUID.t()

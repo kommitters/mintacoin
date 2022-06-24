@@ -3,8 +3,7 @@ defmodule Mintacoin.Blockchains do
   This module is responsible for doing the CRUD operations for Blockchains
   """
 
-  alias Ecto.{NoResultsError, Changeset, UUID}
-  alias Ecto.Query.CastError
+  alias Ecto.{NoResultsError, Changeset, UUID, Query.CastError}
   alias Mintacoin.{Repo, Blockchain}
 
   @type id :: UUID.t()
