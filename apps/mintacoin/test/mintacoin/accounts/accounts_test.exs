@@ -10,6 +10,9 @@ defmodule Mintacoin.Accounts.AccountsTest do
   alias Mintacoin.{Account, Accounts}
   alias Ecto.Adapters.SQL.Sandbox
 
+  @active_status :active
+  @archived_status :archived
+
   setup do
     :ok = Sandbox.checkout(Mintacoin.Repo)
 
@@ -50,7 +53,7 @@ defmodule Mintacoin.Accounts.AccountsTest do
       assert is_binary(encrypted_signature)
       assert is_binary(signature)
       assert is_binary(seed_words)
-      :active = status
+      @active_status = status
     end
 
     test "with invalid params" do
@@ -73,8 +76,8 @@ defmodule Mintacoin.Accounts.AccountsTest do
     end
 
     test "with archived account" do
-      %Account{address: address} = insert(:account)
-      {:ok, %Account{address: ^address, status: :archived}} = Accounts.delete(address)
+      %Account{address: address, status: @archived_status} =
+        insert(:account, status: @archived_status)
 
       {:error, :not_found} = Accounts.retrieve(address)
     end
@@ -105,23 +108,33 @@ defmodule Mintacoin.Accounts.AccountsTest do
 
   describe "update/1" do
     setup do
-      %{account: insert(:account)}
+      %{
+        account: insert(:account),
+        valid_attrs: %{name: "Another name"},
+        invalid_attrs: %{name: "", email: ""}
+      }
     end
 
-    test "with valid params", %{account: %Account{id: id, address: address}} do
-      {:ok, %Account{id: ^id, address: ^address, name: "Another name"}} =
-        Accounts.update(address, %{name: "Another name"})
+    test "with valid params", %{
+      account: %Account{id: id, address: address},
+      valid_attrs: %{name: name} = valid_attrs
+    } do
+      {:ok, %Account{id: ^id, address: ^address, name: ^name}} =
+        Accounts.update(address, valid_attrs)
     end
 
-    test "with blank required fields", %{account: %Account{address: address}} do
-      {:error, changeset} = Accounts.update(address, %{name: "", email: ""})
+    test "with blank required fields", %{
+      account: %Account{address: address},
+      invalid_attrs: invalid_attrs
+    } do
+      {:error, changeset} = Accounts.update(address, invalid_attrs)
       %{email: ["can't be blank"], name: ["can't be blank"]} = errors_on(changeset)
     end
 
     test "with existing email", %{account: %Account{address: address}} do
-      insert(:account, email: "account0@mail.com", name: "Account 0")
+      %Account{email: email} = insert(:account)
 
-      {:error, changeset} = Accounts.update(address, %{email: "account0@mail.com"})
+      {:error, changeset} = Accounts.update(address, %{email: email})
       %{email: ["has already been taken"]} = errors_on(changeset)
     end
 
@@ -136,8 +149,8 @@ defmodule Mintacoin.Accounts.AccountsTest do
 
   describe "delete/1" do
     test "with valid address" do
-      %Account{address: address, status: :active} = insert(:account)
-      {:ok, %Account{address: ^address, status: :archived}} = Accounts.delete(address)
+      %Account{address: address, status: @active_status} = insert(:account)
+      {:ok, %Account{address: ^address, status: @archived_status}} = Accounts.delete(address)
     end
 
     test "with non existing id and address", %{

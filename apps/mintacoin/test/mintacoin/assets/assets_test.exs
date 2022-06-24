@@ -162,7 +162,7 @@ defmodule Mintacoin.Assets.AssetsTest do
       %{
         assets: [
           insert(:asset, minter: minter),
-          insert(:asset, minter: minter, code: "ASSET_CODE2")
+          insert(:asset, minter: minter)
         ],
         minter: minter
       }

@@ -15,7 +15,7 @@ defmodule Mintacoin.AssetFactory do
         %Minter{id: minter_id, email: email, name: name} =
           Map.get(attrs, :minter, insert(:minter))
 
-        code = Map.get(attrs, :code, "MTK:#{minter_id}")
+        code = Map.get(attrs, :code, sequence(:code, &"MTK#{&1}:#{minter_id}"))
         supply = Map.get(attrs, :supply, "10000")
 
         evaluate_lazy_attributes(%Asset{
