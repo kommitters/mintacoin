@@ -149,6 +149,12 @@ defmodule MintacoinWeb.PaymentsControllerTest do
 
       %{"errors" => %{"detail" => "Not Found"}} = json_response(conn, 404)
     end
+
+    test "returns errors when given id is invalid", %{conn: conn} do
+      conn = get(conn, Routes.payments_path(conn, :show, "invalid"))
+
+      %{"errors" => %{"detail" => "Not Found"}} = json_response(conn, 404)
+    end
   end
 
   defp payment_params(_conn) do

@@ -36,6 +36,13 @@ defmodule MintacoinWeb.PaymentsController do
         ) :: conn() | {:error, error()}
   defp handle_response({:error, error}, _conn, _status, _template), do: {:error, error}
 
+  defp handle_response({:ok, %Payment{id: id} = payment}, conn, :created, template) do
+    conn
+    |> put_status(:created)
+    |> put_resp_header("location", Routes.payments_path(conn, :show, id))
+    |> render(template, payment: payment)
+  end
+
   defp handle_response({:ok, payment}, conn, status, template) do
     conn
     |> put_status(status)
