@@ -41,19 +41,28 @@ defmodule MintacoinWeb.PaymentsControllerTest do
       } = json_response(conn, 201)
     end
 
-    test "returns errors when data is invalid", %{
-      conn: conn
+    test "returns errors when data is invalid except for the source and signature", %{
+      conn: conn,
+      creation_params: %{source: source, signature: signature}
     } do
-      conn = post(conn, Routes.payments_path(conn, :create), %{})
+      conn =
+        post(conn, Routes.payments_path(conn, :create), %{source: source, signature: signature})
 
       %{
         "errors" => %{
-          "source" => ["can't be blank"],
           "destination" => ["can't be blank"],
           "asset_code" => ["can't be blank"],
           "amount" => ["can't be blank"]
         }
       } = json_response(conn, 422)
+    end
+
+    test "returns errors when data is invalide", %{
+      conn: conn
+    } do
+      conn = post(conn, Routes.payments_path(conn, :create), %{})
+
+      %{"errors" => %{"detail" => "Bad Request"}} = json_response(conn, 400)
     end
 
     test "returns errors when the source doesn't exist", %{
@@ -66,7 +75,7 @@ defmodule MintacoinWeb.PaymentsControllerTest do
           | source: UUID.generate()
         })
 
-      %{"errors" => %{"source" => ["does not exist"]}} = json_response(conn, 422)
+      %{"errors" => %{"detail" => "Bad Request"}} = json_response(conn, 400)
     end
 
     test "returns errors when the destination doesn't exist", %{
@@ -82,7 +91,7 @@ defmodule MintacoinWeb.PaymentsControllerTest do
       %{"errors" => %{"destination" => ["does not exist"]}} = json_response(conn, 422)
     end
 
-    test "returns errors when the source is not valid", %{
+    test "returns errors when the source is invalid", %{
       conn: conn,
       creation_params: creation_params
     } do
@@ -92,7 +101,7 @@ defmodule MintacoinWeb.PaymentsControllerTest do
           | source: "invalid-id"
         })
 
-      %{"errors" => %{"source" => ["source must be an uuid"]}} = json_response(conn, 422)
+      %{"errors" => %{"detail" => "Bad Request"}} = json_response(conn, 400)
     end
 
     test "returns errors when the destination is invalid", %{
@@ -158,7 +167,12 @@ defmodule MintacoinWeb.PaymentsControllerTest do
   end
 
   defp payment_params(_conn) do
-    %Account{address: source} = insert(:account)
+    %Account{address: source, signature: source_signature} =
+      insert(:account,
+        signature: "0Qmk3ZinGhZLuIMJC2j/WNN+scV3MMLxkI5ALlAVun8",
+        derived_key: "30MGLHU1OGC23O06RFSHSA5325O49V05UEFA81FMN8JHV0AUVKG0"
+      )
+
     %Account{address: destination} = insert(:account)
 
     %Asset{code: asset_code} = insert(:asset)
@@ -167,7 +181,8 @@ defmodule MintacoinWeb.PaymentsControllerTest do
       source: source,
       destination: destination,
       asset_code: asset_code,
-      amount: "10.0"
+      amount: "10.0",
+      signature: source_signature
     }
 
     %{creation_params: creation_params}
