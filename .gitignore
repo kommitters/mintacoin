@@ -17,3 +17,5 @@ apps/*/cover/
 .deliver/releases/
 .vscode
 config/dev.exs
+/priv/plts/*.plt
+/priv/plts/*.plt.hash
