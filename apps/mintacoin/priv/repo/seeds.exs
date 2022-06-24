@@ -10,7 +10,6 @@
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
 
-alias Mintacoin.{Repo, Blockchain}
-alias Mintacoin.Blockchains.Network.Stellar
+alias Mintacoin.{Repo, Blockchain, Blockchains.Network.Stellar}
 
 Repo.insert!(%Blockchain{name: Stellar.name()})

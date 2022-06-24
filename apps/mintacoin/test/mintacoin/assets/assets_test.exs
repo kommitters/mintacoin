@@ -7,8 +7,17 @@ defmodule Mintacoin.Assets.AssetsTest do
 
   import Mintacoin.Factory
 
-  alias Mintacoin.{Repo, Asset, Assets, Minter, Account, Blockchain, Blockchains}
-  alias Blockchains.Network
+  alias Mintacoin.{
+    Repo,
+    Asset,
+    Assets,
+    Minter,
+    Account,
+    Blockchain,
+    Blockchains,
+    Blockchains.Network
+  }
+
   alias Ecto.Adapters.SQL.Sandbox
 
   setup do
