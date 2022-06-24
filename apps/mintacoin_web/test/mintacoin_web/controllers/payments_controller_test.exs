@@ -125,7 +125,7 @@ defmodule MintacoinWeb.PaymentsControllerTest do
       conn =
         post(conn, Routes.payments_path(conn, :create), %{
           creation_params
-          | asset_code: "bad_code"
+          | asset_code: "MTK:123"
         })
 
       %{"errors" => %{"asset_code" => ["does not exist"]}} = json_response(conn, 422)
