@@ -146,6 +146,7 @@ defmodule MintacoinWeb.PaymentsControllerTest do
 
       %{
         "resource" => "payment",
+        "id" => ^payment_id,
         "source" => ^source,
         "destination" => ^destination,
         "asset_code" => ^asset_code,
