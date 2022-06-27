@@ -14,7 +14,6 @@ defmodule Mintacoin.Keypair.CannedKeypairImpl do
   @impl true
   def from_secret_key(_secret_key) do
     send(self(), {:from_secret_key, "KEYPAIR"})
-
     :ok
   end
 end
