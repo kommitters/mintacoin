@@ -6,6 +6,7 @@ defmodule MintacoinWeb.PaymentsView do
   @spec render(template :: String.t(), assigns :: map()) :: map()
   def render("payment.json", %{
         payment: %Payment{
+          id: id,
           source: source,
           destination: destination,
           asset_code: asset_code,
@@ -14,6 +15,7 @@ defmodule MintacoinWeb.PaymentsView do
       }) do
     %{
       resource: "payment",
+      id: id,
       source: source,
       destination: destination,
       amount: amount,

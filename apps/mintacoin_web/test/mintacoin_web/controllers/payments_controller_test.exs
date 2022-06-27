@@ -3,7 +3,7 @@ defmodule MintacoinWeb.PaymentsControllerTest do
 
   import Mintacoin.Factory
 
-  alias Mintacoin.{Minter, Asset, Account}
+  alias Mintacoin.{Minter, Asset, Account, Payment}
   alias Ecto.UUID
 
   @auth_header "authorization"
@@ -134,7 +134,7 @@ defmodule MintacoinWeb.PaymentsControllerTest do
 
   describe "retrieve payment" do
     test "returns payment with valid given id", %{conn: conn} do
-      %{
+      %Payment{
         id: payment_id,
         source: source,
         destination: destination,
