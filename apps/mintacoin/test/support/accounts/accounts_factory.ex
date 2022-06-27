@@ -3,7 +3,7 @@ defmodule Mintacoin.AccountFactory do
   Allow the creation of accounts while testing.
   """
 
-  alias Mintacoin.Account
+  alias Mintacoin.{Account, Mnemonic, Encryption, Keypair}
   alias Ecto.UUID
 
   defmacro __using__(_opts) do
@@ -15,28 +15,17 @@ defmodule Mintacoin.AccountFactory do
         address = Map.get(attrs, :address, UUID.generate())
         derived_key = Map.get(attrs, :derived_key, sequence(:derived_key, &"derived_key#{&1}"))
 
-        encrypted_signature =
-          Map.get(
-            attrs,
-            :encrypted_signature,
-            sequence(:encrypted_signature, &"encrypted_signature#{&1}")
-          )
+        {:ok, {derived_key, signature}} = Keypair.random()
 
-        signature =
-          Map.get(
-            attrs,
-            :signature,
-            sequence(:signature, &"signature#{&1}")
-          )
+        account_signature = Map.get(attrs, :signature, signature)
 
-        seed_words =
-          Map.get(
-            attrs,
-            :seed_words,
-            sequence(:seed_words, &"word#{&1} ")
-            |> String.duplicate(12)
-            |> String.trim_trailing()
-          )
+        {:ok, {entropy, seed_words}} = Mnemonic.random_entropy_and_mnemonic()
+
+        account_seed_words = Map.get(attrs, :seed_words, seed_words)
+
+        {:ok, encrypted_signature} = Encryption.encrypt(signature, entropy)
+
+        account_encrypted_signature = Map.get(attrs, :encrypted_signature, encrypted_signature)
 
         status = Map.get(attrs, :status, :active)
 
@@ -46,10 +35,10 @@ defmodule Mintacoin.AccountFactory do
           name: name,
           address: address,
           derived_key: derived_key,
-          encrypted_signature: encrypted_signature,
+          encrypted_signature: account_encrypted_signature,
           status: status,
-          signature: signature,
-          seed_words: seed_words
+          signature: account_signature,
+          seed_words: account_seed_words
         }
         |> merge_attributes(attrs)
         |> evaluate_lazy_attributes()

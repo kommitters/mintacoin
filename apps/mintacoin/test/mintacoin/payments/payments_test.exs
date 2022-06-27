@@ -92,9 +92,8 @@ defmodule Mintacoin.Payments.PaymentsTest do
   end
 
   describe "retrieve/1" do
-    setup %{payment: payment_data} do
-      {:ok, %Payment{} = payment} = Payments.create(payment_data)
-      %{payment: payment}
+    setup do
+      %{payment: insert(:payment)}
     end
 
     test "with existing id", %{
@@ -113,9 +112,12 @@ defmodule Mintacoin.Payments.PaymentsTest do
   end
 
   describe "update/1" do
-    setup %{payment: payment_data} do
-      {:ok, %Payment{} = payment} = Payments.create(payment_data)
-      %{payment: payment, valid_attrs: %{status: :processed}, invalid_attrs: %{status: :invalid}}
+    setup do
+      %{
+        payment: insert(:payment),
+        valid_attrs: %{status: :processed},
+        invalid_attrs: %{status: :invalid}
+      }
     end
 
     test "with existing id", %{
