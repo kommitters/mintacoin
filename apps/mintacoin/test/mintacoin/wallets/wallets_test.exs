@@ -7,8 +7,7 @@ defmodule Mintacoin.Wallets.WalletsTest do
 
   import Mintacoin.Factory
 
-  alias Mintacoin.{Repo, Wallet, Wallets, Account, Accounts, Blockchain, Blockchains}
-  alias Blockchains.Network
+  alias Mintacoin.{Repo, Wallet, Wallets, Account, Blockchain, Blockchains, Blockchains.Network}
   alias Ecto.Adapters.SQL.Sandbox
 
   setup do
@@ -38,11 +37,13 @@ defmodule Mintacoin.Wallets.WalletsTest do
           account_id: account_id
         } = wallet_data
     } do
-      {:ok, wallet} = Wallets.create(wallet_data)
-      assert wallet.address == address
-      assert wallet.encrypted_secret == encrypted_secret
-      assert wallet.blockchain_id == blockchain_id
-      assert wallet.account_id == account_id
+      {:ok,
+       %Wallet{
+         address: ^address,
+         encrypted_secret: ^encrypted_secret,
+         blockchain_id: ^blockchain_id,
+         account_id: ^account_id
+       }} = Wallets.create(wallet_data)
     end
 
     test "with invalid params" do
@@ -92,22 +93,33 @@ defmodule Mintacoin.Wallets.WalletsTest do
     end
   end
 
-  describe "retrieve_by_account_id/1" do
+  describe "retrieve_by_account_and_blockchain/2" do
     setup %{wallet: wallet_data} do
       {:ok, wallet} = Wallets.create(wallet_data)
 
       %{
         wallet: wallet,
-        non_existing_account_id: "8dd3eaa3-c073-46f6-8e20-72c7f7203147"
+        non_existing_account_id: "8dd3eaa3-c073-46f6-8e20-72c7f7203147",
+        non_existing_blockchain_id: "77d50348-5991-4981-957a-b0b9e52b12fb"
       }
     end
 
-    test "with valid account_id", %{wallet: %Wallet{account_id: account_id}} do
-      {:ok, %Wallet{account_id: ^account_id}} = Wallets.retrieve_by_account_id(account_id)
+    test "with valid account_id and blockchain_id", %{
+      wallet: %Wallet{account_id: account_id, blockchain_id: blockchain_id}
+    } do
+      {:ok, %Wallet{account_id: ^account_id, blockchain_id: ^blockchain_id}} =
+        Wallets.retrieve_by_account_and_blockchain(account_id, blockchain_id)
     end
 
-    test "with invalid account_id", %{non_existing_account_id: id} do
-      {:error, :not_found} = Wallets.retrieve_by_account_id(id)
+    test "with invalid account_id and blockchain_id", %{
+      non_existing_account_id: non_existing_account_id,
+      non_existing_blockchain_id: non_existing_blockchain_id
+    } do
+      {:error, :not_found} =
+        Wallets.retrieve_by_account_and_blockchain(
+          non_existing_account_id,
+          non_existing_blockchain_id
+        )
     end
   end
 

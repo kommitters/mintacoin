@@ -2,13 +2,13 @@ defmodule Mintacoin.Wallets do
   @moduledoc """
   This module is responsible for doing the CRUD operations for Wallets
   """
-  alias Ecto.{NoResultsError, Changeset, UUID}
-  alias Ecto.Query.CastError
+  alias Ecto.{Query.CastError, NoResultsError, Changeset, UUID}
   alias Mintacoin.{Repo, Wallet}
 
   @type id :: UUID.t()
   @type address :: String.t()
-  @type account_id :: String.t()
+  @type account_id :: UUID.t()
+  @type blockchain_id :: UUID.t()
   @type changes :: map()
   @type parameter :: keyword()
   @type error :: Changeset.t() | :not_found | :bad_argument
@@ -26,9 +26,14 @@ defmodule Mintacoin.Wallets do
   @spec retrieve_by_address(address :: address()) :: {:ok, Wallet.t()} | {:error, error()}
   def retrieve_by_address(address), do: retrieve_by(address: address)
 
-  @spec retrieve_by_account_id(account_id :: account_id()) ::
+  @spec retrieve_by_account_and_blockchain(
+          account_id :: account_id(),
+          blockchain_id :: blockchain_id()
+        ) ::
           {:ok, Wallet.t()} | {:error, error()}
-  def retrieve_by_account_id(account_id), do: retrieve_by(account_id: account_id)
+  def retrieve_by_account_and_blockchain(account_id, blockchain_id) do
+    retrieve_by(account_id: account_id, blockchain_id: blockchain_id)
+  end
 
   @spec retrieve_by(parameter :: parameter()) :: {:ok, Wallet.t()} | {:error, error()}
   def retrieve_by(parameter) when is_list(parameter) do
