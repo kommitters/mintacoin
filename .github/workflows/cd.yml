@@ -1,4 +1,4 @@
-name: MintACoin Landing CD
+name: Mintacoin Landing CD
 
 on: workflow_dispatch
 
@@ -21,7 +21,7 @@ jobs:
       with:
         ref: main
         fetch-depth: 2
-        
+
     - name: Check if there are changes in public folder
       id: public-cache
       uses: actions/cache@v2
