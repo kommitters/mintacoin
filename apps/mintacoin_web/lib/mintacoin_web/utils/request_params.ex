@@ -9,7 +9,8 @@ defmodule MintacoinWeb.Utils.RequestParams do
 
   @allowed_params [
     accounts: ~w(email name),
-    assets: ~w(code supply blockchain)
+    assets: ~w(code supply blockchain),
+    payments: ~w(asset_code source destination amount)
   ]
 
   @spec fetch_allowed(params :: params(), resource :: resource()) :: params()

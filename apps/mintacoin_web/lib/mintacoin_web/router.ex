@@ -9,6 +9,16 @@ defmodule MintacoinWeb.Router do
     plug MintacoinWeb.Plugs.Authenticate
   end
 
+  pipeline :validate_signature do
+    plug MintacoinWeb.Plugs.ValidateSignature
+  end
+
+  scope "/v1/", MintacoinWeb do
+    pipe_through [:api, :authenticated, :validate_signature]
+
+    post "/payments/new", PaymentsController, :create
+  end
+
   scope "/v1/", MintacoinWeb do
     pipe_through [:api, :authenticated]
 
@@ -16,6 +26,8 @@ defmodule MintacoinWeb.Router do
     post "/accounts/:address/recover", AccountsController, :recover
 
     resources "/assets", AssetsController, param: "code", only: ~w(index create show)a
+
+    get "/payments/:id", PaymentsController, :show
   end
 
   # Enables LiveDashboard only for development
