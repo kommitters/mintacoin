@@ -3,6 +3,7 @@ defmodule Mintacoin.Crypto.Stellar.Accounts do
   This module provides functions to interact with accounts in the Stellar network.
   """
 
+  @spec create(params :: map()) :: {:ok, struct()}
   def create(_params) do
     {:ok,
      %Stellar.Horizon.Transaction{

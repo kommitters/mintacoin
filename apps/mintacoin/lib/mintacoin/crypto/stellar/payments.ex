@@ -3,6 +3,7 @@ defmodule Mintacoin.Crypto.Stellar.Payments do
   This module provides functions to interact with payments in the Stellar network.
   """
 
+  @spec create(params :: map()) :: {:ok, struct()}
   def create(_params) do
     {:ok,
      %Stellar.Horizon.Transaction{

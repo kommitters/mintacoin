@@ -3,6 +3,7 @@ defmodule Mintacoin.Crypto.Stellar.Assets do
   This module provides functions for creating and managing assets in the Stellar network.
   """
 
+  @spec create(params :: map()) :: {:ok, struct()}
   def create(_params) do
     {:ok,
      %Stellar.Horizon.Transaction{
@@ -35,6 +36,7 @@ defmodule Mintacoin.Crypto.Stellar.Assets do
      }}
   end
 
+  @spec authorize(params :: map()) :: {:ok, struct()}
   def authorize(_params) do
     {:ok,
      %Stellar.Horizon.Transaction{

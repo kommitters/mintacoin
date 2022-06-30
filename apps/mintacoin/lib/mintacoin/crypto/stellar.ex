@@ -1,6 +1,6 @@
 defmodule Mintacoin.Crypto.Stellar do
   @moduledoc """
-
+  This module provides the crypto transactions implemented with the Stellar network.
   """
 
   @behaviour Mintacoin.Crypto.Spec
