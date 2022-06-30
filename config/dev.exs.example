@@ -9,6 +9,9 @@ config :mintacoin, Mintacoin.Repo,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 
+# Configure Stellar network
+config :stellar_sdk, network: :test
+
 # For development, we disable any cache and enable
 # debugging and code reloading.
 #
