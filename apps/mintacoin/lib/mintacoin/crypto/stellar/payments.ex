@@ -3,17 +3,16 @@ defmodule Mintacoin.Crypto.Stellar.Payments do
   This module provides functions to interact with payments in the Stellar network.
   """
 
-  alias Mintacoin.Crypto.PaymentCreated
+  alias Mintacoin.Crypto.TxResponse
 
   @spec create(params :: map()) :: {:ok, struct()}
   def create(_params) do
     {:ok,
-     %PaymentCreated{
-       source_secret: "SCP6HOQYN57RWQHVDPTPDGV3FMTYL3AULW3A26S5XTB2UNMZ52IFL5FN",
-       destination_secret: "SAHGVCA37V54AACEYNDLNIB356BWV3WEALMYFOAVX2OE24SZCIBDRO4X",
-       asset: [code: "MTK", issuer: "GA2YG3YULNTUEMMLN4HUQVL7B37GJTYSRZYH6HZUFLXFDCCGKLXIXMDT"],
-       amount: 1000,
+     %TxResponse{
        successful: true,
+       hash: "ad9ce37da535471089839da43b007929c17bee4aa747b944e3954efa44472537",
+       created_at: ~U[2022-06-29 21:53:00Z],
+       blockchain: :stellar,
        tx_json: %{
          created_at: ~U[2022-06-29 21:53:00Z],
          envelope_xdr:

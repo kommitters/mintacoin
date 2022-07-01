@@ -3,18 +3,16 @@ defmodule Mintacoin.Crypto.Stellar.Assets do
   This module provides functions for creating and managing assets in the Stellar network.
   """
 
-  alias Mintacoin.Crypto.{AssetCreated, AssetAuthorized}
+  alias Mintacoin.Crypto.TxResponse
 
   @spec create(params :: map()) :: {:ok, struct()}
   def create(_params) do
     {:ok,
-     %AssetCreated{
-       issuer_secret: "SBXUGZ25PNYMPMK36M52TDPB4HSF4CZ23DJPY4ENZMGAN2D4CYFSSVIL",
-       distribution_secret: "SCP6HOQYN57RWQHVDPTPDGV3FMTYL3AULW3A26S5XTB2UNMZ52IFL5FN",
-       asset_code: "MTK",
-       asset_issuer: "GA2YG3YULNTUEMMLN4HUQVL7B37GJTYSRZYH6HZUFLXFDCCGKLXIXMDT",
-       asset_supply: 1_000_000,
+     %TxResponse{
        successful: true,
+       hash: "3378da751d34b5abb6ce233b6a8dd905c461c6c21a813c1d825cd8bc64c38815",
+       created_at: ~U[2022-06-30 17:04:10Z],
+       blockchain: :stellar,
        tx_json: %{
          created_at: ~U[2022-06-30 17:04:10Z],
          envelope_xdr:
@@ -49,11 +47,11 @@ defmodule Mintacoin.Crypto.Stellar.Assets do
   @spec authorize(params :: map()) :: {:ok, struct()}
   def authorize(_params) do
     {:ok,
-     %AssetAuthorized{
-       wallet_secret: "SDG3KYI5RR6YKUECA4J6TNOAPY2XW7OFHAPKR3LII4R47W4SYZNPMPY6",
-       asset_code: "MTK",
-       asset_issuer: "GA2YG3YULNTUEMMLN4HUQVL7B37GJTYSRZYH6HZUFLXFDCCGKLXIXMDT",
+     %TxResponse{
        successful: true,
+       hash: "6984326ac947fba61ab4a702e12b5550eb44f0b9811ce05889b66fe9f9fbe822",
+       created_at: ~U[2022-06-30 16:57:55Z],
+       blockchain: :stellar,
        tx_json: %{
          created_at: ~U[2022-06-30 16:57:55Z],
          envelope_xdr:

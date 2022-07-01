@@ -3,17 +3,16 @@ defmodule Mintacoin.Crypto.Stellar.Accounts do
   This module provides functions to interact with accounts in the Stellar network.
   """
 
-  alias Mintacoin.Crypto.AccountCreated
+  alias Mintacoin.Crypto.TxResponse
 
   @spec create(params :: map()) :: {:ok, struct()}
   def create(_params) do
     {:ok,
-     %AccountCreated{
-       minter_wallet_secret: "SBXUGZ25PNYMPMK36M52TDPB4HSF4CZ23DJPY4ENZMGAN2D4CYFSSVIL",
-       account_wallet_address: "GD47D6GIIJMEDJQVQH3U2LJYB2337AWZKSA2FOZY77XUF27CSRTT2CLV",
-       account_wallet_secret: "SCP6HOQYN57RWQHVDPTPDGV3FMTYL3AULW3A26S5XTB2UNMZ52IFL5FN",
-       initial_balance: 2.0,
+     %TxResponse{
        successful: true,
+       hash: "7f82fe6ac195e7674f7bdf7a3416683ffd55c8414978c70bf4da08ac64fea129",
+       created_at: ~U[2022-06-29 15:45:45Z],
+       blockchain: :stellar,
        tx_json: %{
          created_at: ~U[2022-06-29 15:45:45Z],
          envelope_xdr:
