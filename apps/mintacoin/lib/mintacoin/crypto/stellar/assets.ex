@@ -5,7 +5,7 @@ defmodule Mintacoin.Crypto.Stellar.Assets do
 
   alias Mintacoin.Crypto.TxResponse
 
-  @spec create(params :: map()) :: {:ok, struct()}
+  @spec create(params :: map()) :: {:ok, TxResponse.t()}
   def create(_params) do
     {:ok,
      %TxResponse{
@@ -44,7 +44,7 @@ defmodule Mintacoin.Crypto.Stellar.Assets do
      }}
   end
 
-  @spec authorize(params :: map()) :: {:ok, struct()}
+  @spec authorize(params :: map()) :: {:ok, TxResponse.t()}
   def authorize(_params) do
     {:ok,
      %TxResponse{

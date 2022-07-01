@@ -3,13 +3,15 @@ defmodule Mintacoin.Crypto.Spec do
   Defines contracts for the transactions available in the Crypto layer.
   """
 
+  alias Mintacoin.Crypto.TxResponse
+
   @type status :: :ok | :error
 
-  @callback create_account(map()) :: {status(), struct()}
+  @callback create_account(map()) :: {status(), TxResponse.t()}
 
-  @callback create_asset(map()) :: {status(), struct()}
+  @callback create_asset(map()) :: {status(), TxResponse.t()}
 
-  @callback authorize_asset(map()) :: {status(), struct()}
+  @callback authorize_asset(map()) :: {status(), TxResponse.t()}
 
-  @callback process_payment(map()) :: {status(), struct()}
+  @callback process_payment(map()) :: {status(), TxResponse.t()}
 end

@@ -6,7 +6,7 @@ defmodule Mintacoin.Crypto.TxResponse do
   @type t :: %__MODULE__{
           successful: boolean(),
           hash: String.t(),
-          created_at: Date.t(),
+          created_at: DateTime.t(),
           blockchain: atom(),
           tx_json: map()
         }

@@ -5,7 +5,7 @@ defmodule Mintacoin.Crypto.Stellar.Accounts do
 
   alias Mintacoin.Crypto.TxResponse
 
-  @spec create(params :: map()) :: {:ok, struct()}
+  @spec create(params :: map()) :: {:ok, TxResponse.t()}
   def create(_params) do
     {:ok,
      %TxResponse{
