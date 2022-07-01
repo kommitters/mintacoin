@@ -13,7 +13,7 @@ defmodule Mintacoin.Crypto.Stellar.Accounts do
        hash: "7f82fe6ac195e7674f7bdf7a3416683ffd55c8414978c70bf4da08ac64fea129",
        created_at: ~U[2022-06-29 15:45:45Z],
        blockchain: :stellar,
-       tx_json: %{
+       raw_tx: %{
          created_at: ~U[2022-06-29 15:45:45Z],
          envelope_xdr:
            "AAAAAgAAAAA1g28UW2dCMYtvD0hVfw7+ZM8SjnB/HzQq7lGIRlLuiwAAAGQAAc5vAAAAAQAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAADqwUtg1Z2W2ioK5oidVOy7ezJidLD4oJ6sdOFj6QzNKAAAAAAExLQAAAAAAAAAAAUZS7osAAABAZ8AKJ6GiyYoHUO0wIGcbGe1egu7K1D5K4y50XmF9aRjoD9lxXsIl27Np6k4RJ0h/gqUCxrX2lBY0AhzkzfDjCw==",

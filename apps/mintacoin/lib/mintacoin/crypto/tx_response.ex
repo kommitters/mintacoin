@@ -8,7 +8,7 @@ defmodule Mintacoin.Crypto.TxResponse do
           hash: String.t(),
           created_at: DateTime.t(),
           blockchain: atom(),
-          tx_json: map()
+          raw_tx: map()
         }
 
   defstruct [
@@ -16,6 +16,6 @@ defmodule Mintacoin.Crypto.TxResponse do
     :hash,
     :created_at,
     :blockchain,
-    :tx_json
+    :raw_tx
   ]
 end

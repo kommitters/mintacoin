@@ -13,7 +13,7 @@ defmodule Mintacoin.Crypto.Stellar.Assets do
        hash: "3378da751d34b5abb6ce233b6a8dd905c461c6c21a813c1d825cd8bc64c38815",
        created_at: ~U[2022-06-30 17:04:10Z],
        blockchain: :stellar,
-       tx_json: %{
+       raw_tx: %{
          created_at: ~U[2022-06-30 17:04:10Z],
          envelope_xdr:
            "AAAAAgAAAAA1g28UW2dCMYtvD0hVfw7+ZM8SjnB/HzQq7lGIRlLuiwAAAMgAAc5vAAAACgAAAAAAAAAAAAAAAgAAAAEAAAAA+fH4yEJYQaYVgfdNLTgOt7+C2VSBors4/+9C6+KUZz0AAAAGAAAAAU1USwAAAAAANYNvFFtnQjGLbw9IVX8O/mTPEo5wfx80Ku5RiEZS7ot//////////wAAAAEAAAAANYNvFFtnQjGLbw9IVX8O/mTPEo5wfx80Ku5RiEZS7osAAAABAAAAAPnx+MhCWEGmFYH3TS04Dre/gtlUgaK7OP/vQuvilGc9AAAAAU1USwAAAAAANYNvFFtnQjGLbw9IVX8O/mTPEo5wfx80Ku5RiEZS7osAAAkYTnKgAAAAAAAAAAACRlLuiwAAAEC2abYb0wynN8CPzUJzVQr9koQAxmK4+4VPkvk91xVONGwSECQ6UwxWJiLBl60lq4LatPbiht7cXB8oXs4nhCUI4pRnPQAAAEBH5SXfAGNgiGeQ0GXvV0XpH13cS9IVjTou45AYM91cnBLwK1Mi1vPKpCgVeVAHeHbHOogbOboLNCPavL38IroA",
@@ -52,7 +52,7 @@ defmodule Mintacoin.Crypto.Stellar.Assets do
        hash: "6984326ac947fba61ab4a702e12b5550eb44f0b9811ce05889b66fe9f9fbe822",
        created_at: ~U[2022-06-30 16:57:55Z],
        blockchain: :stellar,
-       tx_json: %{
+       raw_tx: %{
          created_at: ~U[2022-06-30 16:57:55Z],
          envelope_xdr:
            "AAAAAgAAAAD0TmCowAdQZfNEJayTp5/8IFzEYVL1zjguPDIlWU331gAAAGQAAhLHAAAAAQAAAAAAAAAAAAAAAQAAAAAAAAAGAAAAAU1USwAAAAAANYNvFFtnQjGLbw9IVX8O/mTPEo5wfx80Ku5RiEZS7ot//////////wAAAAAAAAABWU331gAAAEC/MisnMeYpoeP271pX5HvRmTJVoJaxww1d7CZPgvlppFyenEYyIpv8sYcZsoFMdrfyJA0k2WVWTcpyHbVKaMEH",

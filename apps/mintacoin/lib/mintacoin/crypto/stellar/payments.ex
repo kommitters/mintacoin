@@ -13,7 +13,7 @@ defmodule Mintacoin.Crypto.Stellar.Payments do
        hash: "ad9ce37da535471089839da43b007929c17bee4aa747b944e3954efa44472537",
        created_at: ~U[2022-06-29 21:53:00Z],
        blockchain: :stellar,
-       tx_json: %{
+       raw_tx: %{
          created_at: ~U[2022-06-29 21:53:00Z],
          envelope_xdr:
            "AAAAAgAAAAA1g28UW2dCMYtvD0hVfw7+ZM8SjnB/HzQq7lGIRlLuiwAAAGQAAc5vAAAABQAAAAAAAAAAAAAAAQAAAAAAAAABAAAAADqwUtg1Z2W2ioK5oidVOy7ezJidLD4oJ6sdOFj6QzNKAAAAAAAAAAAO5rKAAAAAAAAAAAFGUu6LAAAAQAKtIbNz3iWymPeZSugaqWTpiM81VIYedaRlIOcR2SM6+ckueHyqSKYWxmsNAFGW5NJtF38mJt8xk2RFOKONnAc=",
