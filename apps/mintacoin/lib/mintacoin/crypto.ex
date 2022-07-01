@@ -5,6 +5,8 @@ defmodule Mintacoin.Crypto do
 
   @behaviour Mintacoin.Crypto.Spec
 
+  alias Mintacoin.Crypto.Stellar
+
   @impl true
   def create_account(params), do: impl().create_account(params)
 
@@ -18,5 +20,5 @@ defmodule Mintacoin.Crypto do
   def process_payment(params), do: impl().process_payment(params)
 
   @spec impl() :: atom()
-  defp impl, do: Application.get_env(:crypto, :impl)
+  defp impl, do: Application.get_env(:crypto, :impl, Stellar)
 end

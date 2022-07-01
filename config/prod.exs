@@ -1,5 +1,8 @@
 import Config
 
+# Configure Stellar network
+config :stellar_sdk, network: System.get_env("STELLAR_NETWORK") || :test
+
 # For production, don't forget to configure the url host
 # to something meaningful, Phoenix uses this information
 # when generating URLs.

@@ -42,7 +42,8 @@ defmodule Mintacoin.MixProject do
       {:jason, "~> 1.2"},
       {:bip39, "~> 0.1.1"},
       {:ecto_enum, "~> 1.4"},
-      {:ex_machina, "~> 2.7.0", only: :test}
+      {:ex_machina, "~> 2.7.0", only: :test},
+      {:stellar_sdk, "~> 0.7.0"}
     ]
   end
 
