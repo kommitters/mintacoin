@@ -52,4 +52,14 @@ defmodule Mintacoin.Events.Listener do
       error -> {:stop, error, []}
     end
   end
+
+  def handle_info({:notification, _pid, _ref, "asset_authorized", payload}, _state) do
+    with {:ok, data} <- Jason.decode(payload, keys: :atoms) do
+      IO.inspect(data, label: "Asset Authorized")
+
+      {:noreply, :event_handled}
+    else
+      error -> {:stop, error, []}
+    end
+  end
 end

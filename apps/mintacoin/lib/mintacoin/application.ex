@@ -22,6 +22,10 @@ defmodule Mintacoin.Application do
         id: "asset_created_listener",
         event_name: "payment_created"
       ),
+      Mintacoin.Events.Listener.child_spec(
+        id: "asset_authorized_listener",
+        event_name: "asset_authorized"
+      ),
       # Start the PubSub system
       {Phoenix.PubSub, name: Mintacoin.PubSub}
       # Start a worker by calling: Mintacoin.Worker.start_link(arg)
