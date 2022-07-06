@@ -41,7 +41,7 @@ defmodule MintacoinWeb.Plugs.ValidateMinterSignatureTest do
     conn =
       conn
       |> put_format("json")
-      |> Map.merge(%{params: %{"signature" => signature}, assigns: %{"minter" => minter}})
+      |> Map.merge(%{params: %{"signature" => signature}, assigns: %{minter: minter}})
       |> ValidateMinterSignature.call(%{})
 
     %Conn{state: :unset, status: nil} = conn
@@ -67,7 +67,7 @@ defmodule MintacoinWeb.Plugs.ValidateMinterSignatureTest do
     conn =
       conn
       |> put_format("json")
-      |> Map.merge(%{assigns: %{"minter" => minter}})
+      |> Map.merge(%{assigns: %{minter: minter}})
       |> ValidateMinterSignature.call(%{})
 
     assert response(conn, 400)
