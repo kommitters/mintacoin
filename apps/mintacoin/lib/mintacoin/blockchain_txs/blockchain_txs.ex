@@ -29,19 +29,19 @@ defmodule Mintacoin.BlockchainTxs do
   @spec retrieve(id :: id()) :: {:ok, BlockchainTx.t()} | {:error, error()}
   def retrieve(id), do: retrieve_by(id: id)
 
-  @spec retrieve_by(parameter :: parameter()) :: {:ok, BlockchainTx.t()} | {:error, error()}
-  def retrieve_by(parameter) when is_list(parameter) do
-    {:ok, Repo.get_by!(BlockchainTx, parameter)}
-  rescue
-    CastError -> {:error, :not_found}
-    NoResultsError -> {:error, :not_found}
-  end
-
   @spec update(id :: id(), changes :: changes()) :: {:ok, BlockchainTx.t()} | {:error, error()}
   def update(id, changes) do
     id
     |> retrieve()
     |> persist_changes(changes)
+  end
+
+  @spec retrieve_by(parameter :: parameter()) :: {:ok, BlockchainTx.t()} | {:error, error()}
+  defp retrieve_by(parameter) when is_list(parameter) do
+    {:ok, Repo.get_by!(BlockchainTx, parameter)}
+  rescue
+    CastError -> {:error, :not_found}
+    NoResultsError -> {:error, :not_found}
   end
 
   @spec persist_changes({:ok, BlockchainTx.t()} | {:error, error()}, changes :: changes()) ::
