@@ -18,7 +18,7 @@ defmodule MintacoinWeb.Plugs.ValidateMinterSignature do
 
   @impl true
   def call(
-        %{params: %{"signature" => signature}, assigns: %{"minter" => %{email: email}}} = conn,
+        %{params: %{"signature" => signature}, assigns: %{minter: %{email: email}}} = conn,
         _default
       ) do
     with {:ok, {derived_key, _encoded_secret_key}} <- Keypair.from_secret_key(signature),
