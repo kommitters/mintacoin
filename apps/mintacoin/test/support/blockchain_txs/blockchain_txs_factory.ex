@@ -20,7 +20,7 @@ defmodule Mintacoin.BlockchainTxFactory do
         tx_response = Map.get(attrs, :tx_response, %{})
         %Blockchain{id: blockchain_id} = Map.get(attrs, :blockchain, insert(:blockchain))
 
-        %BlockchainTx{
+        evaluate_lazy_attributes(%BlockchainTx{
           id: UUID.generate(),
           operation_type: operation_type,
           operation_payload: operation_payload,
@@ -30,7 +30,7 @@ defmodule Mintacoin.BlockchainTxFactory do
           tx_hash: tx_hash,
           tx_response: tx_response,
           blockchain_id: blockchain_id
-        }
+        })
       end
     end
   end
