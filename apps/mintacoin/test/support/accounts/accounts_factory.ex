@@ -13,7 +13,6 @@ defmodule Mintacoin.AccountFactory do
         email = Map.get(attrs, :email, sequence(:email, &"account#{&1}@example.com"))
         name = Map.get(attrs, :name, sequence(:name, &"Account #{&1}"))
         address = Map.get(attrs, :address, UUID.generate())
-        derived_key = Map.get(attrs, :derived_key, sequence(:derived_key, &"derived_key#{&1}"))
 
         {:ok, {derived_key, signature}} = Keypair.random()
 
