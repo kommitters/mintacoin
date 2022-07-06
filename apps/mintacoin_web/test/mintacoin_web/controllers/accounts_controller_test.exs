@@ -3,12 +3,13 @@ defmodule MintacoinWeb.AccountsControllerTest do
 
   import Mintacoin.Factory
 
-  alias Mintacoin.{Minter, Encryption, Mnemonic, Keypair}
+  alias Mintacoin.{Minter, Encryption, Mnemonic, Keypair, Account}
 
   @auth_header "authorization"
 
   setup %{conn: conn} do
-    %Minter{api_key: api_key} = insert(:minter)
+    %Minter{api_key: api_key, email: email} = insert(:minter)
+    %Account{signature: signature} = insert(:account, email: email)
 
     conn =
       conn
@@ -16,15 +17,25 @@ defmodule MintacoinWeb.AccountsControllerTest do
       |> put_req_header(@auth_header, "Bearer #{api_key}")
 
     %{
-      create_attrs: %{"name" => "Test Name", "email" => "test@mail.com"},
+      create_attrs: %{"name" => "Test Name", "email" => "test@mail.com", "signature" => signature},
       update_attrs: %{"name" => "Updated Test Name", "email" => "updatedtest@mail.com"},
       invalid_attrs: %{},
+      invalid_attrs_with_signature: %{"signature" => signature},
       non_existing_address: "78f0eb93-4466-451c-b3e7-5c6189500919",
       conn: conn
     }
   end
 
   describe "create account" do
+    test "returns bad request response when signature is invalid", %{
+      conn: conn,
+      invalid_attrs: invalid_attrs
+    } do
+      conn = post(conn, Routes.accounts_path(conn, :create), invalid_attrs)
+
+      %{"detail" => "Bad Request"} = json_response(conn, 400)["errors"]
+    end
+
     test "returns account when data is valid", %{conn: conn, create_attrs: create_attrs} do
       conn = post(conn, Routes.accounts_path(conn, :create), create_attrs)
       %{"address" => address} = json_response(conn, 201)
@@ -33,8 +44,11 @@ defmodule MintacoinWeb.AccountsControllerTest do
       %{"address" => ^address} = json_response(conn, 200)
     end
 
-    test "returns errors when data is invalid", %{conn: conn, invalid_attrs: invalid_attrs} do
-      conn = post(conn, Routes.accounts_path(conn, :create), invalid_attrs)
+    test "returns errors when data is invalid", %{
+      conn: conn,
+      invalid_attrs_with_signature: invalid_attrs_with_signature
+    } do
+      conn = post(conn, Routes.accounts_path(conn, :create), invalid_attrs_with_signature)
 
       %{"email" => ["can't be blank"], "name" => ["can't be blank"]} =
         json_response(conn, 422)["errors"]
