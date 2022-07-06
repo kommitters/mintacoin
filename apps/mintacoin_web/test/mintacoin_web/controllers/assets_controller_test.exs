@@ -15,7 +15,7 @@ defmodule MintacoinWeb.AssetsControllerTest do
     {:ok, %Blockchain{id: blockchain_id}} = Blockchains.create(%{name: Network.name()})
 
     %Minter{id: minter_id, email: email, name: name, api_key: api_key} = insert(:minter)
-    %Account{address: address} = insert(:account, email: email, name: name)
+    %Account{address: address, signature: signature} = insert(:account, email: email, name: name)
 
     conn =
       conn
@@ -33,12 +33,26 @@ defmodule MintacoinWeb.AssetsControllerTest do
       attrs: %{
         "code" => code,
         "supply" => "1000000",
-        "blockchain" => Network.name()
+        "blockchain" => Network.name(),
+        "signature" => signature
+      },
+      invalid_attrs: %{},
+      invalid_attrs_with_signature: %{
+        "signature" => signature
       }
     }
   end
 
   describe "create asset" do
+    test "returns bad request response when signature is invalid", %{
+      conn: conn,
+      invalid_attrs: invalid_attrs
+    } do
+      conn = post(conn, Routes.assets_path(conn, :create), invalid_attrs)
+
+      %{"detail" => "Bad Request"} = json_response(conn, 400)["errors"]
+    end
+
     test "returns asset when data is valid", %{
       conn: conn,
       attrs:
@@ -107,8 +121,11 @@ defmodule MintacoinWeb.AssetsControllerTest do
       } = json_response(conn, 201)
     end
 
-    test "returns errors when data is invalid", %{conn: conn} do
-      conn = post(conn, Routes.assets_path(conn, :create), %{})
+    test "returns errors when data is invalid", %{
+      conn: conn,
+      invalid_attrs_with_signature: invalid_attrs_with_signature
+    } do
+      conn = post(conn, Routes.assets_path(conn, :create), invalid_attrs_with_signature)
 
       %{
         "errors" => %{
