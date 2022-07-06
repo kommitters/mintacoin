@@ -26,18 +26,18 @@ defmodule MintacoinWeb.Plugs.ValidateMinterSignature do
            Accounts.retrieve_by(email: email, status: :active) do
       conn
     else
-      _error -> unauthorized_response(conn)
+      _error -> bad_response(conn)
     end
   end
 
-  def call(conn, _default), do: unauthorized_response(conn)
+  def call(conn, _default), do: bad_response(conn)
 
-  @spec unauthorized_response(conn :: conn()) :: conn()
-  defp unauthorized_response(conn) do
+  @spec bad_response(conn :: conn()) :: conn()
+  defp bad_response(conn) do
     conn
-    |> put_status(:unauthorized)
+    |> put_status(:bad_request)
     |> put_view(ErrorView)
-    |> render(:"401")
+    |> render(:"400")
     |> halt()
   end
 end
