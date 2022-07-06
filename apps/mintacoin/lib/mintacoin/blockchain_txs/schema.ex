@@ -55,15 +55,32 @@ defmodule Mintacoin.BlockchainTx do
     timestamps()
   end
 
-  @allowed_attrs ~w(operation_type operation_payload signatures state successful tx_id tx_hash tx_response)a
-
   @spec changeset(blockchain_tx :: %__MODULE__{}, changes :: map()) :: Changeset.t()
-  def changeset(blockchain_tx, changes), do: cast(blockchain_tx, changes, @allowed_attrs)
+  def changeset(blockchain_tx, changes),
+    do:
+      cast(blockchain_tx, changes, [
+        :signatures,
+        :state,
+        :successful,
+        :tx_id,
+        :tx_hash,
+        :tx_response
+      ])
 
   @spec create_changeset(blockchain_tx :: %__MODULE__{}, changes :: map()) :: Changeset.t()
   def create_changeset(blockchain_tx, changes) do
     blockchain_tx
-    |> cast(changes, [:blockchain_id | @allowed_attrs])
+    |> cast(changes, [
+      :blockchain_id,
+      :operation_type,
+      :operation_payload,
+      :signatures,
+      :state,
+      :successful,
+      :tx_id,
+      :tx_hash,
+      :tx_response
+    ])
     |> validate_required([:blockchain_id, :operation_type, :operation_payload, :signatures])
     |> foreign_key_constraint(:blockchain_id)
   end
