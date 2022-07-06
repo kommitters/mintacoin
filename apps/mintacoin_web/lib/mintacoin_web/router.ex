@@ -13,19 +13,30 @@ defmodule MintacoinWeb.Router do
     plug MintacoinWeb.Plugs.ValidateSignature
   end
 
+  pipeline :validate_minter_signature do
+    plug MintacoinWeb.Plugs.ValidateMinterSignature
+  end
+
   scope "/v1/", MintacoinWeb do
     pipe_through [:api, :authenticated, :validate_signature]
 
-    post "/payments/new", PaymentsController, :create
+    post "/payments", PaymentsController, :create
+  end
+
+  scope "/v1/", MintacoinWeb do
+    pipe_through [:api, :authenticated, :validate_minter_signature]
+
+    post "/accounts", AccountsController, :create
+    post "/assets", AssetsController, :create
   end
 
   scope "/v1/", MintacoinWeb do
     pipe_through [:api, :authenticated]
 
-    resources "/accounts", AccountsController, param: "address", except: [:index]
+    resources "/accounts", AccountsController, param: "address", except: [:index, :create, :new]
     post "/accounts/:address/recover", AccountsController, :recover
 
-    resources "/assets", AssetsController, param: "code", only: ~w(index create show)a
+    resources "/assets", AssetsController, param: "code", only: ~w(index show)a
 
     get "/payments/:id", PaymentsController, :show
   end
