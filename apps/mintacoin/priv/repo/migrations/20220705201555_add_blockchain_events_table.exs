@@ -1,13 +1,12 @@
-defmodule Mintacoin.Repo.Migrations.AddBlockchainTxsTable do
+defmodule Mintacoin.Repo.Migrations.AddBlockchainEventsTable do
   use Ecto.Migration
 
   def change do
-    create table(:blockchain_txs, primary_key: false) do
+    create table(:blockchain_events, primary_key: false) do
       add(:id, :uuid, primary_key: true)
       add(:blockchain_id, references(:blockchains, type: :uuid), null: false)
-      add(:operation_type, :string)
-      add(:operation_payload, :map)
-      add(:signatures, {:array, :string})
+      add(:event_type, :string)
+      add(:event_payload, :map)
       add(:state, :string)
       add(:successful, :boolean)
       add(:tx_id, :string)

@@ -1,6 +1,6 @@
-defmodule Mintacoin.BlockchainTx do
+defmodule Mintacoin.BlockchainEvent do
   @moduledoc """
-  Ecto schema for BlockchainTx
+  Ecto schema for BlockchainEvent
   """
 
   use Ecto.Schema
@@ -11,13 +11,12 @@ defmodule Mintacoin.BlockchainTx do
   alias Ecto.Changeset
   alias Mintacoin.Blockchain
 
-  @type operation_type :: :create_account | :mint_asset | :authorize_asset | :payment | :signature
+  @type event_type :: :create_account | :mint_asset | :authorize_asset | :payment | :signature
   @type state :: :pending | :processing | :completed
 
   @type t :: %__MODULE__{
-          operation_type: operation_type(),
-          operation_payload: map(),
-          signatures: list(String.t()),
+          event_type: event_type(),
+          event_payload: map(),
           state: state(),
           successful: boolean(),
           tx_id: String.t(),
@@ -26,7 +25,7 @@ defmodule Mintacoin.BlockchainTx do
           blockchain: Blockchain.t()
         }
 
-  defenum(OperationType, :operation_type, [
+  defenum(EventType, :event_type, [
     :create_account,
     :mint_asset,
     :authorize_asset,
@@ -41,11 +40,10 @@ defmodule Mintacoin.BlockchainTx do
   ])
 
   @primary_key {:id, :binary_id, autogenerate: true}
-  schema "blockchain_txs" do
+  schema "blockchain_events" do
     belongs_to(:blockchain, Blockchain, type: :binary_id)
-    field(:operation_type, OperationType)
-    field(:operation_payload, :map)
-    field(:signatures, {:array, :string})
+    field(:event_type, EventType)
+    field(:event_payload, :map)
     field(:state, State, default: :pending)
     field(:successful, :boolean, default: false)
     field(:tx_id, :string)
@@ -55,11 +53,10 @@ defmodule Mintacoin.BlockchainTx do
     timestamps()
   end
 
-  @spec changeset(blockchain_tx :: %__MODULE__{}, changes :: map()) :: Changeset.t()
-  def changeset(blockchain_tx, changes),
+  @spec changeset(blockchain_event :: %__MODULE__{}, changes :: map()) :: Changeset.t()
+  def changeset(blockchain_event, changes),
     do:
-      cast(blockchain_tx, changes, [
-        :signatures,
+      cast(blockchain_event, changes, [
         :state,
         :successful,
         :tx_id,
@@ -67,21 +64,20 @@ defmodule Mintacoin.BlockchainTx do
         :tx_response
       ])
 
-  @spec create_changeset(blockchain_tx :: %__MODULE__{}, changes :: map()) :: Changeset.t()
-  def create_changeset(blockchain_tx, changes) do
-    blockchain_tx
+  @spec create_changeset(blockchain_event :: %__MODULE__{}, changes :: map()) :: Changeset.t()
+  def create_changeset(blockchain_event, changes) do
+    blockchain_event
     |> cast(changes, [
       :blockchain_id,
-      :operation_type,
-      :operation_payload,
-      :signatures,
+      :event_type,
+      :event_payload,
       :state,
       :successful,
       :tx_id,
       :tx_hash,
       :tx_response
     ])
-    |> validate_required([:blockchain_id, :operation_type, :operation_payload, :signatures])
+    |> validate_required([:blockchain_id, :event_type, :event_payload])
     |> foreign_key_constraint(:blockchain_id)
   end
 end

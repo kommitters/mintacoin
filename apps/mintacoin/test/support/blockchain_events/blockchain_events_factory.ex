@@ -1,18 +1,17 @@
-defmodule Mintacoin.BlockchainTxFactory do
+defmodule Mintacoin.BlockchainEventFactory do
   @moduledoc """
-  Allow the creation of BlockchainTxs while testing.
+  Allow the creation of BlockchainEvents while testing.
   """
 
   alias Ecto.UUID
-  alias Mintacoin.{BlockchainTx, Blockchain}
+  alias Mintacoin.{BlockchainEvent, Blockchain}
 
   defmacro __using__(_opts) do
     quote do
-      @spec blockchain_tx_factory(attrs :: map()) :: BlockchainTx.t()
-      def blockchain_tx_factory(attrs) do
-        operation_type = Map.get(attrs, :operation_type, :create_account)
-        operation_payload = Map.get(attrs, :operation_payload, %{})
-        signatures = Map.get(attrs, :signatures, [])
+      @spec blockchain_event_factory(attrs :: map()) :: BlockchainEvent.t()
+      def blockchain_event_factory(attrs) do
+        event_type = Map.get(attrs, :event_type, :create_account)
+        event_payload = Map.get(attrs, :event_payload, %{})
         state = Map.get(attrs, :state, :pending)
         successful = Map.get(attrs, :successful, false)
         tx_id = Map.get(attrs, :tx_id, nil)
@@ -20,11 +19,10 @@ defmodule Mintacoin.BlockchainTxFactory do
         tx_response = Map.get(attrs, :tx_response, %{})
         %Blockchain{id: blockchain_id} = Map.get(attrs, :blockchain, insert(:blockchain))
 
-        evaluate_lazy_attributes(%BlockchainTx{
+        evaluate_lazy_attributes(%BlockchainEvent{
           id: UUID.generate(),
-          operation_type: operation_type,
-          operation_payload: operation_payload,
-          signatures: signatures,
+          event_type: event_type,
+          event_payload: event_payload,
           successful: successful,
           tx_id: tx_id,
           tx_hash: tx_hash,
