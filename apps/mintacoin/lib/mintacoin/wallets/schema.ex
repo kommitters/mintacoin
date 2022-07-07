@@ -30,6 +30,8 @@ defmodule Mintacoin.Wallet do
     belongs_to(:blockchain, Blockchain, type: :binary_id)
     belongs_to(:blockchain_event, BlockchainEvent, type: :binary_id)
 
+    field(:secret, :string, virtual: true)
+
     timestamps()
   end
 
@@ -42,7 +44,8 @@ defmodule Mintacoin.Wallet do
       :settled_in_blockchain,
       :account_id,
       :blockchain_id,
-      :blockchain_event_id
+      :blockchain_event_id,
+      :secret
     ])
     |> validate_required([:address, :encrypted_secret, :account_id, :blockchain_id])
     |> validate_format(:account_id, @uuid_regex, message: "account_id must be a uuid")
