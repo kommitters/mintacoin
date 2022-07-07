@@ -16,7 +16,7 @@ defmodule Mintacoin.Wallets do
   @spec create(changes :: changes()) :: {:ok, Wallet.t()} | {:error, error()}
   def create(changes) do
     %Wallet{}
-    |> Wallet.changeset(changes)
+    |> Wallet.create_changeset(changes)
     |> Repo.insert()
   end
 
@@ -44,4 +44,21 @@ defmodule Mintacoin.Wallets do
   end
 
   def retrieve_by(_parameter), do: {:error, :bad_argument}
+
+  @spec update(id :: id(), changes :: changes()) :: {:ok, Wallet.t()} | {:error, error()}
+  def update(id, changes) do
+    id
+    |> retrieve()
+    |> persist_changes(changes)
+  end
+
+  @spec persist_changes({:ok, Wallet.t()} | {:error, error()}, changes :: changes()) ::
+          {:ok, Wallet.t()} | {:error, error()}
+  defp persist_changes({:ok, %Wallet{} = wallet}, changes) do
+    wallet
+    |> Wallet.changeset(changes)
+    |> Repo.update()
+  end
+
+  defp persist_changes({:error, error}, _changes), do: {:error, error}
 end
