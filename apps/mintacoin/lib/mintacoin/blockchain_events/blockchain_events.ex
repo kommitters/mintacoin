@@ -46,8 +46,8 @@ defmodule Mintacoin.BlockchainEvents do
 
   @spec persist_changes({:ok, BlockchainEvent.t()} | {:error, error()}, changes :: changes()) ::
           {:ok, BlockchainEvent.t()} | {:error, error()}
-  defp persist_changes({:ok, %BlockchainEvent{} = blockchain_tx}, changes) do
-    blockchain_tx
+  defp persist_changes({:ok, %BlockchainEvent{} = blockchain_event}, changes) do
+    blockchain_event
     |> BlockchainEvent.changeset(changes)
     |> Repo.update()
   end
