@@ -1,6 +1,6 @@
-defmodule Mintacoin.BlockchainTxs.BlockchainTxsTest do
+defmodule Mintacoin.BlockchainEvents.BlockchainEventsTest do
   @moduledoc """
-    This module is used to group common tests for BlockchainTx functions
+    This module is used to group common tests for BlockchainEvent functions
   """
   use Mintacoin.DataCase, async: false
 
@@ -10,8 +10,8 @@ defmodule Mintacoin.BlockchainTxs.BlockchainTxsTest do
 
   alias Mintacoin.{
     Repo,
-    BlockchainTx,
-    BlockchainTxs,
+    BlockchainEvent,
+    BlockchainEvents,
     Blockchain,
     Blockchains,
     Blockchains.Network
@@ -22,11 +22,12 @@ defmodule Mintacoin.BlockchainTxs.BlockchainTxsTest do
     {:ok, %Blockchain{id: blockchain_id}} = Blockchains.create(%{name: Network.name()})
 
     %{
-      blockchain_tx: %{
+      blockchain_event: %{
         blockchain_id: blockchain_id,
-        operation_type: :create_account,
-        operation_payload: %{},
-        signatures: []
+        event_type: :create_account,
+        event_payload: %{
+          signatures: "signature_1"
+        }
       },
       invalid_id: "1",
       non_existing_id: "8dd3eaa3-c073-46f6-8e20-72c7f7203146"
@@ -35,52 +36,54 @@ defmodule Mintacoin.BlockchainTxs.BlockchainTxsTest do
 
   describe "create/1" do
     test "with valid params", %{
-      blockchain_tx: %{blockchain_id: blockchain_id} = blockchain_tx_data
+      blockchain_event: %{blockchain_id: blockchain_id} = blockchain_event_data
     } do
       {:ok,
-       %BlockchainTx{
+       %BlockchainEvent{
          blockchain_id: ^blockchain_id,
+         event_payload: %{
+           signatures: "signature_1"
+         },
          state: :pending,
          successful: false,
          tx_id: nil,
          tx_hash: nil,
          tx_response: %{}
-       }} = BlockchainTxs.create(blockchain_tx_data)
+       }} = BlockchainEvents.create(blockchain_event_data)
     end
 
     test "with invalid params" do
-      {:error, changeset} = BlockchainTxs.create(%{})
+      {:error, changeset} = BlockchainEvents.create(%{})
 
       %{
-        operation_payload: ["can't be blank"],
-        operation_type: ["can't be blank"],
-        signatures: ["can't be blank"]
+        event_payload: ["can't be blank"],
+        event_type: ["can't be blank"]
       } = errors_on(changeset)
     end
   end
 
   describe "retrieve/1" do
     setup do
-      %{blockchain_tx: insert(:blockchain_tx)}
+      %{blockchain_event: insert(:blockchain_event)}
     end
 
-    test "with valid id", %{blockchain_tx: %BlockchainTx{id: id} = blockchain_tx} do
-      {:ok, ^blockchain_tx} = BlockchainTxs.retrieve(id)
+    test "with valid id", %{blockchain_event: %BlockchainEvent{id: id} = blockchain_event} do
+      {:ok, ^blockchain_event} = BlockchainEvents.retrieve(id)
     end
 
     test "with non existing id", %{non_existing_id: id} do
-      {:error, :not_found} = BlockchainTxs.retrieve(id)
+      {:error, :not_found} = BlockchainEvents.retrieve(id)
     end
 
     test "with invalid id", %{invalid_id: id} do
-      {:error, :not_found} = BlockchainTxs.retrieve(id)
+      {:error, :not_found} = BlockchainEvents.retrieve(id)
     end
   end
 
   describe "update/1" do
     setup do
       %{
-        blockchain_tx: insert(:blockchain_tx),
+        blockchain_event: insert(:blockchain_event),
         valid_attrs: %{
           state: :completed,
           successful: true,
@@ -94,7 +97,6 @@ defmodule Mintacoin.BlockchainTxs.BlockchainTxsTest do
           }
         },
         invalid_attrs: %{
-          signatures: [1, 2, 3],
           state: :invalid_state,
           successful: "invalid_successful",
           tx_response: "invalid_tx_response"
@@ -103,30 +105,29 @@ defmodule Mintacoin.BlockchainTxs.BlockchainTxsTest do
     end
 
     test "with invalid id", %{invalid_id: id, valid_attrs: valid_attrs} do
-      {:error, :not_found} = BlockchainTxs.update(id, valid_attrs)
+      {:error, :not_found} = BlockchainEvents.update(id, valid_attrs)
     end
 
     test "with non existing id", %{non_existing_id: id, valid_attrs: valid_attrs} do
-      {:error, :not_found} = BlockchainTxs.update(id, valid_attrs)
+      {:error, :not_found} = BlockchainEvents.update(id, valid_attrs)
     end
 
     test "with invalid params", %{
-      blockchain_tx: %BlockchainTx{id: id},
+      blockchain_event: %BlockchainEvent{id: id},
       invalid_attrs: invalid_attrs
     } do
       {:error,
        %Changeset{
          errors: [
-           signatures: {"is invalid", [type: {:array, :string}, validation: :cast]},
-           state: {"is invalid", [type: BlockchainTx.State, validation: :cast]},
+           state: {"is invalid", [type: BlockchainEvent.State, validation: :cast]},
            successful: {"is invalid", [type: :boolean, validation: :cast]},
            tx_response: {"is invalid", [type: :map, validation: :cast]}
          ]
-       }} = BlockchainTxs.update(id, invalid_attrs)
+       }} = BlockchainEvents.update(id, invalid_attrs)
     end
 
     test "with valid params", %{
-      blockchain_tx: %BlockchainTx{id: id},
+      blockchain_event: %BlockchainEvent{id: id},
       valid_attrs:
         %{
           state: state,
@@ -137,14 +138,14 @@ defmodule Mintacoin.BlockchainTxs.BlockchainTxsTest do
         } = valid_attrs
     } do
       {:ok,
-       %BlockchainTx{
+       %BlockchainEvent{
          id: ^id,
          state: ^state,
          successful: ^successful,
          tx_id: ^tx_id,
          tx_hash: ^tx_hash,
          tx_response: ^tx_response
-       }} = BlockchainTxs.update(id, valid_attrs)
+       }} = BlockchainEvents.update(id, valid_attrs)
     end
   end
 end

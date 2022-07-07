@@ -10,6 +10,6 @@ defmodule Mintacoin.Factory do
     AssetFactory,
     BlockchainFactory,
     PaymentFactory,
-    BlockchainTxFactory
+    BlockchainEventFactory
   }
 end
