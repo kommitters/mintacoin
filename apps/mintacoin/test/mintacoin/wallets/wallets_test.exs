@@ -192,5 +192,20 @@ defmodule Mintacoin.Wallets.WalletsTest do
         blockchain_event_id: ["blockchain_event_id must be a uuid"]
       } = errors_on(changeset)
     end
+
+    test "with valid params", %{
+      wallet: %Wallet{id: id},
+      valid_attrs: %{blockchain_event_id: blockchain_event_id} = valid_attrs
+    } do
+      {:ok, %Wallet{settled_in_blockchain: true, blockchain_event_id: ^blockchain_event_id}} =
+        Wallets.update(id, valid_attrs)
+    end
+
+    test "only changing the settled_in_blockchain param", %{
+      wallet: %Wallet{id: id}
+    } do
+      {:ok, %Wallet{settled_in_blockchain: true}} =
+        Wallets.update(id, %{settled_in_blockchain: true})
+    end
   end
 end
