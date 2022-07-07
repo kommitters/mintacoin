@@ -7,13 +7,24 @@ defmodule Mintacoin.Wallets.WalletsTest do
 
   import Mintacoin.Factory
 
-  alias Mintacoin.{Repo, Wallet, Wallets, Account, Blockchain, Blockchains, Blockchains.Network}
+  alias Mintacoin.{
+    Repo,
+    Wallet,
+    Wallets,
+    Account,
+    Blockchain,
+    Blockchains,
+    Blockchains.Network,
+    BlockchainEvent
+  }
+
   alias Ecto.Adapters.SQL.Sandbox
 
   setup do
     :ok = Sandbox.checkout(Repo)
 
-    {:ok, %Blockchain{id: blockchain_id}} = Blockchains.create(%{name: Network.name()})
+    {:ok, %Blockchain{id: blockchain_id} = blockchain} =
+      Blockchains.create(%{name: Network.name()})
 
     %Account{id: account_id} = insert(:account, email: "account@mail.com", name: "Account name")
 
@@ -23,7 +34,10 @@ defmodule Mintacoin.Wallets.WalletsTest do
         encrypted_secret: "x4lUNWS/MHHbvhNvDfydziBlxFB6/5vQnK5ekmnDzgo",
         blockchain_id: blockchain_id,
         account_id: account_id
-      }
+      },
+      blockchain: blockchain,
+      invalid_id: "1",
+      non_existing_id: "8dd3eaa3-c073-46f6-8e20-72c7f7203146"
     }
   end
 
@@ -81,7 +95,7 @@ defmodule Mintacoin.Wallets.WalletsTest do
     setup %{wallet: wallet_data} do
       {:ok, wallet} = Wallets.create(wallet_data)
 
-      %{wallet: wallet, invalid_address: 'invalid_address'}
+      %{wallet: wallet, invalid_address: "invalid_address"}
     end
 
     test "with valid address", %{wallet: %Wallet{address: address}} do
@@ -141,6 +155,42 @@ defmodule Mintacoin.Wallets.WalletsTest do
 
     test "with bad argument" do
       {:error, :bad_argument} = Wallets.retrieve_by("invalid")
+    end
+  end
+
+  describe "update/1" do
+    setup %{blockchain: blockchain} do
+      %BlockchainEvent{id: blockchain_event_id} =
+        insert(:blockchain_event, blockchain: blockchain)
+
+      %{
+        wallet: insert(:wallet, blockchain: blockchain),
+        valid_attrs: %{
+          settled_in_blockchain: true,
+          blockchain_event_id: blockchain_event_id
+        },
+        invalid_attrs: %{
+          settled_in_blockchain: "invalid_value",
+          blockchain_event_id: "invalid_id"
+        }
+      }
+    end
+
+    test "with invalid id", %{invalid_id: id, valid_attrs: valid_attrs} do
+      {:error, :not_found} = Wallets.update(id, valid_attrs)
+    end
+
+    test "with non existing id", %{non_existing_id: id, valid_attrs: valid_attrs} do
+      {:error, :not_found} = Wallets.update(id, valid_attrs)
+    end
+
+    test "with invalid params", %{wallet: %Wallet{id: id}, invalid_attrs: invalid_attrs} do
+      {:error, changeset} = Wallets.update(id, invalid_attrs)
+
+      %{
+        settled_in_blockchain: ["is invalid"],
+        blockchain_event_id: ["blockchain_event_id must be a uuid"]
+      } = errors_on(changeset)
     end
   end
 end
