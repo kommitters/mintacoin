@@ -10,22 +10,7 @@ defmodule Mintacoin.Application do
     children = [
       # Start the Ecto repository
       Mintacoin.Repo,
-      Mintacoin.Events.Listener.child_spec(
-        id: "account_created_listener",
-        event_name: "account_created"
-      ),
-      Mintacoin.Events.Listener.child_spec(
-        id: "asset_created_listener",
-        event_name: "asset_created"
-      ),
-      Mintacoin.Events.Listener.child_spec(
-        id: "asset_created_listener",
-        event_name: "payment_created"
-      ),
-      Mintacoin.Events.Listener.child_spec(
-        id: "asset_authorized_listener",
-        event_name: "asset_authorized"
-      ),
+      Mintacoin.Events.Listener,
       # Start the PubSub system
       {Phoenix.PubSub, name: Mintacoin.PubSub}
       # Start a worker by calling: Mintacoin.Worker.start_link(arg)

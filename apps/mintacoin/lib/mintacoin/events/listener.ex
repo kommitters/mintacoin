@@ -13,9 +13,7 @@ defmodule Mintacoin.Events.Listener do
 
   @impl true
   def init(opts) do
-    event_name = Keyword.get(opts, :event_name, nil)
-
-    with {:ok, _pid, _ref} <- Mintacoin.Repo.listen(event_name) do
+    with {:ok, _pid, _ref} <- Mintacoin.Repo.listen("event_created") do
       {:ok, opts}
     else
       error -> {:stop, error}
@@ -23,39 +21,9 @@ defmodule Mintacoin.Events.Listener do
   end
 
   @impl true
-  def handle_info({:notification, _pid, _ref, "account_created", payload}, _state) do
+  def handle_info({:notification, _pid, _ref, "event_created", payload}, _state) do
     with {:ok, data} <- Jason.decode(payload, keys: :atoms) do
-      IO.inspect(data, label: "Account Created")
-
-      {:noreply, :event_handled}
-    else
-      error -> {:stop, error, []}
-    end
-  end
-
-  def handle_info({:notification, _pid, _ref, "asset_created", payload}, _state) do
-    with {:ok, data} <- Jason.decode(payload, keys: :atoms) do
-      IO.inspect(data, label: "Asset Created")
-
-      {:noreply, :event_handled}
-    else
-      error -> {:stop, error, []}
-    end
-  end
-
-  def handle_info({:notification, _pid, _ref, "payment_created", payload}, _state) do
-    with {:ok, data} <- Jason.decode(payload, keys: :atoms) do
-      IO.inspect(data, label: "Payment Created")
-
-      {:noreply, :event_handled}
-    else
-      error -> {:stop, error, []}
-    end
-  end
-
-  def handle_info({:notification, _pid, _ref, "asset_authorized", payload}, _state) do
-    with {:ok, data} <- Jason.decode(payload, keys: :atoms) do
-      IO.inspect(data, label: "Asset Authorized")
+      IO.inspect(data, label: "Event Created")
 
       {:noreply, :event_handled}
     else
