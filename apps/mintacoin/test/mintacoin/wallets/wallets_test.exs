@@ -30,8 +30,10 @@ defmodule Mintacoin.Wallets.WalletsTest do
 
     %{
       wallet: %{
-        address: "KUU65DG3NREN84RV39LS7J3E6GKTR82BV6L7QO88TU9I2QIOE2AG",
-        encrypted_secret: "x4lUNWS/MHHbvhNvDfydziBlxFB6/5vQnK5ekmnDzgo",
+        address: "GCL4WMNIEZWMQR4RDQ5WMC27NQBAZK4WVAG7RCCAZPEAB2CNIUVF5LZP",
+        encrypted_secret:
+          "K71bp0FNtVxyVGzdks+rCSFqloN5UAwn/+aivZ1jdEZ3vknaSgt44yTR4NGs176fIeSGtwnukNP92nRRnmd3yhYKpmKEso9XfDqqzkgb288",
+        secret: "SCSIFI5WM22U7NW5SCKQISNJAKMDXJ5FUXUQPBPRFF2KGC2YFSKLCB25",
         blockchain_id: blockchain_id,
         account_id: account_id
       },
@@ -47,6 +49,7 @@ defmodule Mintacoin.Wallets.WalletsTest do
         %{
           address: address,
           encrypted_secret: encrypted_secret,
+          secret: secret,
           blockchain_id: blockchain_id,
           account_id: account_id
         } = wallet_data
@@ -55,6 +58,7 @@ defmodule Mintacoin.Wallets.WalletsTest do
        %Wallet{
          address: ^address,
          encrypted_secret: ^encrypted_secret,
+         secret: ^secret,
          blockchain_id: ^blockchain_id,
          account_id: ^account_id
        }} = Wallets.create(wallet_data)

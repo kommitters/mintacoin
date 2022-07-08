@@ -4,6 +4,12 @@ defmodule Mintacoin.Crypto.CannedCryptoImpl do
   @behaviour Mintacoin.Crypto.Spec
 
   @impl true
+  def random_keypair do
+    send(self(), {:random_keypair, "KEYPAIR"})
+    :ok
+  end
+
+  @impl true
   def create_account(_params) do
     send(self(), {:create_account, "ACCOUNT"})
     :ok
@@ -39,6 +45,11 @@ defmodule Mintacoin.CryptoTest do
     on_exit(fn ->
       Application.delete_env(:crypto, :impl)
     end)
+  end
+
+  test "random_keypair" do
+    Crypto.random_keypair()
+    assert_receive({:random_keypair, "KEYPAIR"})
   end
 
   test "create_account/1" do
