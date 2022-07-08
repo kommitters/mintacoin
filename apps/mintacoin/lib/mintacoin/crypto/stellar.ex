@@ -9,7 +9,7 @@ defmodule Mintacoin.Crypto.Stellar do
   alias Stellar.KeyPair
 
   @impl true
-  def random_keypair(), do: KeyPair.random()
+  def random_keypair, do: KeyPair.random()
 
   @impl true
   defdelegate create_account(params), to: Accounts, as: :create

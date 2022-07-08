@@ -8,7 +8,7 @@ defmodule Mintacoin.Crypto do
   alias Mintacoin.Crypto.Stellar
 
   @impl true
-  def random_keypair(), do: impl().random_keypair()
+  def random_keypair, do: impl().random_keypair()
 
   @impl true
   def create_account(params), do: impl().create_account(params)
