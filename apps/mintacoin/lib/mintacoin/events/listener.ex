@@ -18,9 +18,7 @@ defmodule Mintacoin.Events.Listener do
   end
 
   @spec start_link(opts :: Keyword.t()) :: GenServer.on_start()
-  def(start_link(opts \\ []),
-    do: GenServer.start_link(__MODULE__, opts)
-  )
+  def start_link(opts \\ []), do: GenServer.start_link(__MODULE__, opts)
 
   @impl true
   def init(opts) do
@@ -32,8 +30,8 @@ defmodule Mintacoin.Events.Listener do
 
   @impl true
   def handle_info({:notification, _pid, _ref, "event_created", payload}, _state) do
-    with {:ok, data} <- Jason.decode(payload, keys: :atoms),
-         %BlockchainEvent{} = blockchain_event <- struct!(BlockchainEvent, data) do
+    with {:ok, %{record: record}} <- Jason.decode(payload, keys: :atoms),
+         %BlockchainEvent{} = blockchain_event <- struct!(BlockchainEvent, record) do
       payload = cast_payload(blockchain_event)
 
       {:noreply, payload}
