@@ -1,6 +1,6 @@
 defmodule Mintacoin.Events.ListenerTest do
   @moduledoc """
-
+  This module defines the test cases for the `Listener` GenServer module.
   """
 
   use ExUnit.Case
