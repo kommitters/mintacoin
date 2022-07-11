@@ -14,8 +14,8 @@ defmodule Mintacoin.BlockchainEventFactory do
 
         event_payload =
           Map.get(attrs, :event_payload, %{
-            balance: 1.5,
-            destination: "GBROZ4DOLG3POUYZZ53Y6CEECNYM75VCY5ZSYSMOC25LMW4TMSKWL2SY"
+            "balance" => 1.5,
+            "destination" => "GBROZ4DOLG3POUYZZ53Y6CEECNYM75VCY5ZSYSMOC25LMW4TMSKWL2SY"
           })
 
         state = Map.get(attrs, :state, :pending)

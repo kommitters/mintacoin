@@ -18,7 +18,7 @@ defmodule Mintacoin.Events.ListenerTest do
 
   describe "handle_info/2" do
     test "with valid payload", %{pid: pid} do
-      %{event_payload: %{balance: balance, destination: destination}} =
+      %{event_payload: %{"balance" => balance, "destination" => destination}} =
         blockchain_event =
         :blockchain_event
         |> params_for()
