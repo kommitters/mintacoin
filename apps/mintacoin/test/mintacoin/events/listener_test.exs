@@ -12,18 +12,16 @@ defmodule Mintacoin.Events.ListenerTest do
 
   setup do
     :ok = Sandbox.checkout(Mintacoin.Repo)
-
-    %{pid: self()}
+    %{pid: self(), blockchain_event: params_for(:blockchain_event)}
   end
 
   describe "handle_info/2" do
-    test "with valid payload", %{pid: pid} do
-      %{event_payload: %{"balance" => balance, "destination" => destination}} =
-        blockchain_event =
-        :blockchain_event
-        |> params_for()
-
-      encoded_blockchain_event = Jason.encode!(blockchain_event)
+    test "with valid payload", %{
+      pid: pid,
+      blockchain_event:
+        %{event_payload: %{"balance" => balance, "destination" => destination}} = blockchain_event
+    } do
+      encoded_payload = Jason.encode!(%{operation: "INSERT", record: blockchain_event})
 
       {:noreply,
        %AccountCreated{
@@ -31,37 +29,35 @@ defmodule Mintacoin.Events.ListenerTest do
          destination: ^destination
        }} =
         Listener.handle_info(
-          {:notification, pid, "ref", "event_created", encoded_blockchain_event},
+          {:notification, pid, "ref", "event_created", encoded_payload},
           []
         )
     end
 
-    test "with empty payload", %{pid: pid} do
-      blockchain_event =
-        :blockchain_event
-        |> params_for(event_payload: %{})
-        |> Jason.encode!()
+    test "with empty payload", %{pid: pid, blockchain_event: blockchain_event} do
+      blockchain_event = %{blockchain_event | event_payload: %{}}
+
+      encoded_payload = Jason.encode!(%{operation: "INSERT", record: blockchain_event})
 
       {:noreply, %AccountCreated{balance: nil, destination: nil}} =
         Listener.handle_info(
-          {:notification, pid, "ref", "event_created", blockchain_event},
+          {:notification, pid, "ref", "event_created", encoded_payload},
           []
         )
     end
   end
 
-  test "Assert notification received in handle_info", %{pid: pid} do
-    blockchain_event =
-      :blockchain_event
-      |> params_for()
-      |> Jason.encode!()
+  test "Assert notification received in handle_info", %{
+    pid: pid,
+    blockchain_event: blockchain_event
+  } do
+    encoded_payload = Jason.encode!(%{operation: "INSERT", record: blockchain_event})
 
-    Process.send(
+    send(
       pid,
-      {:notification, pid, "ref", "event_created", blockchain_event},
-      []
+      {:notification, pid, "ref", "event_created", encoded_payload}
     )
 
-    assert_receive({:notification, ^pid, "ref", "event_created", ^blockchain_event})
+    assert_receive({:notification, ^pid, "ref", "event_created", ^encoded_payload})
   end
 end
