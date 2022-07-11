@@ -24,9 +24,8 @@ defmodule Mintacoin.Events.Listener do
 
   @impl true
   def init(opts) do
-    with {:ok, _pid, _ref} <- Mintacoin.Repo.listen("event_created") do
-      {:ok, opts}
-    else
+    case Mintacoin.Repo.listen("event_created") do
+      {:ok, _pid, _ref} -> {:ok, opts}
       error -> {:stop, error}
     end
   end
