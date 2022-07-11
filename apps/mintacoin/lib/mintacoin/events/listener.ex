@@ -7,7 +7,7 @@ defmodule Mintacoin.Events.Listener do
 
   use GenServer
 
-  alias Mintacoin.{Events.Structs.AccountCreated, BlockchainEvent}
+  alias Mintacoin.{Events.Structs.AccountCreated, BlockchainEvent, Events.Consumer}
 
   @spec child_spec(opts :: Keyword.t()) :: map()
   def child_spec(opts) do
@@ -32,14 +32,20 @@ defmodule Mintacoin.Events.Listener do
   def handle_info({:notification, _pid, _ref, "event_created", payload}, _state) do
     with {:ok, %{record: record}} <- Jason.decode(payload, keys: :atoms),
          %BlockchainEvent{} = blockchain_event <- struct!(BlockchainEvent, record) do
-      payload = cast_payload(blockchain_event)
-
-      {:noreply, payload}
+      blockchain_event
+      |> submit_blockchain_transaction()
+      |> (&{:noreply, &1}).()
     else
       error -> {:stop, error, []}
     end
   end
 
-  defp cast_payload(%{event_type: "create_account", event_payload: event_payload}),
-    do: struct(AccountCreated, event_payload)
+  defp submit_blockchain_transaction(
+         %BlockchainEvent{event_type: "create_account", event_payload: event_payload} =
+           blockchain_event
+       ) do
+    AccountCreated
+    |> struct(event_payload)
+    |> Consumer.create_account(blockchain_event)
+  end
 end

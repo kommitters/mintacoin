@@ -10,6 +10,7 @@ defmodule Mintacoin.Crypto.Stellar.Payments do
     {:ok,
      %TxResponse{
        successful: true,
+       id: "ad9ce37da535471089839da43b007929c17bee4aa747b944e3954efa44472537",
        hash: "ad9ce37da535471089839da43b007929c17bee4aa747b944e3954efa44472537",
        created_at: ~U[2022-06-29 21:53:00Z],
        blockchain: :stellar,

@@ -5,6 +5,7 @@ defmodule Mintacoin.Crypto.TxResponse do
 
   @type t :: %__MODULE__{
           successful: boolean(),
+          id: String.t(),
           hash: String.t(),
           created_at: DateTime.t(),
           blockchain: atom(),
@@ -13,6 +14,7 @@ defmodule Mintacoin.Crypto.TxResponse do
 
   defstruct [
     :successful,
+    :id,
     :hash,
     :created_at,
     :blockchain,
