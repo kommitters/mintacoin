@@ -13,15 +13,12 @@ defmodule Mintacoin.Events.Consumer do
     Wallets
   }
 
-  @spec create_account(
-          account_created_event :: AccountCreated.t(),
-          blockchain_event :: BlockchainEvent.t()
-        ) :: {:ok, BlockchainEvent.t()} | {:error, term()}
-  def create_account(
-        %AccountCreated{destination: address} = account_created_event,
-        %BlockchainEvent{id: blockchain_event_id}
-      ) do
-    with {:ok, %TxResponse{id: tx_id, hash: tx_hash, successful: successful, raw_tx: tx_response}} <-
+  @spec create_account(blockchain_event :: BlockchainEvent.t()) ::
+          {:ok, BlockchainEvent.t()} | {:error, term()}
+  def create_account(%BlockchainEvent{id: blockchain_event_id, event_payload: event_payload}) do
+    with %AccountCreated{destination: address} = account_created_event <-
+           struct(AccountCreated, event_payload),
+         {:ok, %TxResponse{id: tx_id, hash: tx_hash, successful: successful, raw_tx: tx_response}} <-
            Crypto.create_account(account_created_event),
          {:ok, %BlockchainEvent{} = blockchain_event} <-
            BlockchainEvents.update(blockchain_event_id, %{
@@ -38,9 +35,13 @@ defmodule Mintacoin.Events.Consumer do
            }) do
       {:ok, blockchain_event}
     else
-      {:error, error} -> {:error, error}
+      {:error, error} ->
+        {:error, error}
+
+      error ->
+        {:error, error}
     end
   end
 
-  def create_account(_account_created_event, _blockchain_event), do: {:error, :bad_argument}
+  def create_account(_blockchain_event), do: {:error, :bad_argument}
 end
