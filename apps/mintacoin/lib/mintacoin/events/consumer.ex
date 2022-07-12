@@ -26,39 +26,75 @@ defmodule Mintacoin.Events.Consumer do
   @spec create_account(blockchain_event :: BlockchainEvent.t()) ::
           {:ok, BlockchainEvent.t()} | {:error, error()}
   def create_account(%BlockchainEvent{id: blockchain_event_id, event_payload: event_payload}) do
-    with %AccountCreated{destination: address} = account_created_event <-
-           struct(AccountCreated, event_payload),
-         {:ok, %TxResponse{id: tx_id, hash: tx_hash, successful: successful, raw_tx: tx_response}} <-
-           Crypto.create_account(account_created_event),
-         # Pipeline continues only if the transaction was successful,
-         # but the BlockchainEvent is updated eitherway.
-         {:ok, %BlockchainEvent{successful: true} = blockchain_event} <-
-           BlockchainEvents.update(blockchain_event_id, %{
-             successful: successful,
-             tx_id: tx_id,
-             tx_hash: tx_hash,
-             tx_response: tx_response
-           }),
-         {:ok, %Wallet{}} <-
-           Wallets.update_by_address(address, %{
-             blockchain_event_id: blockchain_event_id,
-             settled_in_blockchain: true
-           }) do
-      {:ok, blockchain_event}
-    else
-      {:error, %TxResponse{}} ->
-        {:error, :blockchain_transaction_error}
+    %AccountCreated{destination: address} =
+      account_created_event = struct(AccountCreated, event_payload)
 
-      {:error, error} ->
-        {:error, error}
-
-      {:ok, %BlockchainEvent{}} ->
-        {:error, :blockchain_transaction_failed}
-
-      error when is_struct(error) ->
-        {:error, :invalid_event_payload}
-    end
+    account_created_event
+    |> execute_transaction()
+    |> update_blockchain_event(blockchain_event_id)
+    |> update_wallet(address)
   end
 
   def create_account(_blockchain_event), do: {:error, :bad_argument}
+
+  @spec execute_transaction(account_created_event :: AccountCreated.t()) ::
+          {:ok, TxResponse.t()} | {:error, error()}
+  def execute_transaction(%AccountCreated{balance: balance, destination: destination})
+      when is_nil(balance) or is_nil(destination) do
+    {:error, :invalid_event_payload}
+  end
+
+  def execute_transaction(%AccountCreated{} = account_created_event) do
+    Crypto.create_account(account_created_event)
+  end
+
+  @spec update_blockchain_event(
+          tx_response :: {:ok, TxResponse.t()},
+          blockchain_event_id :: binary()
+        ) ::
+          {:ok, BlockchainEvent.t()} | {:error, error()}
+  def update_blockchain_event(
+        {:ok, %TxResponse{id: tx_id, hash: tx_hash, successful: successful, raw_tx: tx_response}},
+        blockchain_event_id
+      ) do
+    BlockchainEvents.update(blockchain_event_id, %{
+      successful: successful,
+      tx_id: tx_id,
+      tx_hash: tx_hash,
+      tx_response: tx_response
+    })
+  end
+
+  def update_blockchain_event({:error, %TxResponse{}}, _blockchain_event_id) do
+    {:error, :blockchain_transaction_error}
+  end
+
+  def update_blockchain_event({:error, _error} = error, _blockchain_event_id) do
+    error
+  end
+
+  @spec update_wallet(blockchain_event :: {:ok, BlockchainEvent.t()}, address :: binary()) ::
+          {:ok, Wallet.t()} | {:error, error()}
+  def update_wallet(
+        {:ok, %BlockchainEvent{id: blockchain_event_id, successful: true} = blockchain_event},
+        address
+      ) do
+    address
+    |> Wallets.update_by_address(%{
+      blockchain_event_id: blockchain_event_id,
+      settled_in_blockchain: true
+    })
+    |> case do
+      {:ok, %Wallet{}} -> {:ok, blockchain_event}
+      {:error, error} -> {:error, error}
+    end
+  end
+
+  def update_wallet({:error, _error} = error, _address) do
+    error
+  end
+
+  def update_wallet(_blockchain_event, _address) do
+    {:error, :blockchain_transaction_failed}
+  end
 end
