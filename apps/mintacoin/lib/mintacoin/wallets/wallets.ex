@@ -52,6 +52,13 @@ defmodule Mintacoin.Wallets do
     |> persist_changes(changes)
   end
 
+  @spec update_by_address(address :: address(), changes :: changes()) :: {:ok, Wallet.t()} | {:error, error()}
+  def update_by_address(address, changes) do
+    address
+    |> retrieve_by_address()
+    |> persist_changes(changes)
+  end
+
   @spec persist_changes({:ok, Wallet.t()} | {:error, error()}, changes :: changes()) ::
           {:ok, Wallet.t()} | {:error, error()}
   defp persist_changes({:ok, %Wallet{} = wallet}, changes) do
