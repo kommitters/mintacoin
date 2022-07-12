@@ -6,8 +6,10 @@ defmodule Mintacoin.Events.ListenerTest do
   use ExUnit.Case
 
   import Mintacoin.Factory
+  import Mock
 
-  alias Mintacoin.Events.{Listener, Structs.AccountCreated}
+  alias Mintacoin.Events.{Listener, Consumer}
+  alias Mintacoin.BlockchainEvent
   alias Ecto.Adapters.SQL.Sandbox
 
   setup do
@@ -15,31 +17,15 @@ defmodule Mintacoin.Events.ListenerTest do
     %{pid: self(), blockchain_event: params_for(:blockchain_event)}
   end
 
-  describe "handle_info/2" do
-    test "with valid payload", %{
-      pid: pid,
-      blockchain_event:
-        %{event_payload: %{"balance" => balance, "destination" => destination}} = blockchain_event
-    } do
+  test "handle_info/2", %{
+    pid: pid,
+    blockchain_event:
+      %{event_payload: %{"balance" => balance, "destination" => destination}} = blockchain_event
+  } do
+    with_mock Consumer, consumer_functions() do
       encoded_payload = Jason.encode!(%{operation: "INSERT", record: blockchain_event})
 
-      {:noreply,
-       %AccountCreated{
-         balance: ^balance,
-         destination: ^destination
-       }} =
-        Listener.handle_info(
-          {:notification, pid, "ref", "event_created", encoded_payload},
-          []
-        )
-    end
-
-    test "with empty payload", %{pid: pid, blockchain_event: blockchain_event} do
-      blockchain_event = %{blockchain_event | event_payload: %{}}
-
-      encoded_payload = Jason.encode!(%{operation: "INSERT", record: blockchain_event})
-
-      {:noreply, %AccountCreated{balance: nil, destination: nil}} =
+      {:noreply, %BlockchainEvent{event_payload: %{balance: ^balance, destination: ^destination}}} =
         Listener.handle_info(
           {:notification, pid, "ref", "event_created", encoded_payload},
           []
@@ -59,5 +45,11 @@ defmodule Mintacoin.Events.ListenerTest do
     )
 
     assert_receive({:notification, ^pid, "ref", "event_created", ^encoded_payload})
+  end
+
+  def consumer_functions do
+    [
+      create_account: fn blockchain_event -> blockchain_event end
+    ]
   end
 end

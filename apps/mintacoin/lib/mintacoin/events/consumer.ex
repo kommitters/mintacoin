@@ -36,6 +36,9 @@ defmodule Mintacoin.Events.Consumer do
            }) do
       {:ok, blockchain_event}
     else
+      {:error, %TxResponse{}} ->
+        {:error, :blockchain_transaction_error}
+
       {:error, error} ->
         {:error, error}
 

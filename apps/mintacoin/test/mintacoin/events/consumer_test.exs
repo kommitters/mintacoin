@@ -9,6 +9,8 @@ defmodule Mintacoin.Events.ConsumerTest do
   import Mock
 
   alias Mintacoin.{
+    Crypto,
+    Crypto.TxResponse,
     Wallet,
     Wallets,
     BlockchainEvent,
@@ -93,5 +95,57 @@ defmodule Mintacoin.Events.ConsumerTest do
          settled_in_blockchain: true
        }} = Wallets.retrieve_by_address(address)
     end
+
+    test "create_account pipeline failed", %{blockchain_event: blockchain_event} do
+      with_mock Crypto, bad_crypto_create_account1() do
+        {:error, :blockchain_transaction_failed} = Consumer.create_account(blockchain_event)
+      end
+    end
+
+    test "create_account transaction error", %{blockchain_event: blockchain_event} do
+      with_mock Crypto, bad_crypto_create_account2() do
+        {:error, :blockchain_transaction_error} = Consumer.create_account(blockchain_event)
+      end
+    end
+  end
+
+  def bad_crypto_create_account1 do
+    [
+      create_account: fn _account_created_event ->
+        {:ok,
+         %TxResponse{
+           successful: false,
+           id: "7f82fe6ac195e7674f7bdf7a3416683ffd55c8414978c70bf4da08ac64fea129",
+           hash: "7f82fe6ac195e7674f7bdf7a3416683ffd55c8414978c70bf4da08ac64fea129",
+           created_at: ~U[2022-06-29 15:45:45Z],
+           blockchain: :stellar,
+           raw_tx: %{
+             hash: "7f82fe6ac195e7674f7bdf7a3416683ffd55c8414978c70bf4da08ac64fea129",
+             id: "7f82fe6ac195e7674f7bdf7a3416683ffd55c8414978c70bf4da08ac64fea129",
+             successful: false
+           }
+         }}
+      end
+    ]
+  end
+
+  def bad_crypto_create_account2 do
+    [
+      create_account: fn _account_created_event ->
+        {:error,
+         %TxResponse{
+           successful: false,
+           id: "7f82fe6ac195e7674f7bdf7a3416683ffd55c8414978c70bf4da08ac64fea129",
+           hash: "7f82fe6ac195e7674f7bdf7a3416683ffd55c8414978c70bf4da08ac64fea129",
+           created_at: ~U[2022-06-29 15:45:45Z],
+           blockchain: :stellar,
+           raw_tx: %{
+             hash: "7f82fe6ac195e7674f7bdf7a3416683ffd55c8414978c70bf4da08ac64fea129",
+             id: "7f82fe6ac195e7674f7bdf7a3416683ffd55c8414978c70bf4da08ac64fea129",
+             successful: false
+           }
+         }}
+      end
+    ]
   end
 end
