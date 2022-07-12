@@ -20,16 +20,17 @@ defmodule Mintacoin.Events.Consumer do
            struct(AccountCreated, event_payload),
          {:ok, %TxResponse{id: tx_id, hash: tx_hash, successful: successful, raw_tx: tx_response}} <-
            Crypto.create_account(account_created_event),
-         {:ok, %BlockchainEvent{} = blockchain_event} <-
+         # Pipeline continues only if the transaction was successful,
+         # but the BlockchainEvent is updated eitherway.
+         {:ok, %BlockchainEvent{successful: true} = blockchain_event} <-
            BlockchainEvents.update(blockchain_event_id, %{
              successful: successful,
              tx_id: tx_id,
              tx_hash: tx_hash,
              tx_response: tx_response
            }),
-         {:ok, %Wallet{id: wallet_id}} <- Wallets.retrieve_by_address(address),
          {:ok, %Wallet{}} <-
-           Wallets.update(wallet_id, %{
+           Wallets.update_by_address(address, %{
              blockchain_event_id: blockchain_event_id,
              settled_in_blockchain: true
            }) do
@@ -38,8 +39,11 @@ defmodule Mintacoin.Events.Consumer do
       {:error, error} ->
         {:error, error}
 
-      error ->
-        {:error, error}
+      {:ok, %BlockchainEvent{}} ->
+        {:error, :blockchain_transaction_failed}
+
+      error when is_struct(error) ->
+        {:error, :invalid_event_payload}
     end
   end
 
