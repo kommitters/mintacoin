@@ -3,6 +3,8 @@ defmodule Mintacoin.Events.Consumer do
   This module provides functions to handle the transaction responses from crypto and update the DB records involved with the transactions.
   """
 
+  alias Ecto.Changeset
+
   alias Mintacoin.{
     Crypto,
     Crypto.TxResponse,
@@ -13,8 +15,16 @@ defmodule Mintacoin.Events.Consumer do
     Wallets
   }
 
+  @type error ::
+          Changeset.t()
+          | :blockchain_transaction_error
+          | :blockchain_transaction_failed
+          | :invalid_event_payload
+          | :bad_argument
+          | :not_found
+
   @spec create_account(blockchain_event :: BlockchainEvent.t()) ::
-          {:ok, BlockchainEvent.t()} | {:error, term()}
+          {:ok, BlockchainEvent.t()} | {:error, error()}
   def create_account(%BlockchainEvent{id: blockchain_event_id, event_payload: event_payload}) do
     with %AccountCreated{destination: address} = account_created_event <-
            struct(AccountCreated, event_payload),

@@ -7,7 +7,17 @@ defmodule Mintacoin.Events.Listener do
 
   use GenServer
 
+  alias Ecto.Changeset
   alias Mintacoin.{BlockchainEvent, Events.Consumer}
+
+  @type error ::
+          Changeset.t()
+          | :bad_blockchain_event_provided
+          | :blockchain_transaction_error
+          | :blockchain_transaction_failed
+          | :invalid_event_payload
+          | :bad_argument
+          | :not_found
 
   @spec child_spec(opts :: Keyword.t()) :: map()
   def child_spec(opts) do
@@ -43,7 +53,7 @@ defmodule Mintacoin.Events.Listener do
   end
 
   @spec submit_blockchain_transaction(blockchain_event :: BlockchainEvent.t()) ::
-          {:ok, BlockchainEvent.t()} | {:error, term()}
+          {:ok, BlockchainEvent.t()} | {:error, error()}
   defp submit_blockchain_transaction(
          %BlockchainEvent{event_type: :create_account} = blockchain_event
        ),

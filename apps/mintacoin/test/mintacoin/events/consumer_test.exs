@@ -1,6 +1,6 @@
 defmodule Mintacoin.Events.ConsumerTest do
   @moduledoc """
-
+  This module defines the test cases for the `Consumer` module.
   """
 
   use ExUnit.Case
@@ -109,7 +109,7 @@ defmodule Mintacoin.Events.ConsumerTest do
     end
   end
 
-  def bad_crypto_create_account1 do
+  defp bad_crypto_create_account1 do
     [
       create_account: fn _account_created_event ->
         {:ok,
@@ -129,7 +129,7 @@ defmodule Mintacoin.Events.ConsumerTest do
     ]
   end
 
-  def bad_crypto_create_account2 do
+  defp bad_crypto_create_account2 do
     [
       create_account: fn _account_created_event ->
         {:error,

@@ -8,8 +8,7 @@ defmodule Mintacoin.Events.ListenerTest do
   import Mintacoin.Factory
   import Mock
 
-  alias Mintacoin.Events.{Listener, Consumer}
-  alias Mintacoin.BlockchainEvent
+  alias Mintacoin.{BlockchainEvent, Events.Listener, Events.Consumer}
   alias Ecto.Adapters.SQL.Sandbox
 
   setup do
@@ -47,7 +46,7 @@ defmodule Mintacoin.Events.ListenerTest do
     assert_receive({:notification, ^pid, "ref", "event_created", ^encoded_payload})
   end
 
-  def consumer_functions do
+  defp consumer_functions do
     [
       create_account: fn blockchain_event -> blockchain_event end
     ]
