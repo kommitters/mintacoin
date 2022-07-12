@@ -10,6 +10,7 @@ defmodule Mintacoin.Application do
     children = [
       # Start the Ecto repository
       Mintacoin.Repo,
+      Mintacoin.Events.Listener,
       # Start the PubSub system
       {Phoenix.PubSub, name: Mintacoin.PubSub}
       # Start a worker by calling: Mintacoin.Worker.start_link(arg)

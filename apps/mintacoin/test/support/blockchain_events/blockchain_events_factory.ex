@@ -11,7 +11,13 @@ defmodule Mintacoin.BlockchainEventFactory do
       @spec blockchain_event_factory(attrs :: map()) :: BlockchainEvent.t()
       def blockchain_event_factory(attrs) do
         event_type = Map.get(attrs, :event_type, :create_account)
-        event_payload = Map.get(attrs, :event_payload, %{})
+
+        event_payload =
+          Map.get(attrs, :event_payload, %{
+            "balance" => 1.5,
+            "destination" => "GBROZ4DOLG3POUYZZ53Y6CEECNYM75VCY5ZSYSMOC25LMW4TMSKWL2SY"
+          })
+
         state = Map.get(attrs, :state, :pending)
         successful = Map.get(attrs, :successful, false)
         tx_id = Map.get(attrs, :tx_id, nil)
