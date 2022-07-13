@@ -40,13 +40,11 @@ defmodule Mintacoin.Events.Consumer do
   @spec execute_transaction(account_created_event :: AccountCreated.t()) ::
           {:ok, TxResponse.t()} | {:error, error()}
   def execute_transaction(%AccountCreated{balance: balance, destination: destination})
-      when is_nil(balance) or is_nil(destination) do
-    {:error, :invalid_event_payload}
-  end
+      when is_nil(balance) or is_nil(destination),
+      do: {:error, :invalid_event_payload}
 
-  def execute_transaction(%AccountCreated{} = account_created_event) do
-    Crypto.create_account(account_created_event)
-  end
+  def execute_transaction(%AccountCreated{} = account_created_event),
+    do: Crypto.create_account(account_created_event)
 
   @spec update_blockchain_event(
           tx_response :: {:ok, TxResponse.t()},
@@ -56,22 +54,19 @@ defmodule Mintacoin.Events.Consumer do
   def update_blockchain_event(
         {:ok, %TxResponse{id: tx_id, hash: tx_hash, successful: successful, raw_tx: tx_response}},
         blockchain_event_id
-      ) do
-    BlockchainEvents.update(blockchain_event_id, %{
-      successful: successful,
-      tx_id: tx_id,
-      tx_hash: tx_hash,
-      tx_response: tx_response
-    })
-  end
+      ),
+      do:
+        BlockchainEvents.update(blockchain_event_id, %{
+          successful: successful,
+          tx_id: tx_id,
+          tx_hash: tx_hash,
+          tx_response: tx_response
+        })
 
-  def update_blockchain_event({:error, %TxResponse{}}, _blockchain_event_id) do
-    {:error, :blockchain_transaction_error}
-  end
+  def update_blockchain_event({:error, %TxResponse{}}, _blockchain_event_id),
+    do: {:error, :blockchain_transaction_error}
 
-  def update_blockchain_event({:error, _error} = error, _blockchain_event_id) do
-    error
-  end
+  def update_blockchain_event({:error, error}, _blockchain_event_id), do: {:error, error}
 
   @spec update_wallet(blockchain_event :: {:ok, BlockchainEvent.t()}, address :: binary()) ::
           {:ok, Wallet.t()} | {:error, error()}
@@ -90,11 +85,6 @@ defmodule Mintacoin.Events.Consumer do
     end
   end
 
-  def update_wallet({:error, _error} = error, _address) do
-    error
-  end
-
-  def update_wallet(_blockchain_event, _address) do
-    {:error, :blockchain_transaction_failed}
-  end
+  def update_wallet({:error, error}, _address), do: {:error, error}
+  def update_wallet(_blockchain_event, _address), do: {:error, :blockchain_transaction_failed}
 end
