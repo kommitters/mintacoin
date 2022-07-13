@@ -10,6 +10,7 @@ defmodule Mintacoin.Crypto.Stellar.Accounts do
     {:ok,
      %TxResponse{
        successful: true,
+       id: "7f82fe6ac195e7674f7bdf7a3416683ffd55c8414978c70bf4da08ac64fea129",
        hash: "7f82fe6ac195e7674f7bdf7a3416683ffd55c8414978c70bf4da08ac64fea129",
        created_at: ~U[2022-06-29 15:45:45Z],
        blockchain: :stellar,
