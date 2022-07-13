@@ -1,3 +1,58 @@
+defmodule Mintacoin.Crypto.CannedCryptoConsumerImpl do
+  @moduledoc """
+  This module defines a canned implementation of the crypto module to return mocked responses for testing.
+  """
+
+  @behaviour Mintacoin.Crypto.Spec
+
+  alias Mintacoin.Crypto.TxResponse
+
+  @impl true
+  def create_account(%{destination: "bad_destination"}) do
+    {:error,
+     %TxResponse{
+       successful: false,
+       id: "7f82fe6ac195e7674f7bdf7a3416683ffd55c8414978c70bf4da08ac64fea129",
+       hash: "7f82fe6ac195e7674f7bdf7a3416683ffd55c8414978c70bf4da08ac64fea129",
+       created_at: ~U[2022-06-29 15:45:45Z],
+       blockchain: :stellar,
+       raw_tx: %{
+         hash: "7f82fe6ac195e7674f7bdf7a3416683ffd55c8414978c70bf4da08ac64fea129",
+         id: "7f82fe6ac195e7674f7bdf7a3416683ffd55c8414978c70bf4da08ac64fea129",
+         successful: false
+       }
+     }}
+  end
+
+  def create_account(_account_created_event) do
+    {:ok,
+     %TxResponse{
+       successful: false,
+       id: "7f82fe6ac195e7674f7bdf7a3416683ffd55c8414978c70bf4da08ac64fea129",
+       hash: "7f82fe6ac195e7674f7bdf7a3416683ffd55c8414978c70bf4da08ac64fea129",
+       created_at: ~U[2022-06-29 15:45:45Z],
+       blockchain: :stellar,
+       raw_tx: %{
+         hash: "7f82fe6ac195e7674f7bdf7a3416683ffd55c8414978c70bf4da08ac64fea129",
+         id: "7f82fe6ac195e7674f7bdf7a3416683ffd55c8414978c70bf4da08ac64fea129",
+         successful: false
+       }
+     }}
+  end
+
+  @impl true
+  def authorize_asset(_asset_authorized_event), do: :ok
+
+  @impl true
+  def create_asset(_asset_created_event), do: :ok
+
+  @impl true
+  def process_payment(_process_payment_event), do: :ok
+
+  @impl true
+  def random_keypair, do: :ok
+end
+
 defmodule Mintacoin.Events.ConsumerTest do
   @moduledoc """
   This module defines the test cases for the `Consumer` module.
@@ -6,15 +61,13 @@ defmodule Mintacoin.Events.ConsumerTest do
   use ExUnit.Case
 
   import Mintacoin.Factory
-  import Mock
 
   alias Mintacoin.{
-    Crypto,
-    Crypto.TxResponse,
     Wallet,
     Wallets,
     BlockchainEvent,
-    Events.Consumer
+    Events.Consumer,
+    Crypto.CannedCryptoConsumerImpl
   }
 
   alias Ecto.Adapters.SQL.Sandbox
@@ -97,55 +150,33 @@ defmodule Mintacoin.Events.ConsumerTest do
     end
 
     test "create_account pipeline failed", %{blockchain_event: blockchain_event} do
-      with_mock Crypto, bad_crypto_create_account1() do
-        {:error, :blockchain_transaction_failed} = Consumer.create_account(blockchain_event)
-      end
+      setup_crypto_canned_impl()
+
+      {:error, :blockchain_transaction_failed} = Consumer.create_account(blockchain_event)
     end
 
     test "create_account transaction error", %{blockchain_event: blockchain_event} do
-      with_mock Crypto, bad_crypto_create_account2() do
-        {:error, :blockchain_transaction_error} = Consumer.create_account(blockchain_event)
-      end
+      setup_crypto_canned_impl()
+
+      {:error, :blockchain_transaction_error} =
+        blockchain_event
+        |> Map.put(:event_payload, %{balance: 1.5, destination: "bad_destination"})
+        |> Consumer.create_account()
+    end
+
+    test "invalid event payload error", %{blockchain_event: blockchain_event} do
+      {:error, :invalid_event_payload} =
+        blockchain_event
+        |> Map.put(:event_payload, %{})
+        |> Consumer.create_account()
     end
   end
 
-  defp bad_crypto_create_account1 do
-    [
-      create_account: fn _account_created_event ->
-        {:ok,
-         %TxResponse{
-           successful: false,
-           id: "7f82fe6ac195e7674f7bdf7a3416683ffd55c8414978c70bf4da08ac64fea129",
-           hash: "7f82fe6ac195e7674f7bdf7a3416683ffd55c8414978c70bf4da08ac64fea129",
-           created_at: ~U[2022-06-29 15:45:45Z],
-           blockchain: :stellar,
-           raw_tx: %{
-             hash: "7f82fe6ac195e7674f7bdf7a3416683ffd55c8414978c70bf4da08ac64fea129",
-             id: "7f82fe6ac195e7674f7bdf7a3416683ffd55c8414978c70bf4da08ac64fea129",
-             successful: false
-           }
-         }}
-      end
-    ]
-  end
+  defp setup_crypto_canned_impl do
+    Application.put_env(:crypto, :impl, CannedCryptoConsumerImpl)
 
-  defp bad_crypto_create_account2 do
-    [
-      create_account: fn _account_created_event ->
-        {:error,
-         %TxResponse{
-           successful: false,
-           id: "7f82fe6ac195e7674f7bdf7a3416683ffd55c8414978c70bf4da08ac64fea129",
-           hash: "7f82fe6ac195e7674f7bdf7a3416683ffd55c8414978c70bf4da08ac64fea129",
-           created_at: ~U[2022-06-29 15:45:45Z],
-           blockchain: :stellar,
-           raw_tx: %{
-             hash: "7f82fe6ac195e7674f7bdf7a3416683ffd55c8414978c70bf4da08ac64fea129",
-             id: "7f82fe6ac195e7674f7bdf7a3416683ffd55c8414978c70bf4da08ac64fea129",
-             successful: false
-           }
-         }}
-      end
-    ]
+    on_exit(fn ->
+      Application.delete_env(:crypto, :impl)
+    end)
   end
 end

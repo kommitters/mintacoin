@@ -6,37 +6,61 @@ defmodule Mintacoin.Events.ListenerTest do
   use ExUnit.Case
 
   import Mintacoin.Factory
-  import Mock
 
-  alias Mintacoin.{BlockchainEvent, Events.Listener, Events.Consumer}
+  alias Mintacoin.{Wallet, BlockchainEvent, Events.Listener}
   alias Ecto.Adapters.SQL.Sandbox
 
   setup do
     :ok = Sandbox.checkout(Mintacoin.Repo)
-    %{pid: self(), blockchain_event: params_for(:blockchain_event)}
+
+    blockchain = insert(:blockchain, name: "Stellar")
+
+    %Wallet{address: destination} = insert(:wallet, blockchain: blockchain)
+
+    blockchain_event =
+      insert(:blockchain_event,
+        event_type: :create_account,
+        event_payload: %{balance: 1.5, destination: destination},
+        blockchain: blockchain
+      )
+
+    %{
+      pid: self(),
+      blockchain_event: blockchain_event
+    }
   end
 
   test "handle_info/2", %{
     pid: pid,
     blockchain_event:
-      %{event_payload: %{"balance" => balance, "destination" => destination}} = blockchain_event
+      %{event_payload: %{balance: balance, destination: destination}} = blockchain_event
   } do
-    with_mock Consumer, consumer_functions() do
-      encoded_payload = Jason.encode!(%{operation: "INSERT", record: blockchain_event})
+    encoded_payload =
+      blockchain_event
+      |> Map.from_struct()
+      |> Map.delete(:__meta__)
+      |> Map.delete(:blockchain)
+      |> (&Jason.encode!(%{operation: "INSERT", record: &1})).()
 
-      {:noreply, %BlockchainEvent{event_payload: %{balance: ^balance, destination: ^destination}}} =
-        Listener.handle_info(
-          {:notification, pid, "ref", "event_created", encoded_payload},
-          []
-        )
-    end
+    {:noreply,
+     {:ok,
+      %BlockchainEvent{event_payload: %{"balance" => ^balance, "destination" => ^destination}}}} =
+      Listener.handle_info(
+        {:notification, pid, "ref", "event_created", encoded_payload},
+        []
+      )
   end
 
   test "Assert notification received in handle_info", %{
     pid: pid,
     blockchain_event: blockchain_event
   } do
-    encoded_payload = Jason.encode!(%{operation: "INSERT", record: blockchain_event})
+    encoded_payload =
+      blockchain_event
+      |> Map.from_struct()
+      |> Map.delete(:__meta__)
+      |> Map.delete(:blockchain)
+      |> (&Jason.encode!(%{operation: "INSERT", record: &1})).()
 
     send(
       pid,
@@ -44,11 +68,5 @@ defmodule Mintacoin.Events.ListenerTest do
     )
 
     assert_receive({:notification, ^pid, "ref", "event_created", ^encoded_payload})
-  end
-
-  defp consumer_functions do
-    [
-      create_account: fn blockchain_event -> blockchain_event end
-    ]
   end
 end
